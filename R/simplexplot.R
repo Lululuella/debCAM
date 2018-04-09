@@ -28,11 +28,11 @@
 #'
 #' #plot simplex for data
 #' simplexplot(data, A)
-#' simplexplot(data, A, MGlist) # Color marker genes in simplex plot
+#' simplexplot(data, A, MGlist = pMGlist.FC) #Color marker genes in simplex plot
 #'
 #' #set differnt corner order and colors
-#' simplexplot(data, A, MGlist, corner.order = c(2,1,3),
-#' data.col = "blue", corner.col = c("red","orange","green"))
+#' simplexplot(data, A, MGlist = pMGlist.FC, corner.order = c(2,1,3),
+#'             data.col = "blue", corner.col = c("red","orange","green"))
 simplexplot <- function(data, A, MGlist = NULL, corner.order = NULL,
                         data.col = 'gray', corner.col = 'red', ...){
     if (class(data) == "data.frame") {
@@ -61,7 +61,7 @@ simplexplot <- function(data, A, MGlist = NULL, corner.order = NULL,
 
     Xproj <- t(data / rowSums(data))
     A <- A / rep(colSums(A), 1, each = nrow(A))
-    PS <- t(matrix(c(cos((1:K - 1) * 2 * pi / K), sin((1:K - 1) * 2 * pi / K)), K))
+    PS <- t(matrix(c(cos((seq_len(K) - 1) * 2 * pi / K), sin((seq_len(K) - 1) * 2 * pi / K)), K))
     tmp <- PS %*% pseudoinverse(A[,corner.order])
     tmp[1,] <- tmp[1,] / c(sqrt(tmp[1,] %*% tmp[1,]))
     tmp[2,] <- tmp[2,] - c(tmp[2,] %*% tmp[1,]) * tmp[1,]

@@ -4,17 +4,17 @@
 \alias{CAMASest}
 \title{A and S matrix estimation by CAM}
 \usage{
-CAMASest(data, PrepResult, MGResult, corner.strategy = 2)
+CAMASest(MGResult, PrepResult, data, corner.strategy = 2)
 }
 \arguments{
+\item{MGResult}{An object of class "CAMMGObj" from \code{\link{CAMMGCluster}}.}
+
+\item{PrepResult}{An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.}
+
 \item{data}{Matrix of mixture expression profiles.
 Each row is a gene and each column is a sample.
 data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
 Missing values are not supported.}
-
-\item{PrepResult}{An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.}
-
-\item{MGResult}{An object of class "CAMMGObj" from \code{\link{CAMMGCluster}}.}
 
 \item{corner.strategy}{The method to detect corner clusters.
 1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
@@ -64,8 +64,8 @@ data <- ratMix3$X
 rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 
 #Marker gene cluster detection with a fixed K
-rMGC <- CAMMGCluster(rPrep, K = 3)
+rMGC <- CAMMGCluster(3, rPrep)
 
 #A and S matrix estimation
-rASest <- CAMASest(data, rPrep, rMGC)
+rASest <- CAMASest(rMGC, rPrep, data)
 }

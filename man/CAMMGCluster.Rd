@@ -4,19 +4,17 @@
 \alias{CAMMGCluster}
 \title{MG cluster detection for CAM}
 \usage{
-CAMMGCluster(PrepResult, K, nComb = 200, coreParam = NULL)
+CAMMGCluster(K, PrepResult, nComb = 200)
 }
 \arguments{
-\item{PrepResult}{An object of class "CAMPrepObj" from \code{\link{CAMPrep}} function.}
-
 \item{K}{The candidate subpopulation number.}
+
+\item{PrepResult}{An object of class "CAMPrepObj" from \code{\link{CAMPrep}} function.}
 
 \item{nComb}{The number of possible combinations of clusters as corner clusters.
 Within these possible combinations ranked by margin errors,
 We can further select the best one based on reconstruction errors.
 The default is 200.}
-
-\item{coreParam}{A BiocParallelParam instance determining the parallel back-end.}
 }
 \value{
 An object of class "CAMMGObj" containing the following components:
@@ -47,6 +45,6 @@ data <- ratMix3$X
 #preprocess data
 rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 
-#Marker gene cluster detection with a fixed K
-rMGC <- CAMMGCluster(rPrep, K = 3)
+#Marker gene cluster detection with a fixed K = 3
+rMGC <- CAMMGCluster(3, rPrep)
 }

@@ -30,21 +30,26 @@ The range should be between 0 and 1. The default is 0.05.}
 \item{thres.high}{The percentage of genes the user wants to remove with highest norm.
 The range should be between 0 and 1. The default is 0.95.}
 
-\item{cluster.method}{The method to do clustering. The default "K-Means" will use \code{\link{kmeans}}.
+\item{cluster.method}{The method to do clustering.
+The default "K-Means" will use \code{\link{kmeans}}.
 The alternative "apcluster" will use \code{\link[apcluster]{apclusterK}}.}
 
-\item{cluster.num}{The number of clusters; should be much larger than K. The default is 50.}
+\item{cluster.num}{The number of clusters; should be much larger than K.
+The default is 50.}
 
-\item{MG.num.thres}{The clusters with the gene number smaller than MG.num.thres will be treated as outliers.
+\item{MG.num.thres}{The clusters with the gene number smaller than
+MG.num.thres will be treated as outliers.
 The default is 20.}
 
 \item{lof.thres}{Remove local outlier using \code{\link[DMwR]{lofactor}}.
-MG.num.thres is used as the number of neighbours in the calculation of the local outlier factors.
+MG.num.thres is used as the number of neighbours in the calculation of
+the local outlier factors.
 The default value 0.02 will remove top 2\% local outliers.
 Zero value will disable lof.}
 
 \item{cores}{The number of system cores for parallel computing.
-If not provided, the default back-end is used. Zero value will disable parallel computing.}
+If not provided, the default back-end is used.
+Zero value will disable parallel computing.}
 
 \item{seed}{For reproducibility, the seed of the random number generator for k-Means.}
 }
@@ -65,16 +70,20 @@ This function performs a fully unsupervised computational deconvolution method
     as well as their respective expression profiles.
 }
 \details{
-This function includes three necessary steps to decompose a matrix of mixture expression prefiles:
-data preprocessing, marker gene cluster search, and matrix decomposition. They are implemented in
-\code{\link{CAMPrep}}, \code{\link{CAMMGCluster}}, and \code{\link{CAMASest}}, seperately.
+This function includes three necessary steps to decompose a matrix
+of mixture expression prefiles: data preprocessing, marker gene cluster
+search, and matrix decomposition. They are implemented in
+\code{\link{CAMPrep}}, \code{\link{CAMMGCluster}}, and
+\code{\link{CAMASest}}, seperately.
 More details can be find in the help document of each function.
 
-For \code{\link{CAM}} function, you needs to specify the range of possible subpopulation numbers
-and the percentage of low/high-expressed molecueles to be removed.
-Typically, 30\% ~ 50\% low-expressed genes can be removed from gene expression data.
-Much less low-expressed proteins are removed, e.g. 0\% ~ 10\%, due to a limited number of proteins in proteomics data.
-The removel of high-expressed molecules has much less impact on results, and usually set to be 0\% ~ 10\%.
+For \code{\link{CAM}} function, you needs to specify the range of possible
+subpopulation numbers and the percentage of low/high-expressed molecueles to
+be removed. Typically, 30\% ~ 50\% low-expressed genes can be removed from
+gene expression data. Much less low-expressed proteins are removed,
+e.g. 0\% ~ 10\%, due to a limited number of proteins in proteomics data.
+The removel of high-expressed molecules has much less impact on results,
+and usually set to be 0\% ~ 10\%.
 }
 \examples{
 #obtain data

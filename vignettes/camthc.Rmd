@@ -67,11 +67,10 @@ data <- ratMix3$X
 
 ### Analysis by CAM
 
-Unsupervised deconvolution can be achieved by the function `CAM()` with a simple setting as Section \@ref(quick-start) introduced. Other critial parameters are `dim.rdc` (reduced data dimension) and `cluster.num` (number of clusters). Increase them will bring more time complexity. We can also specify `cores` for parallel computing. `cores = 0` will disable parallel computing. No `cores` argument will invoke parallel computing with the default back-end configured by `r Biocpkg("BiocParallel")`. The `seed` argument can help generate reproduciable results. 
+Unsupervised deconvolution can be achieved by the function `CAM()` with a simple setting as Section \@ref(quick-start) introduced. Other critial parameters are `dim.rdc` (reduced data dimension) and `cluster.num` (number of clusters). Increasing them will bring more time complexity. We can also specify `cores` for parallel computing configured by `r Biocpkg("BiocParallel")`. `cores = 0` will disable parallel computing. No `cores` argument will invoke one core for each element in `K`. The `seed` argument can help generate reproduciable results. 
 
 ```{r, echo=TRUE, message=FALSE}
-rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95, 
-            cores = 30, seed = 111)
+rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95, seed = 111)
 #CAM return three sub results: 
 #rCAM$PrepResult contains details corresponding to data preprocessing.
 #rCAM$MGResult contains details corresponding to marker gene clusters detection.
@@ -98,7 +97,7 @@ Sest <- rCAM$ASestResult[[m]]$Sest
 The marker genes detected by CAM and used for A matrix estimation can be obtained by
 
 ```{r, echo=TRUE}
-MGlist <- MGsforA(rCAM, K = 3)
+MGlist <- MGsforA(rCAM, K = 3) #for three subpopulations
 ```
 
 Data preprocessing has filtered many genes, among which there are also some biologically-meaningful marker genes. So we need to check each gene again to find all the possible markers. Two statistics based on the subpopultiaon-specifc expressions are exploited to identify marker genes with certain thresholds. The first is OVE-FC (one versus everyone - fold change) (Yu et al. 2010). The second is the lower confidence bound of bootstrapped OVE-FC at $\alpha$ level. 
@@ -204,10 +203,10 @@ There major steps in CAM (data preprocession, marker gene cluster detection, and
 rPrep <- CAMPrep(data, thres.low = 0.30, thres.high = 0.95, seed = 111)
 
 #Marker gene cluster detection with a fixed K
-rMGC <- CAMMGCluster(rPrep, K = 3, cores = 30)
+rMGC <- CAMMGCluster(3, rPrep)
 
 #A and S matrix estimation
-rASest <- CAMASest(data, rPrep, rMGC)
+rASest <- CAMASest(rMGC, rPrep, data)
 
 #Obtain A and S matrix
 Aest <- rASest$Aest
@@ -228,7 +227,7 @@ MGlist.FCboot <- lapply(1:3, function(x)
 
 We have implemented PCA in `CAM()`/`CAMPrep()` to reduce data dimensions. Sample clusteirng, as another data dimension reduction method, is optional prior to `CAM()`/`CAMPrep()`. 
 
-```{r, echo=TRUE, cache=TRUE, message=FALSE}
+```{r, echo=TRUE, message=FALSE}
 #clustering
 library(apcluster)
 apres <- apclusterK(negDistMat(r=2), t(data),  K = 10) 
@@ -256,7 +255,7 @@ Aest <- AfromMarkers(data, MGlist)
 
 [GSE11058](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE11058) run four immune cell lines on microarrays as well as their mixtures of various relative proportions. The code chunk below shows how to use CAM to blindly seperate the four mixtures into four pure cell lines. Note that this data set contains 54613 probe/probesets. We can reduce running time by downsampling probe/probesets or remove more low-expressed genes (e.g. 70%).
 
-```{r, echo=TRUE, cache=TRUE, message=FALSE}
+```{r, echo=TRUE, message=FALSE}
 #download data and phenotypes
 library(GEOquery)
 gsm<- getGEO('GSE11058')

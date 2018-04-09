@@ -18,28 +18,37 @@
 #'     The range should be between 0 and 1. The default is 0.05.
 #' @param thres.high The percentage of genes the user wants to remove with highest norm.
 #'     The range should be between 0 and 1. The default is 0.95.
-#' @param cluster.method The method to do clustering. The default "K-Means" will use \code{\link{kmeans}}.
+#' @param cluster.method The method to do clustering.
+#'     The default "K-Means" will use \code{\link{kmeans}}.
 #'     The alternative "apcluster" will use \code{\link[apcluster]{apclusterK}}.
-#' @param cluster.num The number of clusters; should be much larger than K. The default is 50.
-#' @param MG.num.thres The clusters with the gene number smaller than MG.num.thres will be treated as outliers.
+#' @param cluster.num The number of clusters; should be much larger than K.
+#'     The default is 50.
+#' @param MG.num.thres The clusters with the gene number smaller than
+#'     MG.num.thres will be treated as outliers.
 #'     The default is 20.
 #' @param lof.thres Remove local outlier using \code{\link[DMwR]{lofactor}}.
-#'     MG.num.thres is used as the number of neighbours in the calculation of the local outlier factors.
+#'     MG.num.thres is used as the number of neighbours in the calculation of
+#'     the local outlier factors.
 #'     The default value 0.02 will remove top 2\% local outliers.
 #'     Zero value will disable lof.
 #' @param cores The number of system cores for parallel computing.
-#'     If not provided, the default back-end is used. Zero value will disable parallel computing.
+#'     If not provided, the default back-end is used.
+#'     Zero value will disable parallel computing.
 #' @param seed For reproducibility, the seed of the random number generator for k-Means.
-#' @details This function includes three necessary steps to decompose a matrix of mixture expression prefiles:
-#' data preprocessing, marker gene cluster search, and matrix decomposition. They are implemented in
-#' \code{\link{CAMPrep}}, \code{\link{CAMMGCluster}}, and \code{\link{CAMASest}}, seperately.
+#' @details This function includes three necessary steps to decompose a matrix
+#' of mixture expression prefiles: data preprocessing, marker gene cluster
+#' search, and matrix decomposition. They are implemented in
+#' \code{\link{CAMPrep}}, \code{\link{CAMMGCluster}}, and
+#' \code{\link{CAMASest}}, seperately.
 #' More details can be find in the help document of each function.
 #'
-#' For \code{\link{CAM}} function, you needs to specify the range of possible subpopulation numbers
-#' and the percentage of low/high-expressed molecueles to be removed.
-#' Typically, 30\% ~ 50\% low-expressed genes can be removed from gene expression data.
-#' Much less low-expressed proteins are removed, e.g. 0\% ~ 10\%, due to a limited number of proteins in proteomics data.
-#' The removel of high-expressed molecules has much less impact on results, and usually set to be 0\% ~ 10\%.
+#' For \code{\link{CAM}} function, you needs to specify the range of possible
+#' subpopulation numbers and the percentage of low/high-expressed molecueles to
+#' be removed. Typically, 30\% ~ 50\% low-expressed genes can be removed from
+#' gene expression data. Much less low-expressed proteins are removed,
+#' e.g. 0\% ~ 10\%, due to a limited number of proteins in proteomics data.
+#' The removel of high-expressed molecules has much less impact on results,
+#' and usually set to be 0\% ~ 10\%.
 #' @return A list containing the following components:
 #' \item{PrepResult}{An object of class "CAMPrepObj" containing
 #' data preprocessing results from \code{\link{CAMPrep}} function.}
@@ -68,7 +77,8 @@
 #' }
 
 CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
-                thres.low = 0.05, thres.high = 0.95, cluster.method = c('K-Means', 'apcluster'),
+                thres.low = 0.05, thres.high = 0.95,
+                cluster.method = c('K-Means', 'apcluster'),
                 cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02,
                 cores = NULL, seed = NULL){
     if (is.null(K)) {
@@ -96,12 +106,12 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
     }
 
     coreParam <- NULL
-    if (is.null(cores) || cores > 0) {
+    if (length(K) > 1 && (is.null(cores) || cores > 0)) {
         registered()
         if (is.null(cores)) {
-            coreParma <- bpparam()
+            coreParam <- SnowParam(workers = length(K), type = "SOCK")
         } else if (cores > 0) {
-            coreParma <- SnowParam(workers = cores, type = "SOCK")
+            coreParam <- SnowParam(workers = cores, type = "SOCK")
         }
     }
 
@@ -112,23 +122,29 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
                           cluster.num, MG.num.thres, lof.thres, seed)
 
     ################ Marker Gene Selection ################
-    message('Marker Gene Selection:\n')
+    message('Marker Gene Selection\n')
     MGResult<-list()
-    for(snum in K){
-        message('K = ', snum, '\n')
-        MGResult <- c(MGResult, list(CAMMGCluster(PrepResult,
-                                                  K = snum, nComb = 200,
-                                                  coreParam=coreParam)))
+
+    if (is.null(coreParam)) {
+        MGResult <- lapply(K, CAMMGCluster, PrepResult)
+    } else {
+        MGResult <- bplapply(K, CAMMGCluster, PrepResult,
+                            BPPARAM = coreParam)
     }
     names(MGResult) <- as.character(K)
 
     ################ A and S Matrix Estimation ################
     message('A and S Matrix Estimation\n')
-    ASestResult <- list()
-    for(i in seq_along(K)){
-        ASestResult <- c(ASestResult, list(CAMASest(data, PrepResult, MGResult[[i]], corner.strategy)))
+    if (is.null(coreParam)) {
+        ASestResult <- lapply(MGResult, CAMASest, PrepResult, data,
+                            corner.strategy)
+    } else {
+        ASestResult <- bplapply(MGResult, CAMASest, PrepResult, data,
+                                corner.strategy, BPPARAM = coreParam)
     }
     names(ASestResult) <- as.character(K)
 
-    return(list(PrepResult=PrepResult, MGResult=MGResult, ASestResult=ASestResult))
+    return(list(PrepResult=PrepResult,
+                MGResult=MGResult,
+                ASestResult=ASestResult))
 }

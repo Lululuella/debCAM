@@ -4,7 +4,7 @@ Title: Convex Analysis of Mixtures for Tissue Heterogeneity Characterization
 Version: 0.99.0
 Author: Lulu Chen <luluchen@vt.edu>
 Maintainer: Lulu Chen <luluchen@vt.edu>
-biocViews: Software
+biocViews: Software, CellBiology
 Description: An R package for tissue heterogeneity characterization by convex 
     analysis of mixtures (CAM). It provides basic functions to perform 
     unsupervised deconvolution on mixture expression profiles by CAM and some 
@@ -17,7 +17,7 @@ License: GPL-2
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Depends: R (>= 2.10)
+Depends: R (>= 3.5)
 Suggests: 
     knitr,
     rmarkdown,

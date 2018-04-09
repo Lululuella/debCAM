@@ -46,9 +46,9 @@ pMGlist.FC <- lapply(c("Liver","Brain","Lung"), function(x)
 
 #plot simplex for data
 simplexplot(data, A)
-simplexplot(data, A, MGlist) # Color marker genes in simplex plot
+simplexplot(data, A, MGlist = pMGlist.FC) #Color marker genes in simplex plot
 
 #set differnt corner order and colors
-simplexplot(data, A, MGlist, corner.order = c(2,1,3),
-data.col = "blue", corner.col = c("red","orange","green"))
+simplexplot(data, A, MGlist = pMGlist.FC, corner.order = c(2,1,3),
+            data.col = "blue", corner.col = c("red","orange","green"))
 }

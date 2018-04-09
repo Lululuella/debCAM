@@ -1,12 +1,12 @@
 #' A and S matrix estimation by CAM
 #'
 #' This function estimates A and S matrix based on marker gene clusters detected by CAM.
-#' @param data    Matrix of mixture expression profiles.
+#' @param MGResult An object of class "CAMMGObj" from \code{\link{CAMMGCluster}}.
+#' @param PrepResult An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.
+#' @param data Matrix of mixture expression profiles.
 #'     Each row is a gene and each column is a sample.
 #'     data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
 #'     Missing values are not supported.
-#' @param PrepResult An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.
-#' @param MGResult An object of class "CAMMGObj" from \code{\link{CAMMGCluster}}.
 #' @param corner.strategy The method to detect corner clusters.
 #'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
 #'     The default is 2.
@@ -48,11 +48,11 @@
 #' rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 #'
 #' #Marker gene cluster detection with a fixed K
-#' rMGC <- CAMMGCluster(rPrep, K = 3)
+#' rMGC <- CAMMGCluster(3, rPrep)
 #'
 #' #A and S matrix estimation
-#' rASest <- CAMASest(data, rPrep, rMGC)
-CAMASest <- function(data, PrepResult, MGResult, corner.strategy = 2) {
+#' rASest <- CAMASest(rMGC, rPrep, data)
+CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
     if (is.null(MGResult)) {
         return (NULL)
     }
