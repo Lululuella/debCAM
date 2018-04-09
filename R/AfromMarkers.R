@@ -20,9 +20,9 @@
 #' #obtain data and marker genes
 #' data(ratMix3)
 #' S <- ratMix3$S
-#' pMGstat <- MGstatistic(S, c("Liver","Brain","Lung"), cores = 30)
+#' pMGstat <- MGstatistic(S, c("Liver","Brain","Lung"))
 #' pMGlist.FC <- lapply(c("Liver","Brain","Lung"), function(x)
-#' rownames(pMGstat)[pMGstat$idx == x & pMGstat$OVE.FC > 10])
+#'     rownames(pMGstat)[pMGstat$idx == x & pMGstat$OVE.FC > 10])
 #'
 #' #estimate A matrix from markers
 #' Aest <- AfromMarkers(ratMix3$X, pMGlist.FC)
@@ -55,6 +55,7 @@ AfromMarkers <- function(data, MGlist, scaleRecover = TRUE){
         A1 <- A[,colSums(A)>0]
         scale.pca <- c(.fcnnls(A1, matrix(1,nrow(A1),1))$coef)
         #scale.pca <- as.vector(coef(nnls(A1,matrix(1,nrow(A1),1))))
+        scale.pca[scale.pca<1e-10] <- 0.01/(sqrt(colSums(A1^2)))[scale.pca<1e-10]
         scale.pca[scale.pca==0] <- 0.0001
         A1 <- A1%*%diag(scale.pca)
         A[,colSums(A)>0] <- A1

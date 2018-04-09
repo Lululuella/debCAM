@@ -4,7 +4,7 @@
 \alias{CAMMGCluster}
 \title{MG cluster detection for CAM}
 \usage{
-CAMMGCluster(PrepResult, K, nComb = 100, cores = NA)
+CAMMGCluster(PrepResult, K, nComb = 200, coreParam = NULL)
 }
 \arguments{
 \item{PrepResult}{An object of class "CAMPrepObj" from \code{\link{CAMPrep}} function.}
@@ -13,9 +13,10 @@ CAMMGCluster(PrepResult, K, nComb = 100, cores = NA)
 
 \item{nComb}{The number of possible combinations of clusters as corner clusters.
 Within these possible combinations ranked by margin errors,
-We can further select the best one based on reconstruction errors.}
+We can further select the best one based on reconstruction errors.
+The default is 200.}
 
-\item{cores}{The number of system cores for parallel computing.}
+\item{coreParam}{A BiocParallelParam instance determining the parallel back-end.}
 }
 \value{
 An object of class "CAMMGObj" containing the following components:
@@ -33,9 +34,10 @@ detect clusters containing marker genes,
 or used when you want to perfrom CAM step by step.
 
 This function provides two solutions. The first is the combination of clusters
-    yielding the minimum margin errors of cluster ceneters. In the second,
-    nComb possible combinations are selected by ranking margin errors of cluster centers.
-    Then the best one is selected based on reconstruction errors of all data points.
+    yielding the minimum sum margin-of-errors for cluster ceneters. In the second,
+    nComb possible combinations are selected by ranking sum margin-of-errors
+    for cluster centers. Then the best one is selected based on
+    reconstruction errors of all data points in original space.
 }
 \examples{
 #obtain data
@@ -43,8 +45,8 @@ data(ratMix3)
 data <- ratMix3$X
 
 #preprocess data
-rPrep <- CAMPrep(data, thres.low = 0.30, thres.high = 0.95)
+rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 
 #Marker gene cluster detection with a fixed K
-rMGC <- CAMMGCluster(rPrep, K = 3, cores = 30)
+rMGC <- CAMMGCluster(rPrep, K = 3)
 }

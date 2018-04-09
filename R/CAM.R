@@ -11,7 +11,7 @@
 #'     Missing values are not supported.
 #' @param K The candidate subpopulation number(s), e.g. K = 2:8.
 #' @param corner.strategy The method to find corners of convex hull.
-#'     1: minimum margin error; 2: minimum reconstruction error.
+#'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
 #'     The default is 2.
 #' @param dim.rdc Reduced data dimension; should be not less than maximum candidate K.
 #' @param thres.low The percentage of genes the user wants to remove with lowest norm.
@@ -27,7 +27,6 @@
 #'     MG.num.thres is used as the number of neighbours in the calculation of the local outlier factors.
 #'     The default value 0.02 will remove top 2\% local outliers.
 #'     Zero value will disable lof.
-#' @param qhull.enable Enable quickhull to reduce time complexity for marker detection.The default is TRUE.
 #' @param cores The number of system cores for parallel computing.
 #'     If not provided, the default back-end is used. Zero value will disable parallel computing.
 #' @param seed For reproducibility, the seed of the random number generator for k-Means.
@@ -55,15 +54,23 @@
 #' data(ratMix3)
 #' data <- ratMix3$X
 #'
-#' #Analysis by CAM
-#' rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95)
+#' #CAM with known subpopulation number
+#' rCAM <- CAM(data, K = 3, dim.rdc= 3, thres.low = 0.30, thres.high = 0.95)
+#' #A larger dim.rdc can improve performance but increase time complexity
+#'
+#' \donttest{
+#' #CAM with a range of subpopulation number
+#' rCAM <- CAM(data, K = 2:5, dim.rdc= 10, thres.low = 0.30, thres.high = 0.95)
 #'
 #' #Use "apcluster" to aggregate gene vectors in CAM
-#' rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95, cluster.method = 'apcluster')
+#' rCAM <- CAM(data, K = 2:5, dim.rdc= 10, thres.low = 0.30, thres.high = 0.95,
+#'             cluster.method = 'apcluster')
+#' }
+
 CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
                 thres.low = 0.05, thres.high = 0.95, cluster.method = c('K-Means', 'apcluster'),
                 cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02,
-                qhull.enable = TRUE, cores = NULL, seed = NA){
+                cores = NULL, seed = NULL){
     if (is.null(K)) {
         stop("K is missing")
     }
@@ -88,17 +95,30 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
         warning("dim.rdc is less than max(K)!")
     }
 
+    coreParam <- NULL
+    if (is.null(cores) || cores > 0) {
+        registered()
+        if (is.null(cores)) {
+            coreParma <- bpparam()
+        } else if (cores > 0) {
+            coreParma <- SnowParam(workers = cores, type = "SOCK")
+        }
+    }
+
+
     ################ Preprocessing ################
     message('Preprocessing\n')
     PrepResult <- CAMPrep(data, dim.rdc, thres.low, thres.high, cluster.method,
-                          cluster.num, MG.num.thres, lof.thres, qhull.enable, seed)
+                          cluster.num, MG.num.thres, lof.thres, seed)
 
     ################ Marker Gene Selection ################
     message('Marker Gene Selection:\n')
     MGResult<-list()
     for(snum in K){
         message('K = ', snum, '\n')
-        MGResult <- c(MGResult, list(CAMMGCluster(PrepResult, K=snum, nComb=100, cores=cores)))
+        MGResult <- c(MGResult, list(CAMMGCluster(PrepResult,
+                                                  K = snum, nComb = 200,
+                                                  coreParam=coreParam)))
     }
     names(MGResult) <- as.character(K)
 

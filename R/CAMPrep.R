@@ -23,7 +23,6 @@
 #'     MG.num.thres is used as the number of neighbours in the calculation of the local outlier factors.
 #'     The default value 0.02 will remove top 2\% local outliers.
 #'     Zero value will disable lof.
-#' @param qhull.enable Enable quickhull to reduce time complexity for marker detection.The default is TRUE.
 #' @param seed For reproducibility, the seed of the random number generator for k-Means.
 #' @details This function is used internally by \code{\link{CAM}} function to preprocess data,
 #' or used when you want to perfrom CAM step by step.
@@ -54,11 +53,11 @@
 #' data <- ratMix3$X
 #'
 #' #preprocess data
-#' rPrep <- CAMPrep(data, thres.low = 0.30, thres.high = 0.95)
+#' rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
                     cluster.method = c('K-Means', 'apcluster'),
                     cluster.num = 50, MG.num.thres = 20, lof.thres = 0,
-                    qhull.enable = TRUE, seed = NA){
+                    seed = NULL){
     if (class(data) == "data.frame") {
         data <- as.matrix(data)
     } else if (class(data) != "matrix") {
@@ -76,7 +75,7 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
     if (is.null(rownames(data))) {
         rownames(data) <- seq_len(nrow(data))
     }
-    if (!is.na(seed)) {
+    if (!is.null(seed)) {
         set.seed(seed)
     }
 
@@ -134,7 +133,8 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
         if (cluster.method != 'apcluster') {
             stop("Only K-Means and apcluster are supported.")
         }
-        clusterRes <- apcluster::apclusterK(apcluster::negDistMat(r=2), t(Xproj),  K=cluster.num)
+        clusterRes <- apcluster::apclusterK(apcluster::negDistMat(r=2),
+                                            t(Xproj),  K=cluster.num)
         clusterSize <- unlist(lapply(clusterRes@clusters, length))
         clusterIdx <- rep(0, length(clusterSize))
         for(i in seq_along(clusterSize)) {
@@ -148,20 +148,20 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
     c.outlier <- which(cluster$size < MG.num.thres)
     message('outlier cluster number: ',sum(cluster$size < MG.num.thres),"\n")
 
-    medcenters <- vapply(cluster.valid, function(x) pcaPP::l1median(t(Xproj[,cluster$cluster==x])), numeric(L))
+    medcenters <- vapply(cluster.valid, function(x)
+        pcaPP::l1median(t(Xproj[,cluster$cluster==x])), numeric(L))
     colnames(medcenters) <- cluster.valid
 
     ################ quickhull #################
     J <- length(cluster.valid)
     corner <- seq_len(J)
+    convex <- geometry::convhulln(rbind(t(medcenters),0), options = "QbB")
+    corner <- unique(c(convex))
+    corner <- corner[-which(corner == (J+1))]  # throw away the origin point
+    message('convex hull cluster number: ',length(corner),"\n")
 
-    if (qhull.enable == TRUE){
-        convex <- geometry::convhulln(rbind(t(medcenters),0), options = "QbB")
-        corner <- unique(c(convex))
-        corner <- corner[-which(corner == (J+1))]  # throw away the origin point
-        message('convex hull cluster number: ',length(corner),"\n")
-    }
 
     structure(list(ValidIdx=Valid, Xprep=X, Xproj=Xproj, W=weightMatrix,
-                   cluster=cluster, c.outlier=c.outlier, centers=medcenters[,corner]), class = "CAMPrepObj")
+                   cluster=cluster, c.outlier=c.outlier,
+                   centers=medcenters[,corner]), class = "CAMPrepObj")
 }

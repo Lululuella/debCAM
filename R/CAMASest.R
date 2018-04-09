@@ -8,7 +8,7 @@
 #' @param PrepResult An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.
 #' @param MGResult An object of class "CAMMGObj" from \code{\link{CAMMGCluster}}.
 #' @param corner.strategy The method to detect corner clusters.
-#'     1: minimum margin error; 2: minimum reconstruction error.
+#'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
 #'     The default is 2.
 #' @details This function is used internally by \code{\link{CAM}} function to
 #' estimate proportion matrix (A), subpopulation-specific expression matrix (S)
@@ -45,14 +45,17 @@
 #' data <- ratMix3$X
 #'
 #' #preprocess data
-#' rPrep <- CAMPrep(data, thres.low = 0.30, thres.high = 0.95)
+#' rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 #'
 #' #Marker gene cluster detection with a fixed K
-#' rMGC <- CAMMGCluster(rPrep, K = 3, cores = 30)
+#' rMGC <- CAMMGCluster(rPrep, K = 3)
 #'
 #' #A and S matrix estimation
 #' rASest <- CAMASest(data, rPrep, rMGC)
 CAMASest <- function(data, PrepResult, MGResult, corner.strategy = 2) {
+    if (is.null(MGResult)) {
+        return (NULL)
+    }
     if (is.null(rownames(data))) {
         rownames(data) <- seq_len(nrow(data))
         warning('Gene/probe name is missing!')
@@ -71,6 +74,7 @@ CAMASest <- function(data, PrepResult, MGResult, corner.strategy = 2) {
 
     #scale <- as.vector(coef(nnls(Aproj, rowSums(PrepResult$W))))
     scale <- c(.fcnnls(Aproj, matrix(rowSums(PrepResult$W),ncol=1))$coef)
+    scale[scale<1e-10] <- 0.01/(sqrt(colSums(Aproj^2)))[scale<1e-10]
     Apca <- Aproj %*% diag(scale)
     #S1 <- apply(Xprep, 2, function(x) coef(nnls(Apca,x)))
     S1 <- .fcnnls(Apca, Xprep)$coef
@@ -81,6 +85,7 @@ CAMASest <- function(data, PrepResult, MGResult, corner.strategy = 2) {
     Aproj.org <- pseudoinverse(PrepResult$W) %*% Aproj
     #scale.org <- as.vector(coef(nnls(Aproj.org, matrix(1,nrow(Aproj.org),1))))
     scale.org <- c(.fcnnls(Aproj.org, matrix(1,nrow(Aproj.org),1))$coef)
+    scale.org[scale.org<1e-10] <- 0.01/(sqrt(colSums(Aproj.org^2)))[scale.org<1e-10]
     Aest.org <- Aproj.org%*%diag(scale.org)
     Aest.org[Aest.org < 0] <- 0
     Aest.org <- Aest.org/rowSums(Aest.org)
@@ -99,6 +104,7 @@ CAMASest <- function(data, PrepResult, MGResult, corner.strategy = 2) {
     }
     #scale.all <- as.vector(coef(nnls(Aproj.all, matrix(1,nrow(Aproj.all),1))))
     scale.all <- c(.fcnnls(Aproj.all, matrix(1,nrow(Aproj.all),1))$coef)
+    scale.all[scale.all<1e-10] <- 0.01/(sqrt(colSums(Aproj.all^2)))[scale.all<1e-10]
     Aest.all <- Aproj.all%*%diag(scale.all)
     Aest.all <- Aest.all/rowSums(Aest.all)
     #S3 <- apply(X, 2, function(x) coef(nnls(Aest.all, x)))

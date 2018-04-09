@@ -3,13 +3,12 @@
 \docType{data}
 \name{ratMix3}
 \alias{ratMix3}
-\title{Gene expression data profiled by microarray from Shen-Orr et al. 2010}
+\title{Gene expression data downsampled from GSE19380}
 \format{A list with three matrices: mixture profiles (X), mixing proportions (A) and pure profiles (S).}
 \usage{
 data(ratMix3)
 }
 \description{
-GEO accession GSE19380:
 Rat brain, liver and lung biospecimens derived from one animal at the cRNA
 homogenate level in different proportions. 3 technical replicates each.
 We downsample the original data to 10000 probes/probesets and 7 mixtues.

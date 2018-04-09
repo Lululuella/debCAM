@@ -17,12 +17,13 @@
 #' data(ratMix3)
 #' data <- ratMix3$X
 #'
-#' #obtain simplex
-#' Xproj <- XWProj(data, rCAM$PrepResult$W)
+#' #preprocess data
+#' rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.50, thres.high = 0.90)
 #'
+#' #obtain simplex
+#' Xproj <- XWProj(data, rPrep$W)
 #' #plot simplex in 3d space
-#' library(rgl)
-#' plot3d(Xproj[,-1]) #The first dimension is constant after projection
+#' #plot3d(Xproj[,-1]) #The first dimension is constant after projection
 XWProj <- function(data, W){
     Xp <- data %*% t(W)
 

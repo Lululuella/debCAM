@@ -17,7 +17,7 @@ MGsforA(CAMResult = NULL, K = NULL, PrepResult = NULL, MGResult = NULL,
 \item{MGResult}{An object of class "CAMMGObj" from \code{\link{CAMMGCluster}}.}
 
 \item{corner.strategy}{The method to detect corner clusters.
-1: minimum margin error; 2: minimum reconstruction error.
+1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
 The default is 2.}
 }
 \value{
@@ -35,15 +35,13 @@ To obtain a more complete marker gene list, please refer to \code{\link{MGstatis
 #obtain data and run CAM
 data(ratMix3)
 data <- ratMix3$X
-rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95)
-obtain marker genes detected by CAM for estimating A
+rCAM <- CAM(data, K = 3, dim.rdc= 3, thres.low = 0.30, thres.high = 0.95)
+#obtain marker genes detected by CAM for estimating A
 MGlist <- MGsforA(rCAM, K = 3)
 
 #obtain data and run CAM step by step
-data(ratMix3)
-data <- ratMix3$X
-rPrep <- CAMPrep(data, thres.low = 0.30, thres.high = 0.95)
-rMGC <- CAMMGCluster(rPrep, K = 3, cores = 30)
+rPrep <- CAMPrep(data, dim.rdc= 3, thres.low = 0.30, thres.high = 0.95)
+rMGC <- CAMMGCluster(rPrep, K = 3)
 #obtain marker genes detected by CAM for estimating A
 MGlist <- MGsforA(PrepResult = rPrep, MGResult = rMGC)
 }

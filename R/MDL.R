@@ -19,6 +19,7 @@
 #' \item{mdls}{mdl values for each model with a certain subpopulation number.}
 #' @export
 #' @examples
+#' \donttest{
 #' #obtain data
 #' data(ratMix3)
 #' data <- ratMix3$X
@@ -34,22 +35,27 @@
 #' #plot MDL curves
 #' plot(MDL(rCAM))
 #' plot(MDL(rCAM), data.term = TRUE) #with data length curve
+#' }
 MDL <- function(CAMResult, mdl.method = 3) {
-    K <- as.integer(names(CAMResult$ASestResult))
-    datalengths <- unlist(lapply(CAMResult$ASestResult, function(x) x$datalength[mdl.method]))
-    mdls <- unlist(lapply(CAMResult$ASestResult, function(x) x$mdl[mdl.method]))
+    valid <- unlist(lapply(CAMResult$ASestResult, function(x) !is.null(x)))
+    valid <- which(valid)
+    K <- as.integer(names(CAMResult$ASestResult))[valid]
+    datalengths <- unlist(lapply(valid, function(x)
+        CAMResult$ASestResult[[x]]$datalength[mdl.method]))
+    mdls <- unlist(lapply(valid, function(x)
+        CAMResult$ASestResult[[x]]$mdl[mdl.method]))
     structure(list(K = K, datalengths = datalengths, mdls=mdls), class = "MDLObj")
 }
 
 #' @param x An object of class "MDLObj" from \code{\link{MDL}}..
 #' @param data.term If ture, plot data term (code lenght of data under model).
-#' @param ... All other arguments are passed to the plotting command that are used internally.
+#' @param ... All other arguments are passed to the plotting command.
 #' @export
 #' @rdname MDL
 plot.MDLObj <- function(x, data.term = FALSE, ...){
     if (data.term) {
         plot(x$K, x$mdls, xlab = 'number of sources', ylab = '', type='l',
-             ylim = range(c(x$likelihoods, x$mdls)), col= 'blue', xaxt = "n", ...)
+             ylim = range(c(x$datalengths, x$mdls)), col= 'blue', xaxt = "n", ...)
         points(x$K, x$datalengths, type = 'l', lty = 2, col = 'red')
         axis(1, at = min(x$K) : max(x$K))
         legend("topright", cex=1.5, inset=.01, c("MDL","data term"),

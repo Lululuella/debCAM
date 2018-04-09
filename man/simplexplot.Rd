@@ -23,6 +23,8 @@ and/or CAM-detected markers for one subpopulation.}
 \item{data.col}{The color for data points. The default is "gray".}
 
 \item{corner.col}{The color for corner points. The default is "red".}
+
+\item{...}{All other arguments are passed to the plotting command.}
 }
 \description{
 This function shows simplex
@@ -34,10 +36,19 @@ at extreme points of low-dimensional simplex. These corners will follow the
 order set by \code{corner.order} to display in the plot counterclockwise.
 }
 \examples{
-simplexplot(data, Aest) #plot simplex for data
-simplexplot(data, Aest, MGlist) # Color marker genes in simplex plot
+#obtain data, A matrix, marker genes
+data(ratMix3)
+data <- ratMix3$X
+A <- ratMix3$A
+pMGstat <- MGstatistic(ratMix3$S, c("Liver","Brain","Lung"))
+pMGlist.FC <- lapply(c("Liver","Brain","Lung"), function(x)
+    rownames(pMGstat)[pMGstat$idx == x & pMGstat$OVE.FC > 10])
+
+#plot simplex for data
+simplexplot(data, A)
+simplexplot(data, A, MGlist) # Color marker genes in simplex plot
 
 #set differnt corner order and colors
-simplexplot(data, Aest, MGlist, corner.order = c(2,1,3),
+simplexplot(data, A, MGlist, corner.order = c(2,1,3),
 data.col = "blue", corner.col = c("red","orange","green"))
 }

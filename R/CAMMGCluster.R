@@ -6,15 +6,17 @@
 #' @param nComb The number of possible combinations of clusters as corner clusters.
 #'     Within these possible combinations ranked by margin errors,
 #'     We can further select the best one based on reconstruction errors.
-#' @param cores The number of system cores for parallel computing.
+#'     The default is 200.
+#' @param coreParam A BiocParallelParam instance determining the parallel back-end.
 #' @details This function is used internally by \code{\link{CAM}} function to
 #' detect clusters containing marker genes,
 #' or used when you want to perfrom CAM step by step.
 #'
 #' This function provides two solutions. The first is the combination of clusters
-#'     yielding the minimum margin errors of cluster ceneters. In the second,
-#'     nComb possible combinations are selected by ranking margin errors of cluster centers.
-#'     Then the best one is selected based on reconstruction errors of all data points.
+#'     yielding the minimum sum margin-of-errors for cluster ceneters. In the second,
+#'     nComb possible combinations are selected by ranking sum margin-of-errors
+#'     for cluster centers. Then the best one is selected based on
+#'     reconstruction errors of all data points in original space.
 #' @return An object of class "CAMMGObj" containing the following components:
 #' \item{idx}{Two numbers which are two solutions' ranks by margin error.}
 #' \item{corner}{The indexes of clusters as detected corners. Each row is a solution.}
@@ -27,22 +29,18 @@
 #' data <- ratMix3$X
 #'
 #' #preprocess data
-#' rPrep <- CAMPrep(data, thres.low = 0.30, thres.high = 0.95)
+#' rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 #'
 #' #Marker gene cluster detection with a fixed K
-#' rMGC <- CAMMGCluster(rPrep, K = 3, cores = 30)
-CAMMGCluster <- function(PrepResult, K, nComb = 100, cores = NA) {
+#' rMGC <- CAMMGCluster(rPrep, K = 3)
+CAMMGCluster <- function(PrepResult, K, nComb = 200, coreParam = NULL) {
     X <- PrepResult$centers
+    if (K > nrow(X) || K > ncol(X)){
+        warning("Return NULL for K larger than ", max(dim(X)))
+        return(NULL)
+    }
     if (K == ncol(X)){
-        return(list(idx=1,corner=matrix(as.integer(colnames(X)),1)))
-    }
-    if (is.na(cores) | cores > 0) {
-        registered()
-    }
-    if (is.na(cores)) {
-        param <- bpparam()
-    } else if (cores > 0) {
-        param <- SnowParam(workers = cores, type = "SOCK")
+        return(list(idx=c(1,1),corner=matrix(as.integer(colnames(X)),1)[c(1,1),]))
     }
 
     M <- nrow(X)
@@ -58,24 +56,19 @@ CAMMGCluster <- function(PrepResult, K, nComb = 100, cores = NA) {
         A <- X[,idx[,p]]
         #scale <- as.vector(coef(nnls(A,matrix(rowSums(W),M,1))))
         scale <- c(.fcnnls(A, matrix(rowSums(W),M,1))$coef)
-        if(sum(scale<1e-10)>0){
-            return(Inf)
-        }
+        scale[scale<1e-10] <- 0.01/(sqrt(colSums(A^2)))[scale<1e-10]
         A<-A%*%diag(scale)
         #sum(apply(Xall,2, function(x) (nnls(A,x))$deviance))
         sum((Xall - A%*%(.fcnnls(A, Xall)$coef))^2)
     }
-    if (is.na(cores) | cores > 0) {
-        error2 <- unlist(bplapply(seq_len(nComb), errCalcu, idx, X, Xall, PrepResult$W, BPPARAM = param))
+    if (!is.null(coreParam)) {
+        error2 <- unlist(bplapply(seq_len(nComb), errCalcu, idx, X, Xall, PrepResult$W, BPPARAM = coreParam))
     } else {
         error2 <- unlist(lapply(seq_len(nComb), errCalcu, idx, X, Xall, PrepResult$W))
     }
+
+    idx1 <- which.min(error1)
     idx2 <- which.min(error2)
-
-    errortmp <- error1
-    errortmp[error2==Inf] <- Inf
-    idx1 <- which.min(errortmp)
-
     ind1 <- as.integer(colnames(X[,idx[,idx1]]))
     ind2 <- as.integer(colnames(X[,idx[,idx2]]))
 

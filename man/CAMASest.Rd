@@ -17,7 +17,7 @@ Missing values are not supported.}
 \item{MGResult}{An object of class "CAMMGObj" from \code{\link{CAMMGCluster}}.}
 
 \item{corner.strategy}{The method to detect corner clusters.
-1: minimum margin error; 2: minimum reconstruction error.
+1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
 The default is 2.}
 }
 \value{
@@ -61,10 +61,10 @@ data(ratMix3)
 data <- ratMix3$X
 
 #preprocess data
-rPrep <- CAMPrep(data, thres.low = 0.30, thres.high = 0.95)
+rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 
 #Marker gene cluster detection with a fixed K
-rMGC <- CAMMGCluster(rPrep, K = 3, cores = 30)
+rMGC <- CAMMGCluster(rPrep, K = 3)
 
 #A and S matrix estimation
 rASest <- CAMASest(data, rPrep, rMGC)

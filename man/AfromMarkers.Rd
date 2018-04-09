@@ -35,9 +35,9 @@ On the basis of the expression levels of subpopulation-specific marker genes
 #obtain data and marker genes
 data(ratMix3)
 S <- ratMix3$S
-pMGstat <- MGstatistic(S, c("Liver","Brain","Lung"), cores = 30)
+pMGstat <- MGstatistic(S, c("Liver","Brain","Lung"))
 pMGlist.FC <- lapply(c("Liver","Brain","Lung"), function(x)
-rownames(pMGstat)[pMGstat$idx == x & pMGstat$OVE.FC > 10])
+    rownames(pMGstat)[pMGstat$idx == x & pMGstat$OVE.FC > 10])
 
 #estimate A matrix from markers
 Aest <- AfromMarkers(ratMix3$X, pMGlist.FC)

@@ -5,14 +5,14 @@ Version: 0.99.0
 Author: Lulu Chen <luluchen@vt.edu>
 Maintainer: Lulu Chen <luluchen@vt.edu>
 biocViews: Software
-Description: CAMTHC is an R package for tissue heterogeneity characterization 
-    by convex analysis of mixtures (CAM). It provides basic functions to 
-    perform unsupervised deconvolution on mixture expression profiles by CAM 
-    and some auxiliary functions to help understand the subpopulation-specific 
-    results. CAMTHC also implements functions to perform supervised deconlution 
-    based on prior knowledge of molecular markers, S matrix or A matrix. 
-    Semi-suprvised deconvolution can also be achieved by combining molecular 
-    markers from CAM and from prior knowledge to analyze mixture expressions.
+Description: An R package for tissue heterogeneity characterization by convex 
+    analysis of mixtures (CAM). It provides basic functions to perform 
+    unsupervised deconvolution on mixture expression profiles by CAM and some 
+    auxiliary functions to help understand the subpopulation-specific results. 
+    It also implements functions to perform supervised deconlution based on 
+    prior knowledge of molecular markers, S matrix or A matrix. Combining 
+    molecular markers from CAM and from prior knowledge can achieve 
+    Semi-suprvised deconvolution of mixtures.
 License: GPL-2
 Encoding: UTF-8
 LazyData: true

@@ -1,6 +1,5 @@
-#' Gene expression data profiled by microarray from Shen-Orr et al. 2010
+#' Gene expression data downsampled from GSE19380
 #'
-#' GEO accession GSE19380:
 #' Rat brain, liver and lung biospecimens derived from one animal at the cRNA
 #' homogenate level in different proportions. 3 technical replicates each.
 #' We downsample the original data to 10000 probes/probesets and 7 mixtues.

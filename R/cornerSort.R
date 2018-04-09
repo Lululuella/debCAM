@@ -1,14 +1,27 @@
 #' Candidate combinations as corners
 #'
 #' Given a set of data points, return possible combinations of data points as corners.
-#' These combinations are selected by ranking margin errors.
+#' These combinations are selected by ranking the sum of margin-of-errors.
 #' @param X    A matrix of data. Each column is a data point.
 #' @param K    The number of corner points.
-#' @param nComb    The number of possible combinations of data points as corners.
+#' @param nComb    The number of returned combinations of data points as corners.
+#' All combinations will be returned if the number of all combinations is less than nComb.
+#' @details This function is to detect \eqn{K} corner points from \eqn{M} data
+#' points by conducting an exhaustive combinatorial search (with total
+#' \eqn{C_M^K} combinations), based on a convex-hull-to-data fitting criterion:
+#' sum of margin-of-errors. \code{nComb} combinations are returned for further
+#' selection based on reconstruction errors of all data points in original space.#'
 #' @return A list containing the following components:
-#' \item{idx}{A matrix to show the indexes of data points in combinations to construct a convex hull.
-#' Each column is one combination.}
+#' \item{idx}{A matrix to show the indexes of data points in combinations to
+#' construct a convex hull. Each column is one combination.}
 #' \item{error}{A vector of margin errors for each combination}
+#' @export
+#' @examples
+#' #obtain data
+#' data <- matrix(c(0.1,0.2,1.0,0.0,0.0,0.5,0.3,
+#'                  0.1,0.7,0.0,1.0,0.0,0.5,0.3,
+#'                  0.8,0.1,0.0,0.0,1.0,0.0,0.4), nrow =3, byrow = TRUE)
+#' topconv <- cornerSort(data, 3, 10)
 cornerSort <- function(X, K, nComb){
     corner.detect <- .jnew("CornerDetectTopN", .jarray(X, dispatch=TRUE), as.integer(K), as.integer(nComb))
     .jcall(corner.detect, "Z", "search")

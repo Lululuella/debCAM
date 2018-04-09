@@ -19,7 +19,7 @@ The default is 3.}
 
 \item{data.term}{If ture, plot data term (code lenght of data under model).}
 
-\item{...}{All other arguments are passed to the plotting command that are used internally.}
+\item{...}{All other arguments are passed to the plotting command.}
 }
 \value{
 An object of class "MDLObj" containing the following components:
@@ -42,6 +42,7 @@ mdl is code length of data under the model plus
 code length of model. Both mdl and the first term about data are returned.
 }
 \examples{
+\donttest{
 #obtain data
 data(ratMix3)
 data <- ratMix3$X
@@ -57,4 +58,5 @@ MDL(rCAM, 2)
 #plot MDL curves
 plot(MDL(rCAM))
 plot(MDL(rCAM), data.term = TRUE) #with data length curve
+}
 }

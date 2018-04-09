@@ -27,16 +27,21 @@
 #' @examples
 #' #data are mixture expression profiles, A is proportion matrix
 #' data(ratMix3)
-#' MGstat <- MGstatistic(ratMix3$X, ratMix3$A, boot.alpha = 0.05)
+#' MGstat <- MGstatistic(ratMix3$X, ratMix3$A)
+#' \donttest{
+#' MGstat <- MGstatistic(ratMix3$X, ratMix3$A, boot.alpha = 0.05) #enable boot
+#' }
 #'
 #' #data are pure expression profiles without replicates
 #' MGstat <- MGstatistic(ratMix3$S) #boot is not applicable
-#'
+#' \donttest{
 #' #data are pure expression profiles with phenotypes
 #' S <- matrix(rgamma(3000,0.1,0.1), 1000, 3)
 #' S <- S[, c(1,1,1,2,2,2,3,3,3,3)] + rnorm(1000*10, 0, 0.5)
 #' MGstat <- MGstatistic(S, c(1,1,1,2,2,2,3,3,3,3), boot.alpha = 0.05)
-MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000, cores = NA, seed = NA) {
+#' }
+MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
+                        cores = NULL, seed = NULL) {
     if (class(data) == "data.frame") {
         data <- as.matrix(data)
     } else if (class(data) != "matrix") {
@@ -66,7 +71,7 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000, cores =
         colnames(A) <- levels(label)
 
         if (!is.null(boot.alpha)) {
-            if (!is.na(seed)) {
+            if (!is.null(seed)) {
                 set.seed(seed)
             }
             withinGroupSampleBoot <- function(group) {
@@ -82,7 +87,7 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000, cores =
         stop("Sample size in data matrix and A matrix should be the same!")
     } else {
         if (!is.null(boot.alpha)) {
-            if (!is.na(seed)) {
+            if (!is.null(seed)) {
                 set.seed(seed)
             }
             sampleId <- vapply(seq_len(nboot), function(x) sample(M, replace = TRUE), integer(M))
@@ -101,10 +106,10 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000, cores =
             stop("boot.alpha should be in range (0,1)")
         }
 
-        if (is.na(cores) | cores > 0) {
+        if (is.null(cores) || cores > 0) {
             registered()
         }
-        if (is.na(cores)) {
+        if (is.null(cores)) {
             param <- bpparam()
         } else if (cores > 0) {
             param <- SnowParam(workers = cores, type = "SOCK")
@@ -112,20 +117,23 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000, cores =
 
         bootFC <- function(p, sampleId, data, A, idx) {
             #S.boot <- apply(data[,sampleId[,p]], 1, function(x) coef(nnls(A[sampleId[,p],], x)))
-            S.boot <- .fcnnls(A[sampleId[,p],], data[sampleId[,p],])$coef
+            S.boot <- tryCatch(.fcnnls(A[sampleId[,p],], data[sampleId[,p],])$coef, error = function(e) e)
+            if (any(class(S.boot) == "error")) {
+                return(rep(NA, ncol(data)))
+            }
             OVE.FC.boot <- unlist(lapply(seq_len(ncol(S.boot)),
                                          function(x) S.boot[idx[x],x]/max(S.boot[-idx[x],x])))
             OVE.FC.boot[is.na(OVE.FC.boot)] <- 1
-            OVE.FC.boot
+            return(OVE.FC.boot)
         }
-        if (is.na(cores) | cores > 0) {
+        if (is.null(cores) || cores > 0) {
             S.boots <- do.call("cbind", bplapply(seq_len(nboot), bootFC, sampleId,
                                                  data, A, idx, BPPARAM = param))
         } else {
             S.boots <- do.call("cbind", lapply(seq_len(nboot), bootFC, sampleId,
                                                data, A, idx))
         }
-        OVE.FC.alpha <- apply(S.boots, 1, quantile, boot.alpha)
+        OVE.FC.alpha <- apply(S.boots, 1, quantile, boot.alpha, TRUE)
     }
 
 

@@ -52,7 +52,9 @@ The input expression data should be stored in a matrix. Data frames are also acc
 
 We use a data set downsampled from [GSE19830](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE19830) as an example to show CAM workflow. This data set provides gene expression profiles of pure tissues (brain, liver, lung) and their biological mixtures with different proportions.  
 
-```{r, echo=TRUE, cache=TRUE}
+```{r, echo=TRUE}
+library(CAMTHC)
+
 data(ratMix3) 
 #ratMix3$X: X matrix cotaining mixtue expression profiless to be analyzed
 #ratMix3$A: ground truth A matrix cotaining proportions
@@ -65,9 +67,9 @@ data <- ratMix3$X
 
 ### Analysis by CAM
 
-Unsupervised deconvolution can be achieved by the function `CAM()` with a simple setting as Section \@ref(quick-start) introduced. We may need to specify `cores` for parallel computing. `cores = 0` will disable parallel computing. No `cores` argument will invoke parallel computing with the default back-end configured by `r Biocpkg("BiocParallel")`. The `seed` argument can help generate reproduciable results. 
+Unsupervised deconvolution can be achieved by the function `CAM()` with a simple setting as Section \@ref(quick-start) introduced. Other critial parameters are `dim.rdc` (reduced data dimension) and `cluster.num` (number of clusters). Increase them will bring more time complexity. We can also specify `cores` for parallel computing. `cores = 0` will disable parallel computing. No `cores` argument will invoke parallel computing with the default back-end configured by `r Biocpkg("BiocParallel")`. The `seed` argument can help generate reproduciable results. 
 
-```{r, echo=TRUE, cache=TRUE, message=FALSE}
+```{r, echo=TRUE, message=FALSE}
 rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95, 
             cores = 30, seed = 111)
 #CAM return three sub results: 
@@ -102,7 +104,7 @@ MGlist <- MGsforA(rCAM, K = 3)
 Data preprocessing has filtered many genes, among which there are also some biologically-meaningful marker genes. So we need to check each gene again to find all the possible markers. Two statistics based on the subpopultiaon-specifc expressions are exploited to identify marker genes with certain thresholds. The first is OVE-FC (one versus everyone - fold change) (Yu et al. 2010). The second is the lower confidence bound of bootstrapped OVE-FC at $\alpha$ level. 
 
 ```{r, echo=TRUE}
-MGstat <- MGstatistic(data, Aest, boot.alpha = 0.05, nboot = 1000, cores = 30)
+MGstat <- MGstatistic(data, Aest, boot.alpha = 0.05, nboot = 1000)
 MGlist.FC <- lapply(1:3, function(x) 
     rownames(MGstat)[MGstat$idx == x & MGstat$OVE.FC > 10])
 MGlist.FCboot <- lapply(1:3, function(x) 
@@ -215,7 +217,7 @@ Sest <- rASest$Sest
 MGlist <- MGsforA(PrepResult = rPrep, MGResult = rMGC)
 
 #obtain a full list of marker genes 
-MGstat <- MGstatistic(data, Aest, boot.alpha = 0.05, nboot = 1000, cores = 30)
+MGstat <- MGstatistic(data, Aest, boot.alpha = 0.05, nboot = 1000)
 MGlist.FC <- lapply(1:3, function(x) 
     rownames(MGstat)[MGstat$idx == x & MGstat$OVE.FC > 10])
 MGlist.FCboot <- lapply(1:3, function(x) 
@@ -261,7 +263,7 @@ gsm<- getGEO('GSE11058')
 pheno <- pData(phenoData(gsm[[1]]))$characteristics_ch1
 mat <- exprs(gsm[[1]])
 mat <- mat[-grep("^AFFX", rownames(mat)),]
-mat.aggre <- sapply(unique(pheno), function(x) rowSums(mat[,pheno == x]))
+mat.aggre <- sapply(unique(pheno), function(x) rowMeans(mat[,pheno == x]))
 data <- mat.aggre[,5:8]
 
 #running CAM
@@ -302,7 +304,7 @@ Many datasets provide expression profiles for purified cell lines or even every 
 data <- ratMix3$X
 S <- ratMix3$S #known S matrix
 
-pMGstat <- MGstatistic(S, c("Liver","Brain","Lung"), cores = 30)
+pMGstat <- MGstatistic(S, c("Liver","Brain","Lung"))
 pMGlist.FC <- lapply(c("Liver","Brain","Lung"), function(x) 
     rownames(pMGstat)[pMGstat$idx == x & pMGstat$OVE.FC > 10])
 
@@ -318,7 +320,7 @@ data <- ratMix3$X
 A <- ratMix3$A #known A matrix
 
 Sest <- t(NMF::.fcnnls(A, t(data))$coef)
-MGstat <- MGstatistic(data, A, cores = 30)
+MGstat <- MGstatistic(data, A)
 ```
 
 ## Semi-supervised Deconvolution
