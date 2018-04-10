@@ -11,25 +11,28 @@ cornerSort(X, K, nComb)
 
 \item{K}{The number of corner points.}
 
-\item{nComb}{The number of returned combinations of data points as corners.
-All combinations will be returned if the number of all combinations is less than nComb.}
+\item{nComb}{The number of returned combinations of data points as
+corners. All combinations will be returned if the number of all
+combinations is less than nComb.}
 }
 \value{
 A list containing the following components:
 \item{idx}{A matrix to show the indexes of data points in combinations to
 construct a convex hull. Each column is one combination.}
-\item{error}{A vector of margin errors for each combination}
+\item{error}{A vector of margin errors for each combination.}
 }
 \description{
-Given a set of data points, return possible combinations of data points as corners.
-These combinations are selected by ranking the sum of margin-of-errors.
+Given a set of data points, return possible combinations of data points as
+corners. These combinations are selected by ranking the sum of
+margin-of-errors.
 }
 \details{
 This function is to detect \eqn{K} corner points from \eqn{M} data
 points by conducting an exhaustive combinatorial search (with total
 \eqn{C_M^K} combinations), based on a convex-hull-to-data fitting criterion:
 sum of margin-of-errors. \code{nComb} combinations are returned for further
-selection based on reconstruction errors of all data points in original space.#'
+selection based on reconstruction errors of all data points in original
+space.
 }
 \examples{
 #obtain data

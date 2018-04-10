@@ -1,26 +1,30 @@
 #' MG cluster detection for CAM
 #'
-#' This function finds corner clusters as MG clusters (clusters containing marker genes).
+#' This function finds corner clusters as MG clusters
+#' (clusters containing marker genes).
 #' @param K The candidate subpopulation number.
-#' @param PrepResult An object of class "CAMPrepObj" from \code{\link{CAMPrep}} function.
-#' @param nComb The number of possible combinations of clusters as corner clusters.
-#'     Within these possible combinations ranked by margin errors,
+#' @param PrepResult An object of class "CAMPrepObj" from \code{\link{CAMPrep}}
+#'     function.
+#' @param nComb The number of possible combinations of clusters as corner
+#'     clusters. Within these possible combinations ranked by margin errors,
 #'     We can further select the best one based on reconstruction errors.
 #'     The default is 200.
 #' @details This function is used internally by \code{\link{CAM}} function to
 #' detect clusters containing marker genes,
 #' or used when you want to perfrom CAM step by step.
 #'
-#' This function provides two solutions. The first is the combination of clusters
-#'     yielding the minimum sum margin-of-errors for cluster ceneters. In the second,
-#'     nComb possible combinations are selected by ranking sum margin-of-errors
-#'     for cluster centers. Then the best one is selected based on
-#'     reconstruction errors of all data points in original space.
+#' This function provides two solutions. The first is the combination of
+#' clusters yielding the minimum sum margin-of-errors for cluster ceneters.
+#' In the second, nComb possible combinations are selected by ranking sum of
+#' margin-of-errors for cluster centers. Then the best one is selected based on
+#' reconstruction errors of all data points in original space.
 #' @return An object of class "CAMMGObj" containing the following components:
 #' \item{idx}{Two numbers which are two solutions' ranks by margin error.}
-#' \item{corner}{The indexes of clusters as detected corners. Each row is a solution.}
-#' \item{error}{Two rows. The first row is margin errors for nComb possible combinations.
-#'     The second row is reconstruction errors for nComb possible combinations.}
+#' \item{corner}{The indexes of clusters as detected corners. Each row is a
+#'     solution.}
+#' \item{error}{Two rows. The first row is margin errors for nComb possible
+#'     combinations. The second row is reconstruction errors for nComb possible
+#'     combinations.}
 #' @export
 #' @examples
 #' #obtain data
@@ -51,7 +55,7 @@ CAMMGCluster <- function(K, PrepResult, nComb = 200) {
 
 
     Xall <- PrepResult$Xprep[,!(PrepResult$cluster$cluster %in%
-                                    PrepResult$c.outlier)]
+                                PrepResult$c.outlier)]
 
     errCalcu <- function (p, idx, X, Xall, W) {
         A <- X[,idx[,p]]
@@ -72,7 +76,7 @@ CAMMGCluster <- function(K, PrepResult, nComb = 200) {
 
 
     structure(list(idx=c(idx1,idx2), corner=rbind(ind1,ind2),
-                   error=cbind(error1,error2)), class = "CAMMGObj")
+                    error=cbind(error1,error2)), class = "CAMMGObj")
 }
 
 

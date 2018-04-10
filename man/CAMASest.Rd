@@ -7,53 +7,64 @@
 CAMASest(MGResult, PrepResult, data, corner.strategy = 2)
 }
 \arguments{
-\item{MGResult}{An object of class "CAMMGObj" from \code{\link{CAMMGCluster}}.}
+\item{MGResult}{An object of class "CAMMGObj" from
+\code{\link{CAMMGCluster}}.}
 
 \item{PrepResult}{An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.}
 
 \item{data}{Matrix of mixture expression profiles.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
-Missing values are not supported.}
+data should be in non-log linear space with non-negative numerical values
+(i.e. >= 0). Missing values are not supported.}
 
 \item{corner.strategy}{The method to detect corner clusters.
-1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
-The default is 2.}
+1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
+errors. The default is 2.}
 }
 \value{
 An object of class "CAMASObj" containing the following components:
 \item{Aest}{Estimated proportion matrix from Approach (2).}
-\item{Sest}{Estimated subpopulation-specific expression matrix from Approach (2).}
-\item{Aest.proj}{Estimated proportion matrix from Approach (2), before removing scale ambiguity.}
+\item{Sest}{Estimated subpopulation-specific expression matrix from
+    Approach (2).}
+\item{Aest.proj}{Estimated proportion matrix from Approach (2), before
+    removing scale ambiguity.}
 \item{Ascale}{The estimated scales to remove scale ambiguity
     of each column vector in Aest. Sum-to-one constraint on each row of
     Aest is used for scale estimation.}
 \item{AestO}{Estimated proportion matrix from Approach (3).}
-\item{SestO}{Estimated subpopulation-specific expression matrix from Approach (3).}
-\item{AestO.proj}{Estimated proportion matrix from Approach (3), before removing scale ambiguity.}
+\item{SestO}{Estimated subpopulation-specific expression matrix from
+    Approach (3).}
+\item{AestO.proj}{Estimated proportion matrix from Approach (3), before
+    removing scale ambiguity.}
 \item{AscaleO}{The estimated scales to remove scale ambiguity
     of each column vector in AestO. Sum-to-one constraint on each row of
     AestO is used for scale estimation.}
-\item{datalength}{Three values for code length of data. The first is calculated based on
-    dimension-reduced data. The second and third are based on the original data.}
+\item{datalength}{Three values for code length of data. The first is
+    calculated based on dimension-reduced data. The second and third are
+    based on the original data.}
 \item{mdl}{Three mdl values. The first is calculated based on
-    dimension-reduced data. The second and third are based on the original data.}
+    dimension-reduced data. The second and third are based on the original
+    data.}
 }
 \description{
-This function estimates A and S matrix based on marker gene clusters detected by CAM.
+This function estimates A and S matrix based on marker gene clusters
+detected by CAM.
 }
 \details{
 This function is used internally by \code{\link{CAM}} function to
 estimate proportion matrix (A), subpopulation-specific expression matrix (S)
-and mdl values. It can also be used when you want to perfrom CAM step by step.
+and mdl values. It can also be used when you want to perfrom CAM step by
+step.
 
 mdl is calcluated in three approaches:
-    (1) based on data and A in dimension-reduced space; (2) based on original data with A estimated
-    by transforming dimension-reduced A back to original space;
-    (3) based on original data with A directly estimated in origianl space.
-    A and S matrix in origial space estiamted from the latter two approaches are returned.
-    mdl is the sum of two terms: code length of data under the model and
-    code length of model. Both mdl values and the first term (code length of data) will be returned.
+(1) based on data and A matrix in dimension-reduced space; (2) based on
+original data with A matrix estimated by transforming dimension-reduced
+A matrix back to original space;
+(3) based on original data with A directly estimated in origianl space.
+A and S matrix in origial space estiamted from the latter two approaches are
+returned. mdl is the sum of two terms: code length of data under the model
+and code length of model. Both mdl values and the first term (code length
+of data) will be returned.
 }
 \examples{
 #obtain data

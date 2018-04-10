@@ -44,7 +44,8 @@ MDL <- function(CAMResult, mdl.method = 3) {
         CAMResult$ASestResult[[x]]$datalength[mdl.method]))
     mdls <- unlist(lapply(valid, function(x)
         CAMResult$ASestResult[[x]]$mdl[mdl.method]))
-    structure(list(K = K, datalengths = datalengths, mdls=mdls), class = "MDLObj")
+    structure(list(K = K, datalengths = datalengths, mdls=mdls),
+                    class = "MDLObj")
 }
 
 #' @param x An object of class "MDLObj" from \code{\link{MDL}}..
@@ -55,14 +56,15 @@ MDL <- function(CAMResult, mdl.method = 3) {
 plot.MDLObj <- function(x, data.term = FALSE, ...){
     if (data.term) {
         plot(x$K, x$mdls, xlab = 'number of sources', ylab = '', type='l',
-             ylim = range(c(x$datalengths, x$mdls)), col= 'blue', xaxt = "n", ...)
+            ylim = range(c(x$datalengths, x$mdls)), col= 'blue', xaxt = "n",
+            ...)
         points(x$K, x$datalengths, type = 'l', lty = 2, col = 'red')
         axis(1, at = min(x$K) : max(x$K))
         legend("topright", cex=1.5, inset=.01, c("MDL","data term"),
-               lty=c(1,2), col = c('blue', 'red'))
+            lty=c(1,2), col = c('blue', 'red'))
     } else {
-        plot(x$K, x$mdl, xlab = 'number of sources', ylab = '', main = 'MDL Curve',
-             col='blue', type='l', xaxt = "n", ...)
+        plot(x$K, x$mdl, xlab = 'number of sources', ylab = '',
+            main = 'MDL Curve', col='blue', type='l', xaxt = "n", ...)
         axis(1, at = min(x$K) : max(x$K))
     }
 }

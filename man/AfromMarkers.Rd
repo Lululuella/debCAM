@@ -9,7 +9,8 @@ AfromMarkers(data, MGlist, scaleRecover = TRUE)
 \arguments{
 \item{data}{A data set that will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
+data should be in non-log linear space with non-negative numerical values
+(i.e. >= 0).
 Missing values are not supported.}
 
 \item{MGlist}{A list of vectors, each of which contains known markers
@@ -22,14 +23,15 @@ in A matrix is removed based on sum-to-one constraint on each row.}
 returns the estiamted proportion matrix.
 }
 \description{
-This function estimate proportion matrix based on marker gene list and observed
-mixture expression data.
+This function estimate proportion matrix based on marker gene list and
+observed mixture expression data.
 }
 \details{
-On the basis of the expression levels of subpopulation-specific marker genes
-    detected by CAM or from literatures, the relative proportions
-    of constituent subpopulations are estimated by spatial median using \code{\link[pcaPP]{l1median}}.
-    Scale ambiguity is removed optionally.
+On the basis of the expression levels of subpopulation-specific
+marker genes detected by CAM or from literatures, the relative proportions
+of constituent subpopulations are estimated by spatial median using
+\code{\link[pcaPP]{l1median}}. Scale ambiguity is optionally removed based
+on sum-to-one constraint of rows.
 }
 \examples{
 #obtain data and marker genes

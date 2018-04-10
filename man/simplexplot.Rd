@@ -10,8 +10,8 @@ simplexplot(data, A, MGlist = NULL, corner.order = NULL,
 \arguments{
 \item{data}{A data set that will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
-Missing values are not supported.}
+data should be in non-log linear space with non-negative numerical values
+(i.e. >= 0). Missing values are not supported.}
 
 \item{A}{Prior/Estimated proporiton matrix.}
 

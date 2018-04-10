@@ -12,32 +12,36 @@ CAMPrep(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
 \item{data}{Matrix of mixture expression profiles.
 Data frame format will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
-Missing values are not supported.}
+data should be in non-log linear space with non-negative numerical values
+(i.e. >= 0). Missing values are not supported.}
 
-\item{dim.rdc}{Reduced data dimension; should be not less than maximum candidate K.}
+\item{dim.rdc}{Reduced data dimension; should be not less than maximum
+candidate K.}
 
-\item{thres.low}{The percentage of genes the user wants to remove with lowest norm.
-The range should be between 0 and 1. The default is 0.05.}
+\item{thres.low}{The percentage of genes the user wants to remove with
+lowest norm. The range should be between 0 and 1. The default is 0.05.}
 
-\item{thres.high}{The percentage of genes the user wants to remove with highest norm.
-The range should be between 0 and 1. The default is 0.95.}
+\item{thres.high}{The percentage of genes the user wants to remove with
+highest norm. The range should be between 0 and 1. The default is 0.95.}
 
 \item{cluster.method}{The method to do clustering. The default "K-Means" will
 use \code{\link{kmeans}} fucntion. The alternative "apcluster" will use
 \code{\link[apcluster]{apclusterK}} function.}
 
-\item{cluster.num}{The number of clusters; should be much larger than K. The default is 50.}
+\item{cluster.num}{The number of clusters; should be much larger than K.
+The default is 50.}
 
-\item{MG.num.thres}{The clusters with the gene number smaller than MG.num.thres will be treated as outliers.
-The default is 20.}
+\item{MG.num.thres}{The clusters with the gene number smaller than
+MG.num.thres will be treated as outliers. The default is 20.}
 
-\item{lof.thres}{Remove local outlier using \code{\link[DMwR]{lofactor}} function.
-MG.num.thres is used as the number of neighbours in the calculation of the local outlier factors.
+\item{lof.thres}{Remove local outlier using \code{\link[DMwR]{lofactor}}
+function. MG.num.thres is used as the number of neighbours in the
+calculation of the local outlier factors.
 The default value 0.02 will remove top 2\% local outliers.
 Zero value will disable lof.}
 
-\item{seed}{For reproducibility, the seed of the random number generator for k-Means.}
+\item{seed}{For reproducibility, the seed of the random number generator for
+k-Means.}
 }
 \value{
 An object of class "CAMPrepObj" containing the following components:
@@ -46,10 +50,12 @@ An object of class "CAMPrepObj" containing the following components:
 \item{Xproj}{Preprocessed data matrix after perspective projection.}
 \item{W}{The matrix whose rows are loading vectors.}
 \item{cluster}{cluster results including two vectors.
-The first indicates the cluster to which each gene is allocated.
-The second is the number of genes in each cluster.}
-\item{c.outlier}{The clusters with the gene number smaller than MG.num.thres.}
-\item{centers}{The centers of corner clusters (candidate clusters containing marker genes).}
+    The first indicates the cluster to which each gene is allocated.
+    The second is the number of genes in each cluster.}
+\item{c.outlier}{The clusters with the gene number smaller than
+    MG.num.thres.}
+\item{centers}{The centers of corner clusters (candidate clusters containing
+    marker genes).}
 }
 \description{
 This function perform preprocessing for CAM, including norm-based filtering,
@@ -57,18 +63,22 @@ dimension deduction, perspective projection, local outlier removal and
 aggregation of gene expression vectors by clustering.
 }
 \details{
-This function is used internally by \code{\link{CAM}} function to preprocess data,
-or used when you want to perfrom CAM step by step.
+This function is used internally by \code{\link{CAM}} function to
+preprocess data, or used when you want to perfrom CAM step by step.
 
 Low/high-expressed genes are filtered by their L2-norm ranks.
 Dimension reduction is slightly different from PCA.
-The first loading vector is forced to be c(1,1,...,1) with unit norm normaliztion.
-The remaining are eignvectors from PCA in the space orthogonal to the first vector.
-Perspective projection is to project dimension-reduced gene expression vectors
-to the hyperplane orthogonal to c(1,0,...,0), i.e., the first axis in the new coordinate system.
-local outlier removal is optional to exclude outliers in simplex formed after perspective projection.
+The first loading vector is forced to be c(1,1,...,1) with unit norm
+normaliztion. The remaining are eignvectors from PCA in the space orthogonal
+to the first vector.
+Perspective projection is to project dimension-reduced gene expression
+vectors to the hyperplane orthogonal to c(1,0,...,0), i.e., the first axis
+in the new coordinate system.
+local outlier removal is optional to exclude outliers in simplex formed
+after perspective projection.
 Finallly, gene expression vectors are aggregated by clustering
-to further reduce the impact of noise/outler and help improve the efficiency of simplex corner detction.
+to further reduce the impact of noise/outler and help improve the efficiency
+of simplex corner detction.
 }
 \examples{
 #obtain data

@@ -1,19 +1,21 @@
 #' A estimation from marker gene list
 #'
-#' This function estimate proportion matrix based on marker gene list and observed
-#' mixture expression data.
+#' This function estimate proportion matrix based on marker gene list and
+#' observed mixture expression data.
 #' @param data A data set that will be internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
-#'     data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
+#'     data should be in non-log linear space with non-negative numerical values
+#'     (i.e. >= 0).
 #'     Missing values are not supported.
 #' @param MGlist A list of vectors, each of which contains known markers
 #'     and/or CAM-detected markers for one subpopulation.
 #' @param scaleRecover If TRUE, scale ambiguity of each column vector
 #'     in A matrix is removed based on sum-to-one constraint on each row.
-#' @details On the basis of the expression levels of subpopulation-specific marker genes
-#'     detected by CAM or from literatures, the relative proportions
-#'     of constituent subpopulations are estimated by spatial median using \code{\link[pcaPP]{l1median}}.
-#'     Scale ambiguity is removed optionally.
+#' @details On the basis of the expression levels of subpopulation-specific
+#' marker genes detected by CAM or from literatures, the relative proportions
+#' of constituent subpopulations are estimated by spatial median using
+#' \code{\link[pcaPP]{l1median}}. Scale ambiguity is optionally removed based
+#' on sum-to-one constraint of rows.
 #' @return returns the estiamted proportion matrix.
 #' @export
 #' @examples
@@ -55,7 +57,8 @@ AfromMarkers <- function(data, MGlist, scaleRecover = TRUE){
         A1 <- A[,colSums(A)>0]
         scale.pca <- c(.fcnnls(A1, matrix(1,nrow(A1),1))$coef)
         #scale.pca <- as.vector(coef(nnls(A1,matrix(1,nrow(A1),1))))
-        scale.pca[scale.pca<1e-10] <- 0.01/(sqrt(colSums(A1^2)))[scale.pca<1e-10]
+        scale.pca[scale.pca<1e-10] <-
+            0.01/(sqrt(colSums(A1^2)))[scale.pca<1e-10]
         scale.pca[scale.pca==0] <- 0.0001
         A1 <- A1%*%diag(scale.pca)
         A[,colSums(A)>0] <- A1

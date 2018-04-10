@@ -5,24 +5,28 @@
 #' Bootstrappping is optional.
 #' @param data A data set that will be internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
-#'     data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
-#'     Missing values are not supported.
+#'     data should be in non-log linear space with non-negative numerical values
+#'     (i.e. >= 0). Missing values are not supported.
 #' @param A When data is mixture expression profiles,
-#' A is estimated proportion matix or prior proportion matrix.
-#' When data is pure expression profiles,
-#' A is a phenotype vector to indicate which subpopulation each sample belongs to.
-#' @param boot.alpha Alpha for bootstrapped OVE-FC confidence interval. The default is 0.05.
+#'     A is estimated proportion matix or prior proportion matrix.
+#'     When data is pure expression profiles, A is a phenotype vector to
+#'     indicate which subpopulation each sample belongs to.
+#' @param boot.alpha Alpha for bootstrapped OVE-FC confidence interval.
+#'     The default is 0.05.
 #' @param nboot The number of boots.
 #' @param cores The number of system cores for parallel computing.
 #'     If not provided, the default back-end is used.
-#' @param seed For reproducibility, the seed of the random number generator for boot sampling.
+#' @param seed For reproducibility, the seed of the random number generator for
+#'     boot sampling.
 #' @details This function calculates OVE-FC and bootstrapped OVE-FC which can be
 #' used to identify markers from all genes.
 #' @return A data frame containing the following components:
-#' \item{idx}{Numbers or phenotypes indicating which subpopulation each gene could be a marker for.
-#' If A is a proportion matrix without column name, numbers are returned. Otherwize, phenotypes.}
+#' \item{idx}{Numbers or phenotypes indicating which subpopulation each gene
+#' could be a marker for. If A is a proportion matrix without column name,
+#' numbers are returned. Otherwize, phenotypes.}
 #' \item{OVE.FC}{One-versus-Everyone fold change (OVE-FC)}
-#' \item{OVE.FC.alpha}{lower confidence bound of bootstrapped OVE-FC at alpha level.}
+#' \item{OVE.FC.alpha}{lower confidence bound of bootstrapped OVE-FC at alpha
+#'     level.}
 #' @export
 #' @examples
 #' #data are mixture expression profiles, A is proportion matrix
@@ -62,7 +66,8 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
         }
     } else if (class(A) != "matrix") {
         if (M != length(A)) {
-            stop("Sample size in data matrix must be the same with the length of A vector!")
+            stop("Sample size in data matrix must be the same with the length
+                of A vector!")
         }
 
         K <- length(unique(A))
@@ -77,11 +82,13 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
             withinGroupSampleBoot <- function(group) {
                 sidx <- seq_along(group)
                 for (g in unique(group)) {
-                    sidx[group == g] <- sample(which(group == g), replace = TRUE)
+                    sidx[group == g] <-
+                        sample(which(group == g), replace = TRUE)
                 }
                 sidx
             }
-            sampleId <- vapply(seq_len(nboot), function(x) withinGroupSampleBoot(label), integer(M))
+            sampleId <- vapply(seq_len(nboot), function(x)
+                withinGroupSampleBoot(label), integer(M))
         }
     } else if (M != nrow(A)) {
         stop("Sample size in data matrix and A matrix should be the same!")
@@ -90,7 +97,8 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
             if (!is.null(seed)) {
                 set.seed(seed)
             }
-            sampleId <- vapply(seq_len(nboot), function(x) sample(M, replace = TRUE), integer(M))
+            sampleId <- vapply(seq_len(nboot), function(x)
+                sample(M, replace = TRUE), integer(M))
         }
     }
 
@@ -116,22 +124,24 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
         }
 
         bootFC <- function(p, sampleId, data, A, idx) {
-            #S.boot <- apply(data[,sampleId[,p]], 1, function(x) coef(nnls(A[sampleId[,p],], x)))
-            S.boot <- tryCatch(.fcnnls(A[sampleId[,p],], data[sampleId[,p],])$coef, error = function(e) e)
+            #S.boot <- apply(data[,sampleId[,p]], 1, function(x)
+            #coef(nnls(A[sampleId[,p],], x)))
+            S.boot <- tryCatch(.fcnnls(A[sampleId[,p],],
+                data[sampleId[,p],])$coef, error = function(e) e)
             if (any(class(S.boot) == "error")) {
                 return(rep(NA, ncol(data)))
             }
-            OVE.FC.boot <- unlist(lapply(seq_len(ncol(S.boot)),
-                                         function(x) S.boot[idx[x],x]/max(S.boot[-idx[x],x])))
+            OVE.FC.boot <- unlist(lapply(seq_len(ncol(S.boot)), function(x)
+                S.boot[idx[x],x]/max(S.boot[-idx[x],x])))
             OVE.FC.boot[is.na(OVE.FC.boot)] <- 1
             return(OVE.FC.boot)
         }
         if (is.null(cores) || cores > 0) {
-            S.boots <- do.call("cbind", bplapply(seq_len(nboot), bootFC, sampleId,
-                                                 data, A, idx, BPPARAM = param))
+            S.boots <- do.call("cbind", bplapply(seq_len(nboot),
+                bootFC, sampleId, data, A, idx, BPPARAM = param))
         } else {
-            S.boots <- do.call("cbind", lapply(seq_len(nboot), bootFC, sampleId,
-                                               data, A, idx))
+            S.boots <- do.call("cbind", lapply(seq_len(nboot),
+                bootFC, sampleId, data, A, idx))
         }
         OVE.FC.alpha <- apply(S.boots, 1, quantile, boot.alpha, TRUE)
     }
@@ -144,6 +154,7 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
     if (is.null(boot.alpha)) {
         return(data.frame(idx = idx, OVE.FC = OVE.FC))
     } else {
-        return(data.frame(idx = idx, OVE.FC = OVE.FC, OVE.FC.alpha = OVE.FC.alpha))
+        return(data.frame(idx = idx, OVE.FC = OVE.FC,
+                            OVE.FC.alpha = OVE.FC.alpha))
     }
 }

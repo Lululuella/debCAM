@@ -233,7 +233,7 @@ library(apcluster)
 apres <- apclusterK(negDistMat(r=2), t(data),  K = 10) 
 #You can also use apcluster(), but need to make sure the number of clusters is large than potentional subpopulation number.
 
-data.clusterMean <- lapply(apres@clusters, 
+data.clusterMean <- lapply(slot(apres,"clusters"), 
                            function(x) rowMeans(data[, x, drop = FALSE]))
 data.clusterMean <- do.call(cbind, data.clusterMean)
 

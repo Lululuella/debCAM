@@ -7,7 +7,8 @@
 XWProj(data, W)
 }
 \arguments{
-\item{data}{Each row is a gene and each column is a sample. Missing values are not supported.}
+\item{data}{Each row is a gene and each column is a sample. Missing values
+are not supported.}
 
 \item{W}{The matrix whose rows are loading vectors;
 should be obtained from \code{\link{CAM}}/\code{\link{CAMPrep}} function.}

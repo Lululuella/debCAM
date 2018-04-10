@@ -1,23 +1,24 @@
 #' Convex Analysis of Mixtures
 #'
-#' This function performs a fully unsupervised computational deconvolution method
-#'     to identify marker genes that define each of the multiple subpopulations
-#'     and estimate the proportions of these subpopulations in the mixed samples
-#'     as well as their respective expression profiles.
+#' This function performs a fully unsupervised computational deconvolution
+#'     method to identify marker genes that define each of the multiple
+#'     subpopulations and estimate the proportions of these subpopulations in
+#'     the mixed samples as well as their respective expression profiles.
 #' @param data Matrix of mixture expression profiles.
 #'     Data frame will be internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
-#'     data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
-#'     Missing values are not supported.
+#'     data should be in non-log linear space with non-negative numerical values
+#'     (i.e. >= 0). Missing values are not supported.
 #' @param K The candidate subpopulation number(s), e.g. K = 2:8.
 #' @param corner.strategy The method to find corners of convex hull.
-#'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
-#'     The default is 2.
-#' @param dim.rdc Reduced data dimension; should be not less than maximum candidate K.
-#' @param thres.low The percentage of genes the user wants to remove with lowest norm.
-#'     The range should be between 0 and 1. The default is 0.05.
-#' @param thres.high The percentage of genes the user wants to remove with highest norm.
-#'     The range should be between 0 and 1. The default is 0.95.
+#'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
+#'     errors. The default is 2.
+#' @param dim.rdc Reduced data dimension;
+#'     should be not less than maximum candidate K.
+#' @param thres.low The percentage of genes the user wants to remove with
+#'     lowest norm. The range should be between 0 and 1. The default is 0.05.
+#' @param thres.high The percentage of genes the user wants to remove with
+#'     highest norm. The range should be between 0 and 1. The default is 0.95.
 #' @param cluster.method The method to do clustering.
 #'     The default "K-Means" will use \code{\link{kmeans}}.
 #'     The alternative "apcluster" will use \code{\link[apcluster]{apclusterK}}.
@@ -34,7 +35,8 @@
 #' @param cores The number of system cores for parallel computing.
 #'     If not provided, the default back-end is used.
 #'     Zero value will disable parallel computing.
-#' @param seed For reproducibility, the seed of the random number generator for k-Means.
+#' @param seed For reproducibility, the seed of the random number generator for
+#'     k-Means.
 #' @details This function includes three necessary steps to decompose a matrix
 #' of mixture expression prefiles: data preprocessing, marker gene cluster
 #' search, and matrix decomposition. They are implemented in
@@ -119,7 +121,7 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
     ################ Preprocessing ################
     message('Preprocessing\n')
     PrepResult <- CAMPrep(data, dim.rdc, thres.low, thres.high, cluster.method,
-                          cluster.num, MG.num.thres, lof.thres, seed)
+                        cluster.num, MG.num.thres, lof.thres, seed)
 
     ################ Marker Gene Selection ################
     message('Marker Gene Selection\n')

@@ -10,29 +10,33 @@ MGstatistic(data, A = NULL, boot.alpha = NULL, nboot = 1000,
 \arguments{
 \item{data}{A data set that will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
-Missing values are not supported.}
+data should be in non-log linear space with non-negative numerical values
+(i.e. >= 0). Missing values are not supported.}
 
 \item{A}{When data is mixture expression profiles,
 A is estimated proportion matix or prior proportion matrix.
-When data is pure expression profiles,
-A is a phenotype vector to indicate which subpopulation each sample belongs to.}
+When data is pure expression profiles, A is a phenotype vector to
+indicate which subpopulation each sample belongs to.}
 
-\item{boot.alpha}{Alpha for bootstrapped OVE-FC confidence interval. The default is 0.05.}
+\item{boot.alpha}{Alpha for bootstrapped OVE-FC confidence interval.
+The default is 0.05.}
 
 \item{nboot}{The number of boots.}
 
 \item{cores}{The number of system cores for parallel computing.
 If not provided, the default back-end is used.}
 
-\item{seed}{For reproducibility, the seed of the random number generator for boot sampling.}
+\item{seed}{For reproducibility, the seed of the random number generator for
+boot sampling.}
 }
 \value{
 A data frame containing the following components:
-\item{idx}{Numbers or phenotypes indicating which subpopulation each gene could be a marker for.
-If A is a proportion matrix without column name, numbers are returned. Otherwize, phenotypes.}
+\item{idx}{Numbers or phenotypes indicating which subpopulation each gene
+could be a marker for. If A is a proportion matrix without column name,
+numbers are returned. Otherwize, phenotypes.}
 \item{OVE.FC}{One-versus-Everyone fold change (OVE-FC)}
-\item{OVE.FC.alpha}{lower confidence bound of bootstrapped OVE-FC at alpha level.}
+\item{OVE.FC.alpha}{lower confidence bound of bootstrapped OVE-FC at alpha
+    level.}
 }
 \description{
 This function computes One-Versus-Everyone Fold Change (OVE-FC)

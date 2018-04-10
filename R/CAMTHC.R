@@ -9,7 +9,8 @@
 #' and from prior knowledge to analyze mixture expressions.
 #'
 #' @docType package
-#' @name CAMTHC
+#' @name CAMTHC-package
+#' @aliases CAMTHC
 #'
 #' @import rJava
 #' @import BiocParallel

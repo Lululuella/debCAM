@@ -13,22 +13,23 @@ CAM(data, K = NULL, corner.strategy = 2, dim.rdc = 10, thres.low = 0.05,
 \item{data}{Matrix of mixture expression profiles.
 Data frame will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values (i.e. >= 0).
-Missing values are not supported.}
+data should be in non-log linear space with non-negative numerical values
+(i.e. >= 0). Missing values are not supported.}
 
 \item{K}{The candidate subpopulation number(s), e.g. K = 2:8.}
 
 \item{corner.strategy}{The method to find corners of convex hull.
-1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
-The default is 2.}
+1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
+errors. The default is 2.}
 
-\item{dim.rdc}{Reduced data dimension; should be not less than maximum candidate K.}
+\item{dim.rdc}{Reduced data dimension;
+should be not less than maximum candidate K.}
 
-\item{thres.low}{The percentage of genes the user wants to remove with lowest norm.
-The range should be between 0 and 1. The default is 0.05.}
+\item{thres.low}{The percentage of genes the user wants to remove with
+lowest norm. The range should be between 0 and 1. The default is 0.05.}
 
-\item{thres.high}{The percentage of genes the user wants to remove with highest norm.
-The range should be between 0 and 1. The default is 0.95.}
+\item{thres.high}{The percentage of genes the user wants to remove with
+highest norm. The range should be between 0 and 1. The default is 0.95.}
 
 \item{cluster.method}{The method to do clustering.
 The default "K-Means" will use \code{\link{kmeans}}.
@@ -51,7 +52,8 @@ Zero value will disable lof.}
 If not provided, the default back-end is used.
 Zero value will disable parallel computing.}
 
-\item{seed}{For reproducibility, the seed of the random number generator for k-Means.}
+\item{seed}{For reproducibility, the seed of the random number generator for
+k-Means.}
 }
 \value{
 A list containing the following components:
@@ -64,10 +66,10 @@ estimated proportions, subpopution-specific expressions and mdl values
 from \code{\link{CAMASest}} function.}
 }
 \description{
-This function performs a fully unsupervised computational deconvolution method
-    to identify marker genes that define each of the multiple subpopulations
-    and estimate the proportions of these subpopulations in the mixed samples
-    as well as their respective expression profiles.
+This function performs a fully unsupervised computational deconvolution
+    method to identify marker genes that define each of the multiple
+    subpopulations and estimate the proportions of these subpopulations in
+    the mixed samples as well as their respective expression profiles.
 }
 \details{
 This function includes three necessary steps to decompose a matrix

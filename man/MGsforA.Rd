@@ -14,22 +14,25 @@ MGsforA(CAMResult = NULL, K = NULL, PrepResult = NULL, MGResult = NULL,
 
 \item{PrepResult}{An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.}
 
-\item{MGResult}{An object of class "CAMMGObj" from \code{\link{CAMMGCluster}}.}
+\item{MGResult}{An object of class "CAMMGObj" from
+\code{\link{CAMMGCluster}}.}
 
 \item{corner.strategy}{The method to detect corner clusters.
-1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction errors.
-The default is 2.}
+1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
+errors. The default is 2.}
 }
 \value{
-a list of vectors, each of which contains marker genes for one subpopulation.
+a list of vectors, each of which contains marker genes for one
+subpopulation.
 }
 \description{
 This function returns marker gene lists detected by CAM for estimating A.
 }
 \details{
-This function needs to specify CAMResult and K, or PrepResult and MGResult.
-The returned marker genes are those used by CAM for estimating A.
-To obtain a more complete marker gene list, please refer to \code{\link{MGstatistic}}.
+This function needs to specify CAMResult and K, or PrepResult and
+MGResult. The returned marker genes are those used by CAM for estimating A.
+To obtain a more complete marker gene list, please refer to
+\code{\link{MGstatistic}}.
 }
 \examples{
 #obtain data and run CAM
