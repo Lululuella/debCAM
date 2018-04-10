@@ -6,6 +6,13 @@ The goal of CAMTHC is to perform comoputational deconvolution for tissue heterog
 
 You can install the released version of CAMTHC following the instructions CAMTHC's bioconductor page
 
+Or, you can install it from github by
+
+``` r
+devtools::install_github("Lululuella/CAMTHC")
+
+```
+
 ## Example
 
 This is a basic example which shows you how to decompose a data matrix by CAM:
