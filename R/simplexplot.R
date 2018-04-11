@@ -16,7 +16,7 @@
 #' in a 2D plot. The corners in the high-dimenisonal simplex will still locate
 #' at extreme points of low-dimensional simplex. These corners will follow the
 #' order set by \code{corner.order} to display in the plot counterclockwise.
-#' @return NULL
+#' @return A plot to the current device.
 #' @export
 #' @examples
 #' #obtain data, A matrix, marker genes

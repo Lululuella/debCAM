@@ -26,6 +26,9 @@ and/or CAM-detected markers for one subpopulation.}
 
 \item{...}{All other arguments are passed to the plotting command.}
 }
+\value{
+A plot to the current device.
+}
 \description{
 This function shows simplex
 }

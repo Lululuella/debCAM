@@ -33,6 +33,10 @@ points by conducting an exhaustive combinatorial search (with total
 sum of margin-of-errors. \code{nComb} combinations are returned for further
 selection based on reconstruction errors of all data points in original
 space.
+
+The function is implemented in Java with R-to-Java interface provided by
+\code{rJava}. It relies on non-negative least squares (NNLS)
+from Parallel Java Library https://www.cs.rit.edu/~ark/pj.shtml.
 }
 \examples{
 #obtain data

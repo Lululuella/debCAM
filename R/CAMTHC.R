@@ -1,12 +1,23 @@
 #' CAMTHC: A package for Tissue Heterogeneity Characterization.
 #'
-#' The CAMTHC package provides basic functions to perform unsupervised
-#' deconvolution on mixture expression profiles by CAM and some auxiliary
-#' functions to help understand the subpopulation-specific results.
-#' CAMTHC also implements functions to perform supervised deconlution based on
-#' prior knowledge of molecular markers, S matrix or A matrix. Semi-suprvised
-#' deconvolution can also be achieved by combining molecular markers from CAM
-#' and from prior knowledge to analyze mixture expressions.
+#' The core function in this package is \code{\link{CAM}} which achieves fully
+#' unsupervised deconvolution on mixture expression profiles.
+#' Each step in \code{\link{CAM}} can also be performed seperately by
+#' \code{\link{CAMPrep}}, \code{\link{CAMMGCluster}},
+#' and \code{\link{CAMASest}} as a more flexiable workflow.
+#' \code{\link{MGstatistic}} can help extract a complete marker list from CAM
+#' results. \code{\link{MDL}} can help decide the underlying subpopulation
+#' number. With other functions, e.g. \code{\link{AfromMarkers}} and
+#' \code{\link{MGstatistic}}, this package can also perform supervised
+#' deconlution based on prior knowledge of molecular markers,
+#' subpopulation-specific expression matrix (S) or proportion matrix (A).
+#' Semi-suprvised deconvolution can be achieved by combining molecular markers
+#' from CAM and from prior knowledge to analyze mixture expressions.
+#'
+#' @references Wang, N., Hoffman, E. P., Chen, L., Chen, L., Zhang, Z.,
+#' Liu, C., … Wang, Y. (2016). Mathematical modelling of transcriptional
+#' heterogeneity identifies novel markers and subpopulations in complex
+#' tissues. Scientific Reports, 6, 18909. http://doi.org/10.1038/srep18909
 #'
 #' @docType package
 #' @name CAMTHC-package

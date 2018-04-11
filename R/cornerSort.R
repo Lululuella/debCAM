@@ -14,6 +14,10 @@
 #' sum of margin-of-errors. \code{nComb} combinations are returned for further
 #' selection based on reconstruction errors of all data points in original
 #' space.
+#'
+#' The function is implemented in Java with R-to-Java interface provided by
+#' \code{rJava}. It relies on non-negative least squares (NNLS)
+#' from Parallel Java Library https://www.cs.rit.edu/~ark/pj.shtml.
 #' @return A list containing the following components:
 #' \item{idx}{A matrix to show the indexes of data points in combinations to
 #' construct a convex hull. Each column is one combination.}

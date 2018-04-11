@@ -2,7 +2,7 @@
 % Please edit documentation in R/AfromMarkers.R
 \name{AfromMarkers}
 \alias{AfromMarkers}
-\title{A estimation from marker gene list}
+\title{Proportion matrix estimation from marker genes}
 \usage{
 AfromMarkers(data, MGlist, scaleRecover = TRUE)
 }
@@ -20,14 +20,14 @@ and/or CAM-detected markers for one subpopulation.}
 in A matrix is removed based on sum-to-one constraint on each row.}
 }
 \value{
-returns the estiamted proportion matrix.
+Return the estiamted proportion matrix.
 }
 \description{
-This function estimate proportion matrix based on marker gene list and
+This function estimates proportion matrix (A) based on marker genes and
 observed mixture expression data.
 }
 \details{
-On the basis of the expression levels of subpopulation-specific
+With the expression levels of subpopulation-specific
 marker genes detected by CAM or from literatures, the relative proportions
 of constituent subpopulations are estimated by spatial median using
 \code{\link[pcaPP]{l1median}}. Scale ambiguity is optionally removed based
