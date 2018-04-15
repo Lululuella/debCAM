@@ -2,7 +2,7 @@
 % Please edit documentation in R/MGsforA.R
 \name{MGsforA}
 \alias{MGsforA}
-\title{Marker gene lists detected by CAM for estimating A}
+\title{Marker genes detected by CAM for estimating A}
 \usage{
 MGsforA(CAMResult = NULL, K = NULL, PrepResult = NULL, MGResult = NULL,
   corner.strategy = 2)
@@ -22,11 +22,11 @@ MGsforA(CAMResult = NULL, K = NULL, PrepResult = NULL, MGResult = NULL,
 errors. The default is 2.}
 }
 \value{
-a list of vectors, each of which contains marker genes for one
+A list of vectors, each of which contains marker genes for one
 subpopulation.
 }
 \description{
-This function returns marker gene lists detected by CAM for estimating A.
+This function returns marker genes detected by CAM for estimating A.
 }
 \details{
 This function needs to specify CAMResult and K, or PrepResult and
@@ -44,7 +44,7 @@ MGlist <- MGsforA(rCAM, K = 3)
 
 #obtain data and run CAM step by step
 rPrep <- CAMPrep(data, dim.rdc= 3, thres.low = 0.30, thres.high = 0.95)
-rMGC <- CAMMGCluster(rPrep, K = 3)
+rMGC <- CAMMGCluster(3, rPrep)
 #obtain marker genes detected by CAM for estimating A
 MGlist <- MGsforA(PrepResult = rPrep, MGResult = rMGC)
 }

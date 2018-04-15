@@ -1,15 +1,15 @@
-#' Statistics for identifying marker genes
+#' Statistics for ranking marker genes
 #'
 #' This function computes One-Versus-Everyone Fold Change (OVE-FC)
 #' from subpopulation-specific expression profiles.
 #' Bootstrappping is optional.
 #' @param data A data set that will be internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
-#'     data should be in non-log linear space with non-negative numerical values
+#'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
-#' @param A When data is mixture expression profiles,
+#' @param A When data are mixture expression profiles,
 #'     A is estimated proportion matix or prior proportion matrix.
-#'     When data is pure expression profiles, A is a phenotype vector to
+#'     When data are pure expression profiles, A is a phenotype vector to
 #'     indicate which subpopulation each sample belongs to.
 #' @param boot.alpha Alpha for bootstrapped OVE-FC confidence interval.
 #'     The default is 0.05.

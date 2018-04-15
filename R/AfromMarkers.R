@@ -1,7 +1,7 @@
 #' Proportion matrix estimation from marker genes
 #'
-#' This function estimates proportion matrix (A) based on marker genes and
-#' observed mixture expression data.
+#' This function estimates proportion matrix (A matrix) from observed mixture
+#' expression data based on marker genes.
 #' @param data A data set that will be internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
 #'     data should be in non-log linear space with non-negative numerical values
@@ -12,11 +12,12 @@
 #' @param scaleRecover If TRUE, scale ambiguity of each column vector
 #'     in A matrix is removed based on sum-to-one constraint on each row.
 #' @details With the expression levels of subpopulation-specific
-#' marker genes detected by CAM or from literatures, the relative proportions
-#' of constituent subpopulations are estimated by spatial median using
-#' \code{\link[pcaPP]{l1median}}. Scale ambiguity is optionally removed based
-#' on sum-to-one constraint of rows.
-#' @return Return the estiamted proportion matrix.
+#' marker genes, the relative proportions of constituent subpopulations are
+#' estimated by spatial median using \code{\link[pcaPP]{l1median}}.
+#' Marker genes could be from unsupervised/supervised detection or
+#' from literatures.
+#' Scale ambiguity is optionally removed based on sum-to-one constraint of rows.
+#' @return Return the estiamted proportion matrix (A matrix).
 #' @export
 #' @examples
 #' #obtain data and marker genes

@@ -1,9 +1,9 @@
 #' The plot of scatter simplex
 #'
-#' This function shows simplex
+#' This function shows scatter simplex of mixture expressions.
 #' @param data A data set that will be internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
-#'     data should be in non-log linear space with non-negative numerical values
+#'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
 #' @param A Prior/Estimated proporiton matrix.
 #' @param MGlist A list of vectors, each of which contains known markers

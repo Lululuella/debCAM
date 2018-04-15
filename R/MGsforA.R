@@ -1,6 +1,6 @@
-#' Marker gene lists detected by CAM for estimating A
+#' Marker genes detected by CAM for estimating A
 #'
-#' This function returns marker gene lists detected by CAM for estimating A.
+#' This function returns marker genes detected by CAM for estimating A.
 #' @param CAMResult Result from \code{\link{CAM}}.
 #' @param K The candidate subpopulation number.
 #' @param PrepResult An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.
@@ -13,7 +13,7 @@
 #' MGResult. The returned marker genes are those used by CAM for estimating A.
 #' To obtain a more complete marker gene list, please refer to
 #' \code{\link{MGstatistic}}.
-#' @return a list of vectors, each of which contains marker genes for one
+#' @return A list of vectors, each of which contains marker genes for one
 #' subpopulation.
 #' @export
 #' @examples
@@ -26,7 +26,7 @@
 #'
 #' #obtain data and run CAM step by step
 #' rPrep <- CAMPrep(data, dim.rdc= 3, thres.low = 0.30, thres.high = 0.95)
-#' rMGC <- CAMMGCluster(rPrep, K = 3)
+#' rMGC <- CAMMGCluster(3, rPrep)
 #' #obtain marker genes detected by CAM for estimating A
 #' MGlist <- MGsforA(PrepResult = rPrep, MGResult = rMGC)
 MGsforA <- function(CAMResult = NULL, K = NULL,

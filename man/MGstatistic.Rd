@@ -2,7 +2,7 @@
 % Please edit documentation in R/MGstatistic.R
 \name{MGstatistic}
 \alias{MGstatistic}
-\title{Statistics for identifying marker genes}
+\title{Statistics for ranking marker genes}
 \usage{
 MGstatistic(data, A = NULL, boot.alpha = NULL, nboot = 1000,
   cores = NULL, seed = NULL)
@@ -10,12 +10,12 @@ MGstatistic(data, A = NULL, boot.alpha = NULL, nboot = 1000,
 \arguments{
 \item{data}{A data set that will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values
+Data should be in non-log linear space with non-negative numerical values
 (i.e. >= 0). Missing values are not supported.}
 
-\item{A}{When data is mixture expression profiles,
+\item{A}{When data are mixture expression profiles,
 A is estimated proportion matix or prior proportion matrix.
-When data is pure expression profiles, A is a phenotype vector to
+When data are pure expression profiles, A is a phenotype vector to
 indicate which subpopulation each sample belongs to.}
 
 \item{boot.alpha}{Alpha for bootstrapped OVE-FC confidence interval.

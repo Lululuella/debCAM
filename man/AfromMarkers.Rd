@@ -20,18 +20,19 @@ and/or CAM-detected markers for one subpopulation.}
 in A matrix is removed based on sum-to-one constraint on each row.}
 }
 \value{
-Return the estiamted proportion matrix.
+Return the estiamted proportion matrix (A matrix).
 }
 \description{
-This function estimates proportion matrix (A) based on marker genes and
-observed mixture expression data.
+This function estimates proportion matrix (A matrix) from observed mixture
+expression data based on marker genes.
 }
 \details{
 With the expression levels of subpopulation-specific
-marker genes detected by CAM or from literatures, the relative proportions
-of constituent subpopulations are estimated by spatial median using
-\code{\link[pcaPP]{l1median}}. Scale ambiguity is optionally removed based
-on sum-to-one constraint of rows.
+marker genes, the relative proportions of constituent subpopulations are
+estimated by spatial median using \code{\link[pcaPP]{l1median}}.
+Marker genes could be from unsupervised/supervised detection or
+from literatures.
+Scale ambiguity is optionally removed based on sum-to-one constraint of rows.
 }
 \examples{
 #obtain data and marker genes

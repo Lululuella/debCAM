@@ -10,12 +10,12 @@ MDL(CAMResult, mdl.method = 3)
 \method{plot}{MDLObj}(x, data.term = FALSE, ...)
 }
 \arguments{
-\item{CAMResult}{Result from  \code{\link{CAM}} function.}
+\item{CAMResult}{Result from \code{\link{CAM}} function.}
 
 \item{mdl.method}{Approach to calculate mdl values; should be 1, 2, or 3.
 The default is 3.}
 
-\item{x}{An object of class "MDLObj" from \code{\link{MDL}}..}
+\item{x}{An object of class "MDLObj" from \code{\link{MDL}}.}
 
 \item{data.term}{If ture, plot data term (code lenght of data under model).}
 
@@ -26,7 +26,7 @@ An object of class "MDLObj" containing the following components:
 \item{K}{The candidate subpopulation numbers.}
 \item{datalengths}{For each model with a certain subpopulation number,
 code length of data under the model.}
-\item{mdls}{mdl values for each model with a certain subpopulation number.}
+\item{mdls}{mdl value for each model with a certain subpopulation number.}
 }
 \description{
 This function obtains minimum description length (mdl) values for each
@@ -38,8 +38,8 @@ the result of \code{\link{CAM}} function, which contains mdl values form
 three approaches for each candidate subpopulation number.
 For more details about three approaches, refer to \code{\link{CAMASest}}.
 
-mdl is code length of data under the model plus
-code length of model. Both mdl and the first term about data are returned.
+mdl is code length of data under the model plus code length of model.
+Both mdl value and the first term about data are returned.
 }
 \examples{
 \donttest{

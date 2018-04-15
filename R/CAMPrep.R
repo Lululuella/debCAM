@@ -1,4 +1,4 @@
-#' Preprocessing for CAM
+#' Data preprocessing for CAM
 #'
 #' This function perform preprocessing for CAM, including norm-based filtering,
 #' dimension deduction, perspective projection, local outlier removal and
@@ -6,14 +6,16 @@
 #' @param data Matrix of mixture expression profiles.
 #'     Data frame format will be internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
-#'     data should be in non-log linear space with non-negative numerical values
+#'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
 #' @param dim.rdc Reduced data dimension; should be not less than maximum
 #'     candidate K.
-#' @param thres.low The percentage of genes the user wants to remove with
-#'     lowest norm. The range should be between 0 and 1. The default is 0.05.
-#' @param thres.high The percentage of genes the user wants to remove with
-#'     highest norm. The range should be between 0 and 1. The default is 0.95.
+#' @param thres.low The lower bound of percentage of genes to keep for CAM
+#'     with ranked norm. The value should be between 0 and 1.
+#'     The default is 0.05.
+#' @param thres.high The higer bound of percentage of genes to keep for CAM
+#'     with ranked norm. The value should be between 0 and 1.
+#'     The default is 0.95.
 #' @param cluster.method The method to do clustering. The default "K-Means" will
 #'     use \code{\link{kmeans}} fucntion. The alternative "apcluster" will use
 #'     \code{\link[apcluster]{apclusterK}} function.
@@ -29,7 +31,7 @@
 #' @param seed For reproducibility, the seed of the random number generator for
 #'     k-Means.
 #' @details This function is used internally by \code{\link{CAM}} function to
-#' preprocess data, or used when you want to perfrom CAM step by step.
+#' preprocess data, or used when you want to perform CAM step by step.
 #'
 #' Low/high-expressed genes are filtered by their L2-norm ranks.
 #' Dimension reduction is slightly different from PCA.
@@ -54,8 +56,8 @@
 #'     The second is the number of genes in each cluster.}
 #' \item{c.outlier}{The clusters with the gene number smaller than
 #'     MG.num.thres.}
-#' \item{centers}{The centers of corner clusters (candidate clusters containing
-#'     marker genes).}
+#' \item{centers}{The centers of candidate corner clusters (candidate clusters
+#'     containing marker genes).}
 #' @export
 #' @examples
 #' #obtain data

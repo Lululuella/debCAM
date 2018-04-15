@@ -7,38 +7,38 @@
 #' @param PrepResult An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.
 #' @param data Matrix of mixture expression profiles.
 #'     Each row is a gene and each column is a sample.
-#'     data should be in non-log linear space with non-negative numerical values
+#'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
 #' @param corner.strategy The method to detect corner clusters.
 #'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
 #'     errors. The default is 2.
 #' @details This function is used internally by \code{\link{CAM}} function to
 #' estimate proportion matrix (A), subpopulation-specific expression matrix (S)
-#' and mdl values. It can also be used when you want to perfrom CAM step by
+#' and mdl values. It can also be used when you want to perform CAM step by
 #' step.
 #'
-#' mdl is calcluated in three approaches:
+#' The mdl values are calcluated in three approaches:
 #' (1) based on data and A matrix in dimension-reduced space; (2) based on
 #' original data with A matrix estimated by transforming dimension-reduced
 #' A matrix back to original space;
 #' (3) based on original data with A directly estimated in origianl space.
 #' A and S matrix in origial space estiamted from the latter two approaches are
 #' returned. mdl is the sum of two terms: code length of data under the model
-#' and code length of model. Both mdl values and the first term (code length
+#' and code length of model. Both mdl value and the first term (code length
 #' of data) will be returned.
 #' @return An object of class "CAMASObj" containing the following components:
-#' \item{Aest}{Estimated proportion matrix from Approach (2).}
+#' \item{Aest}{Estimated proportion matrix from Approach 2.}
 #' \item{Sest}{Estimated subpopulation-specific expression matrix from
-#'     Approach (2).}
-#' \item{Aest.proj}{Estimated proportion matrix from Approach (2), before
+#'     Approach 2.}
+#' \item{Aest.proj}{Estimated proportion matrix from Approach 2, before
 #'     removing scale ambiguity.}
 #' \item{Ascale}{The estimated scales to remove scale ambiguity
 #'     of each column vector in Aest. Sum-to-one constraint on each row of
 #'     Aest is used for scale estimation.}
-#' \item{AestO}{Estimated proportion matrix from Approach (3).}
+#' \item{AestO}{Estimated proportion matrix from Approach 3.}
 #' \item{SestO}{Estimated subpopulation-specific expression matrix from
-#'     Approach (3).}
-#' \item{AestO.proj}{Estimated proportion matrix from Approach (3), before
+#'     Approach 3.}
+#' \item{AestO.proj}{Estimated proportion matrix from Approach 3, before
 #'     removing scale ambiguity.}
 #' \item{AscaleO}{The estimated scales to remove scale ambiguity
 #'     of each column vector in AestO. Sum-to-one constraint on each row of

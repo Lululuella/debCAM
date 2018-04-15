@@ -2,7 +2,7 @@
 #'
 #' This function obtains minimum description length (mdl) values for each
 #' candidate subpopulation number.
-#' @param CAMResult Result from  \code{\link{CAM}} function.
+#' @param CAMResult Result from \code{\link{CAM}} function.
 #' @param mdl.method Approach to calculate mdl values; should be 1, 2, or 3.
 #' The default is 3.
 #' @details This function extracts minimum description length (mdl) values from
@@ -10,13 +10,13 @@
 #' three approaches for each candidate subpopulation number.
 #' For more details about three approaches, refer to \code{\link{CAMASest}}.
 #'
-#' mdl is code length of data under the model plus
-#' code length of model. Both mdl and the first term about data are returned.
+#' mdl is code length of data under the model plus code length of model.
+#' Both mdl value and the first term about data are returned.
 #' @return An object of class "MDLObj" containing the following components:
 #' \item{K}{The candidate subpopulation numbers.}
 #' \item{datalengths}{For each model with a certain subpopulation number,
 #' code length of data under the model.}
-#' \item{mdls}{mdl values for each model with a certain subpopulation number.}
+#' \item{mdls}{mdl value for each model with a certain subpopulation number.}
 #' @export
 #' @examples
 #' \donttest{
@@ -48,7 +48,7 @@ MDL <- function(CAMResult, mdl.method = 3) {
                     class = "MDLObj")
 }
 
-#' @param x An object of class "MDLObj" from \code{\link{MDL}}..
+#' @param x An object of class "MDLObj" from \code{\link{MDL}}.
 #' @param data.term If ture, plot data term (code lenght of data under model).
 #' @param ... All other arguments are passed to the plotting command.
 #' @export

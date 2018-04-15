@@ -13,7 +13,7 @@ CAM(data, K = NULL, corner.strategy = 2, dim.rdc = 10, thres.low = 0.05,
 \item{data}{Matrix of mixture expression profiles.
 Data frame will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values
+Data should be in non-log linear space with non-negative numerical values
 (i.e. >= 0). Missing values are not supported.}
 
 \item{K}{The candidate subpopulation number(s), e.g. K = 2:8.}
@@ -25,11 +25,13 @@ errors. The default is 2.}
 \item{dim.rdc}{Reduced data dimension;
 should be not less than maximum candidate K.}
 
-\item{thres.low}{The percentage of genes the user wants to remove with
-lowest norm. The range should be between 0 and 1. The default is 0.05.}
+\item{thres.low}{The lower bound of percentage of genes to keep for CAM
+with ranked norm. The value should be between 0 and 1.
+The default is 0.05.}
 
-\item{thres.high}{The percentage of genes the user wants to remove with
-highest norm. The range should be between 0 and 1. The default is 0.95.}
+\item{thres.high}{The higer bound of percentage of genes to keep for CAM
+with ranked norm. The value should be between 0 and 1.
+The default is 0.95.}
 
 \item{cluster.method}{The method to do clustering.
 The default "K-Means" will use \code{\link{kmeans}}.
@@ -49,7 +51,7 @@ The default value 0.02 will remove top 2\% local outliers.
 Zero value will disable lof.}
 
 \item{cores}{The number of system cores for parallel computing.
-If not provided, the default back-end is used.
+If not provided, one core for each element in K will be invoked.
 Zero value will disable parallel computing.}
 
 \item{seed}{For reproducibility, the seed of the random number generator for
@@ -67,25 +69,27 @@ from \code{\link{CAMASest}} function.}
 }
 \description{
 This function performs a fully unsupervised computational deconvolution
-    method to identify marker genes that define each of the multiple
-    subpopulations and estimate the proportions of these subpopulations in
-    the mixed samples as well as their respective expression profiles.
+    to identify marker genes that define each of the multiple
+    subpopulations, and estimate the proportions of these subpopulations in
+    the mixture tissues as well as their respective expression profiles.
 }
 \details{
 This function includes three necessary steps to decompose a matrix
 of mixture expression prefiles: data preprocessing, marker gene cluster
 search, and matrix decomposition. They are implemented in
-\code{\link{CAMPrep}}, \code{\link{CAMMGCluster}}, and
+\code{\link{CAMPrep}}, \code{\link{CAMMGCluster}} and
 \code{\link{CAMASest}}, seperately.
-More details can be find in the help document of each function.
+More details can be found in the help document of each function.
 
-For \code{\link{CAM}} function, you needs to specify the range of possible
-subpopulation numbers and the percentage of low/high-expressed molecueles to
+For this function, you needs to specify the range of possible
+subpopulation numbers and the percentage of low/high-expressed genes to
 be removed. Typically, 30\% ~ 50\% low-expressed genes can be removed from
-gene expression data. Much less low-expressed proteins are removed,
-e.g. 0\% ~ 10\%, due to a limited number of proteins in proteomics data.
-The removel of high-expressed molecules has much less impact on results,
-and usually set to be 0\% ~ 10\%.
+gene expression data. The removel of high-expressed genes has much less
+impact on results, and usually set to be 0\% ~ 10\%.
+
+This function can also analyze other molecular expression data, such as
+proteomics data. Much less low-expressed proteins need to be removed,
+e.g. 0\% ~ 10\%, due to a limited number of proteins without missing values.
 }
 \examples{
 #obtain data
@@ -93,15 +97,15 @@ data(ratMix3)
 data <- ratMix3$X
 
 #CAM with known subpopulation number
-rCAM <- CAM(data, K = 3, dim.rdc= 3, thres.low = 0.30, thres.high = 0.95)
+rCAM <- CAM(data, K = 3, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 #A larger dim.rdc can improve performance but increase time complexity
 
 \donttest{
 #CAM with a range of subpopulation number
-rCAM <- CAM(data, K = 2:5, dim.rdc= 10, thres.low = 0.30, thres.high = 0.95)
+rCAM <- CAM(data, K = 2:5, dim.rdc = 10, thres.low = 0.30, thres.high = 0.95)
 
 #Use "apcluster" to aggregate gene vectors in CAM
-rCAM <- CAM(data, K = 2:5, dim.rdc= 10, thres.low = 0.30, thres.high = 0.95,
+rCAM <- CAM(data, K = 2:5, dim.rdc = 10, thres.low = 0.30, thres.high = 0.95,
             cluster.method = 'apcluster')
 }
 }

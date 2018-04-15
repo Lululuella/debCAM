@@ -4,7 +4,7 @@
 #' homogenate level in different proportions. 3 technical replicates each.
 #' We downsample the original data to 10000 probes/probesets and 7 mixtues.
 #' Proportions used in experiments and pure expression profiles are also
-#' provided.
+#' included.
 #' @docType data
 #' @name ratMix3
 #' @usage data(ratMix3)

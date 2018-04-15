@@ -14,17 +14,18 @@ function.}
 
 \item{nComb}{The number of possible combinations of clusters as corner
 clusters. Within these possible combinations ranked by margin errors,
-We can further select the best one based on reconstruction errors.
+we can further select the best one based on reconstruction errors.
 The default is 200.}
 }
 \value{
 An object of class "CAMMGObj" containing the following components:
-\item{idx}{Two numbers which are two solutions' ranks by margin error.}
+\item{idx}{Two numbers which are two solutions' ranks by sum of
+    margin-of-error.}
 \item{corner}{The indexes of clusters as detected corners. Each row is a
     solution.}
-\item{error}{Two rows. The first row is margin errors for nComb possible
-    combinations. The second row is reconstruction errors for nComb possible
-    combinations.}
+\item{error}{Two rows. The first row is sum of margin-of-errors for nComb
+    possible combinations. The second row is reconstruction errors for
+    nComb possible combinations.}
 }
 \description{
 This function finds corner clusters as MG clusters
@@ -33,10 +34,10 @@ This function finds corner clusters as MG clusters
 \details{
 This function is used internally by \code{\link{CAM}} function to
 detect clusters containing marker genes,
-or used when you want to perfrom CAM step by step.
+or used when you want to perform CAM step by step.
 
 This function provides two solutions. The first is the combination of
-clusters yielding the minimum sum margin-of-errors for cluster ceneters.
+clusters yielding the minimum sum of margin-of-errors for cluster ceneters.
 In the second, nComb possible combinations are selected by ranking sum of
 margin-of-errors for cluster centers. Then the best one is selected based on
 reconstruction errors of all data points in original space.

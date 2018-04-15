@@ -2,7 +2,7 @@
 % Please edit documentation in R/CAMPrep.R
 \name{CAMPrep}
 \alias{CAMPrep}
-\title{Preprocessing for CAM}
+\title{Data preprocessing for CAM}
 \usage{
 CAMPrep(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
   cluster.method = c("K-Means", "apcluster"), cluster.num = 50,
@@ -12,17 +12,19 @@ CAMPrep(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
 \item{data}{Matrix of mixture expression profiles.
 Data frame format will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values
+Data should be in non-log linear space with non-negative numerical values
 (i.e. >= 0). Missing values are not supported.}
 
 \item{dim.rdc}{Reduced data dimension; should be not less than maximum
 candidate K.}
 
-\item{thres.low}{The percentage of genes the user wants to remove with
-lowest norm. The range should be between 0 and 1. The default is 0.05.}
+\item{thres.low}{The lower bound of percentage of genes to keep for CAM
+with ranked norm. The value should be between 0 and 1.
+The default is 0.05.}
 
-\item{thres.high}{The percentage of genes the user wants to remove with
-highest norm. The range should be between 0 and 1. The default is 0.95.}
+\item{thres.high}{The higer bound of percentage of genes to keep for CAM
+with ranked norm. The value should be between 0 and 1.
+The default is 0.95.}
 
 \item{cluster.method}{The method to do clustering. The default "K-Means" will
 use \code{\link{kmeans}} fucntion. The alternative "apcluster" will use
@@ -54,8 +56,8 @@ An object of class "CAMPrepObj" containing the following components:
     The second is the number of genes in each cluster.}
 \item{c.outlier}{The clusters with the gene number smaller than
     MG.num.thres.}
-\item{centers}{The centers of corner clusters (candidate clusters containing
-    marker genes).}
+\item{centers}{The centers of candidate corner clusters (candidate clusters
+    containing marker genes).}
 }
 \description{
 This function perform preprocessing for CAM, including norm-based filtering,
@@ -64,7 +66,7 @@ aggregation of gene expression vectors by clustering.
 }
 \details{
 This function is used internally by \code{\link{CAM}} function to
-preprocess data, or used when you want to perfrom CAM step by step.
+preprocess data, or used when you want to perform CAM step by step.
 
 Low/high-expressed genes are filtered by their L2-norm ranks.
 Dimension reduction is slightly different from PCA.

@@ -19,7 +19,7 @@ combinations is less than nComb.}
 A list containing the following components:
 \item{idx}{A matrix to show the indexes of data points in combinations to
 construct a convex hull. Each column is one combination.}
-\item{error}{A vector of margin errors for each combination.}
+\item{error}{A vector of margin-of-error sums for each combination.}
 }
 \description{
 Given a set of data points, return possible combinations of data points as
@@ -35,11 +35,10 @@ selection based on reconstruction errors of all data points in original
 space.
 
 The function is implemented in Java with R-to-Java interface provided by
-\code{rJava}. It relies on non-negative least squares (NNLS)
-from Parallel Java Library https://www.cs.rit.edu/~ark/pj.shtml.
+\code{rJava} package. It relies on NonNegativeLeastSquares class in Parallel
+Java Library (https://www.cs.rit.edu/~ark/pj.shtml).
 }
 \examples{
-#obtain data
 data <- matrix(c(0.1,0.2,1.0,0.0,0.0,0.5,0.3,
                  0.1,0.7,0.0,1.0,0.0,0.5,0.3,
                  0.8,0.1,0.0,0.0,1.0,0.0,0.4), nrow =3, byrow = TRUE)

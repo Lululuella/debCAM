@@ -10,7 +10,7 @@ simplexplot(data, A, MGlist = NULL, corner.order = NULL,
 \arguments{
 \item{data}{A data set that will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
-data should be in non-log linear space with non-negative numerical values
+Data should be in non-log linear space with non-negative numerical values
 (i.e. >= 0). Missing values are not supported.}
 
 \item{A}{Prior/Estimated proporiton matrix.}
@@ -30,7 +30,7 @@ and/or CAM-detected markers for one subpopulation.}
 A plot to the current device.
 }
 \description{
-This function shows simplex
+This function shows scatter simplex of mixture expressions.
 }
 \details{
 This function can show the scatter simplex and deteced marker genes

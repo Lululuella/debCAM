@@ -238,7 +238,7 @@ data.clusterMean <- lapply(slot(apres,"clusters"),
 data.clusterMean <- do.call(cbind, data.clusterMean)
 
 rCAM <- CAM(data.clusterMean, K = 2:5, thres.low = 0.30, thres.high = 0.95, 
-            cores = 30, seed = 111)
+            seed = 111)
 # or rPrep <- CAMPrep(data.clusterMean, thres.low = 0.30, thres.high = 0.95, seed = 111)
 ```
 
@@ -266,8 +266,7 @@ mat.aggre <- sapply(unique(pheno), function(x) rowMeans(mat[,pheno == x]))
 data <- mat.aggre[,5:8]
 
 #running CAM
-rCAM <- CAM(data, K = 4, thres.low = 0.70, thres.high = 0.95, 
-            cores = 30, seed = 111)
+rCAM <- CAM(data, K = 4, thres.low = 0.70, thres.high = 0.95, seed = 111)
 Aest <- rCAM$ASestResult$'4'$Aest
 Aest
 
@@ -283,7 +282,50 @@ Atrue
 cor(Aest, Atrue)
 ```
 
-### methylation
+### GSE41826 (methylation)
+
+[GSE41826](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41826) conducted a reconstitution experiment by mixing neuron and glial derived DNA from a single individual from 10% ~ 90%. The code chunk below shows how to use CAM to blindly seperate 9 mixtures into neuron and glial specific CpG methylation quantification. Additional requirments of running CAM on methylation data: 
+
+- Use beta-value, not M-value, as methylation quantification.
+- CpG sites in X or Y chromosomes must be removed if mixture tissues are from both males and females. 
+- CpG sites needs to be downsampled since the huge number of CpG sites will slow the clustering process. 
+
+```{r, echo=TRUE, message=FALSE, eval=FALSE}
+#download data
+library(GEOquery)
+gsm<- getGEO('GSE41826')
+mat <- exprs(gsm)
+colnames(mat)<- gsm$title
+mat.mix<- mat[,paste0('Mix',1:9)]
+
+#Remove CpG sites in sex chromosomes if tissues are from both males and females
+#Not necessary in this example as mixtures are from the same subject
+#gpl<- getGEO('GPL13534')
+#annot<-dataTable(gpl)@table[,c('Name','CHR')]
+#rownames(annot) <- annot$Name
+#annot <- annot[rownames(mat.mix),]
+#mat.mix <- mat.mix[annot$CHR != 'X' & annot$CHR != 'Y',]
+
+#downsample CpG sites
+SampleId <- sample(seq_len(nrow(mat.mix)), 20000)
+
+#running CAM
+rCAM <- CAM(mat.mix[SampleId,], K = 2, thres.low = 0.10, thres.high = 0.60)
+Aest <- rCAM$ASestResult$'2'$Aest
+Atrue <- cbind(seq(0.1, 0.9, 0.1), seq(0.9, 0.1, -0.1))
+cor(Aest, Atrue)
+
+#obtain a full list of marker CpG sites
+MGstat <- MGstatistic(mat.mix, Aest)
+MGlist.FC <- lapply(1:2, function(x) 
+    rownames(MGstat)[MGstat$idx == x & MGstat$OVE.FC > 10])
+```
+
+We can also run CAM on unmethylated quantification, 1 - beta, to obtain quite similar results since the underlying linear mixing model is also applicable for unmethylated probe intensity.
+
+```{r, echo=TRUE, message=FALSE, eval=FALSE}
+rCAM <- CAM(1 - mat.mix[SampleId,], K = 2, thres.low = 0.10, thres.high = 0.60)
+```
 
 # Supervised/Semi-supervised Deconvolution
 ## Molecular markers are known

@@ -3,8 +3,8 @@
 #' The core function in this package is \code{\link{CAM}} which achieves fully
 #' unsupervised deconvolution on mixture expression profiles.
 #' Each step in \code{\link{CAM}} can also be performed seperately by
-#' \code{\link{CAMPrep}}, \code{\link{CAMMGCluster}},
-#' and \code{\link{CAMASest}} as a more flexiable workflow.
+#' \code{\link{CAMPrep}}, \code{\link{CAMMGCluster}}
+#' and \code{\link{CAMASest}} in a more flexiable workflow.
 #' \code{\link{MGstatistic}} can help extract a complete marker list from CAM
 #' results. \code{\link{MDL}} can help decide the underlying subpopulation
 #' number. With other functions, e.g. \code{\link{AfromMarkers}} and
