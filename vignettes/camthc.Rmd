@@ -16,7 +16,6 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-knitr::knit_hooks$set(webgl = rgl::hook_webgl)
 ```
 
 # Introduction
@@ -133,7 +132,7 @@ We can also observe the convex cone and simplex of mixture expressions in 3D spa
 
 Code to show convex cone:
 
-```{r, webgl=TRUE}
+```{r, eval=FALSE}
 library(rgl)
 Xp <- data %*% t(rCAM$PrepResult$W)
 plot3d(Xp[, 1:3], col='gray', size=3, 
@@ -146,7 +145,7 @@ for(i in seq_along(MGlist)){
 
 Code to show simplex:
 
-```{r, webgl=TRUE, message=FALSE}
+```{r, eval=FALSE}
 library(rgl)
 clear3d()
 Xproj <- XWProj(data, rCAM$PrepResult$W)

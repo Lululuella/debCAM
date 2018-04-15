@@ -28,7 +28,7 @@ The default is 0.95.}
 
 \item{cluster.method}{The method to do clustering. The default "K-Means" will
 use \code{\link{kmeans}} fucntion. The alternative "apcluster" will use
-\code{\link[apcluster]{apclusterK}} function.}
+\code{\link[apcluster]{apclusterK-methods}}.}
 
 \item{cluster.num}{The number of clusters; should be much larger than K.
 The default is 50.}

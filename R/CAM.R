@@ -23,7 +23,8 @@
 #'     The default is 0.95.
 #' @param cluster.method The method to do clustering.
 #'     The default "K-Means" will use \code{\link{kmeans}}.
-#'     The alternative "apcluster" will use \code{\link[apcluster]{apclusterK}}.
+#'     The alternative "apcluster" will use
+#'     \code{\link[apcluster]{apclusterK-methods}}.
 #' @param cluster.num The number of clusters; should be much larger than K.
 #'     The default is 50.
 #' @param MG.num.thres The clusters with the gene number smaller than
