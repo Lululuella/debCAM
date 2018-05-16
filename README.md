@@ -1,16 +1,21 @@
 # CAMTHC
 
-The goal of CAMTHC is to perform comoputational deconvolution for tissue heterogeneity characterization. It provides basic functions for unsupervised deconvolution on mixture expression profiles by CAM and some auxiliary functions to help understand the subpopulation-specific results. CAMTHC also implements functions to perform supervised deconlution based on prior knowledge of molecular markers, S matrix or A matrix. Semi-suprvised deconvolution can also be achieved by combining molecular markers from CAM and from prior knowledge to analyze mixture expressions.
+The goal of CAMTHC is to perform computational deconvolution for tissue heterogeneity characterization. It provides basic functions for unsupervised deconvolution on mixture expression profiles by CAM and some auxiliary functions to help understand the subpopulation-specific results. CAMTHC also implements functions to perform supervised deconlution based on prior knowledge of molecular markers, S matrix or A matrix. Semi-suprvised deconvolution can also be achieved by combining molecular markers from CAM and from prior knowledge to analyze mixture expressions.
 
 ## Installation
 
-You can install the released version of CAMTHC following the instructions CAMTHC's bioconductor page
+You can install the released version of CAMTHC following the instructions in CAMTHC's bioconductor page
+
+``` r
+## try http:// if https:// URLs are not supported
+source("https://bioconductor.org/biocLite.R")
+biocLite("CAMTHC")
+```
 
 Or, you can install it from github by
 
 ``` r
 devtools::install_github("Lululuella/CAMTHC")
-
 ```
 
 ## Example

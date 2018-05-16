@@ -9,8 +9,8 @@ CAMMGCluster(K, PrepResult, nComb = 200)
 \arguments{
 \item{K}{The candidate subpopulation number.}
 
-\item{PrepResult}{An object of class "CAMPrepObj" from \code{\link{CAMPrep}}
-function.}
+\item{PrepResult}{An object of class "\code{\link{CAMPrepObj}}" obtained
+from \code{\link{CAMPrep}} function.}
 
 \item{nComb}{The number of possible combinations of clusters as corner
 clusters. Within these possible combinations ranked by margin errors,
@@ -18,7 +18,8 @@ we can further select the best one based on reconstruction errors.
 The default is 200.}
 }
 \value{
-An object of class "CAMMGObj" containing the following components:
+An object of class "\code{\link{CAMMGObj}}" containing the
+following components:
 \item{idx}{Two numbers which are two solutions' ranks by sum of
     margin-of-error.}
 \item{corner}{The indexes of clusters as detected corners. Each row is a

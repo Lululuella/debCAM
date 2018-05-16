@@ -5,7 +5,8 @@
 #'     subpopulations, and estimate the proportions of these subpopulations in
 #'     the mixture tissues as well as their respective expression profiles.
 #' @param data Matrix of mixture expression profiles.
-#'     Data frame will be internally coerced into a matrix.
+#'     Data frame, SummarizedExperiment or ExpressionSet object will be
+#'     internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
 #'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
@@ -57,14 +58,16 @@
 #' proteomics data. Much less low-expressed proteins need to be removed,
 #' e.g. 0\% ~ 10\%, due to a limited number of proteins without missing values.
 
-#' @return A list containing the following components:
-#' \item{PrepResult}{An object of class "CAMPrepObj" containing
+#' @return An object of class "\code{\link{CAMObj}}" containing the following
+#' components:
+#' \item{PrepResult}{An object of class "\code{\link{CAMPrepObj}}" containing
 #' data preprocessing results from \code{\link{CAMPrep}} function.}
-#' \item{MGResult}{An object of class "CAMMGObj" containg
-#' marker gene detection results from \code{\link{CAMMGCluster}} function.}
-#' \item{ASestResult}{An object of class "CAMASObj" containing
+#' \item{MGResult}{A list of "\code{\link{CAMMGObj}}" objects containg
+#' marker gene detection results from \code{\link{CAMMGCluster}} function for
+#' each K value.}
+#' \item{ASestResult}{A list of "\code{\link{CAMASObj}}" objects containing
 #' estimated proportions, subpopution-specific expressions and mdl values
-#' from \code{\link{CAMASest}} function.}
+#' from \code{\link{CAMASest}} function for each K value.}
 #' @export
 #' @examples
 #' #obtain data
@@ -97,8 +100,13 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
     }
     if (class(data) == "data.frame") {
         data <- as.matrix(data)
+    } else if (class(data) == "SummarizedExperiment") {
+        data <- assay(data)
+    } else if (class(data) == "ExpressionSet") {
+        data <- exprs(data)
     } else if (class(data) != "matrix") {
-        stop("Only matrix and data frame are supported for expression data!")
+        stop("Only matrix, data frame and SummarizedExperiment object are
+             supported for expression data!")
     }
     if (sum(is.na(data)) > 0) {
         stop("Data with missing values are not supported!")
@@ -152,7 +160,7 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
     }
     names(ASestResult) <- as.character(K)
 
-    return(list(PrepResult=PrepResult,
+    return(new("CAMObj",PrepResult=PrepResult,
                 MGResult=MGResult,
                 ASestResult=ASestResult))
 }

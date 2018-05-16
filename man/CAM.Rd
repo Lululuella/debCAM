@@ -11,7 +11,8 @@ CAM(data, K = NULL, corner.strategy = 2, dim.rdc = 10, thres.low = 0.05,
 }
 \arguments{
 \item{data}{Matrix of mixture expression profiles.
-Data frame will be internally coerced into a matrix.
+Data frame, SummarizedExperiment or ExpressionSet object will be
+internally coerced into a matrix.
 Each row is a gene and each column is a sample.
 Data should be in non-log linear space with non-negative numerical values
 (i.e. >= 0). Missing values are not supported.}
@@ -59,14 +60,16 @@ Zero value will disable parallel computing.}
 k-Means.}
 }
 \value{
-A list containing the following components:
-\item{PrepResult}{An object of class "CAMPrepObj" containing
+An object of class "\code{\link{CAMObj}}" containing the following
+components:
+\item{PrepResult}{An object of class "\code{\link{CAMPrepObj}}" containing
 data preprocessing results from \code{\link{CAMPrep}} function.}
-\item{MGResult}{An object of class "CAMMGObj" containg
-marker gene detection results from \code{\link{CAMMGCluster}} function.}
-\item{ASestResult}{An object of class "CAMASObj" containing
+\item{MGResult}{A list of "\code{\link{CAMMGObj}}" objects containg
+marker gene detection results from \code{\link{CAMMGCluster}} function for
+each K value.}
+\item{ASestResult}{A list of "\code{\link{CAMASObj}}" objects containing
 estimated proportions, subpopution-specific expressions and mdl values
-from \code{\link{CAMASest}} function.}
+from \code{\link{CAMASest}} function for each K value.}
 }
 \description{
 This function performs a fully unsupervised computational deconvolution

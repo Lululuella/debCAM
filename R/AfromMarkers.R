@@ -32,8 +32,13 @@
 AfromMarkers <- function(data, MGlist, scaleRecover = TRUE){
     if (class(data) == "data.frame") {
         data <- as.matrix(data)
+    } else if (class(data) == "SummarizedExperiment") {
+        data <- assay(data)
+    } else if (class(data) == "ExpressionSet") {
+        data <- exprs(data)
     } else if (class(data) != "matrix") {
-        stop("Only matrix and data frame are supported for expression data!")
+        stop("Only matrix, data frame and SummarizedExperiment object are
+             supported for expression data!")
     }
     if (sum(is.na(data)) > 0) {
         stop("Data with missing values are not supported!")

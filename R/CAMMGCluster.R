@@ -3,8 +3,8 @@
 #' This function finds corner clusters as MG clusters
 #' (clusters containing marker genes).
 #' @param K The candidate subpopulation number.
-#' @param PrepResult An object of class "CAMPrepObj" from \code{\link{CAMPrep}}
-#'     function.
+#' @param PrepResult An object of class "\code{\link{CAMPrepObj}}" obtained
+#'     from \code{\link{CAMPrep}} function.
 #' @param nComb The number of possible combinations of clusters as corner
 #'     clusters. Within these possible combinations ranked by margin errors,
 #'     we can further select the best one based on reconstruction errors.
@@ -18,7 +18,8 @@
 #' In the second, nComb possible combinations are selected by ranking sum of
 #' margin-of-errors for cluster centers. Then the best one is selected based on
 #' reconstruction errors of all data points in original space.
-#' @return An object of class "CAMMGObj" containing the following components:
+#' @return An object of class "\code{\link{CAMMGObj}}" containing the
+#' following components:
 #' \item{idx}{Two numbers which are two solutions' ranks by sum of
 #'     margin-of-error.}
 #' \item{corner}{The indexes of clusters as detected corners. Each row is a
@@ -38,13 +39,13 @@
 #' #Marker gene cluster detection with a fixed K = 3
 #' rMGC <- CAMMGCluster(3, rPrep)
 CAMMGCluster <- function(K, PrepResult, nComb = 200) {
-    X <- PrepResult$centers
+    X <- PrepResult@centers
     if (K > nrow(X) || K > ncol(X)){
         warning("Return NULL for K = ", K, " larger than ", max(dim(X)))
         return(NULL)
     }
     if (K == ncol(X)){
-        return(list(idx=c(1,1),
+        return(new("CAMMGObj", idx=c(1,1),
                     corner=matrix(as.integer(colnames(X)),1)[c(1,1),]))
     }
 
@@ -55,8 +56,8 @@ CAMMGCluster <- function(K, PrepResult, nComb = 200) {
     nComb <- length(error1)
 
 
-    Xall <- PrepResult$Xprep[,!(PrepResult$cluster$cluster %in%
-                                PrepResult$c.outlier)]
+    Xall <- PrepResult@Xprep[,!(PrepResult@cluster$cluster %in%
+                                PrepResult@c.outlier)]
 
     errCalcu <- function (p, idx, X, Xall, W) {
         A <- X[,idx[,p]]
@@ -68,7 +69,7 @@ CAMMGCluster <- function(K, PrepResult, nComb = 200) {
         sum((Xall - A%*%(.fcnnls(A, Xall)$coef))^2)
     }
     error2 <- unlist(lapply(seq_len(nComb), errCalcu,
-                            idx, X, Xall, PrepResult$W))
+                            idx, X, Xall, PrepResult@W))
 
     idx1 <- which.min(error1)
     idx2 <- which.min(error2)
@@ -76,8 +77,8 @@ CAMMGCluster <- function(K, PrepResult, nComb = 200) {
     ind2 <- as.integer(colnames(X[,idx[,idx2]]))
 
 
-    structure(list(idx=c(idx1,idx2), corner=rbind(ind1,ind2),
-                    error=cbind(error1,error2)), class = "CAMMGObj")
+    return(new("CAMMGObj", idx=c(idx1,idx2), corner=rbind(ind1,ind2),
+                    error=cbind(error1,error2)))
 }
 
 

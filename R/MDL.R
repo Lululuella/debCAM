@@ -12,7 +12,8 @@
 #'
 #' mdl is code length of data under the model plus code length of model.
 #' Both mdl value and the first term about data are returned.
-#' @return An object of class "MDLObj" containing the following components:
+#' @return An object of class "\code{\link{MDLObj}}" containing the
+#' following components:
 #' \item{K}{The candidate subpopulation numbers.}
 #' \item{datalengths}{For each model with a certain subpopulation number,
 #' code length of data under the model.}
@@ -37,34 +38,35 @@
 #' plot(MDL(rCAM), data.term = TRUE) #with data length curve
 #' }
 MDL <- function(CAMResult, mdl.method = 3) {
-    valid <- unlist(lapply(CAMResult$ASestResult, function(x) !is.null(x)))
+    valid <- unlist(lapply(CAMResult@ASestResult, function(x) !is.null(x)))
     valid <- which(valid)
-    K <- as.integer(names(CAMResult$ASestResult))[valid]
+    K <- as.integer(names(CAMResult@ASestResult))[valid]
     datalengths <- unlist(lapply(valid, function(x)
-        CAMResult$ASestResult[[x]]$datalength[mdl.method]))
+        CAMResult@ASestResult[[x]]@datalength[mdl.method]))
     mdls <- unlist(lapply(valid, function(x)
-        CAMResult$ASestResult[[x]]$mdl[mdl.method]))
-    structure(list(K = K, datalengths = datalengths, mdls=mdls),
-                    class = "MDLObj")
+        CAMResult@ASestResult[[x]]@mdl[mdl.method]))
+    return(new("MDLObj", K = K, datalengths = datalengths, mdls=mdls))
 }
 
-#' @param x An object of class "MDLObj" from \code{\link{MDL}}.
+#' @param x An object of class "\code{\link{MDLObj}}" from \code{\link{MDL}}.
 #' @param data.term If ture, plot data term (code lenght of data under model).
 #' @param ... All other arguments are passed to the plotting command.
 #' @export
 #' @rdname MDL
-plot.MDLObj <- function(x, data.term = FALSE, ...){
-    if (data.term) {
-        plot(x$K, x$mdls, xlab = 'number of sources', ylab = '', type='l',
-            ylim = range(c(x$datalengths, x$mdls)), col= 'blue', xaxt = "n",
-            ...)
-        points(x$K, x$datalengths, type = 'l', lty = 2, col = 'red')
-        axis(1, at = min(x$K) : max(x$K))
-        legend("topright", cex=1.5, inset=.01, c("MDL","data term"),
-            lty=c(1,2), col = c('blue', 'red'))
-    } else {
-        plot(x$K, x$mdl, xlab = 'number of sources', ylab = '',
-            main = 'MDL Curve', col='blue', type='l', xaxt = "n", ...)
-        axis(1, at = min(x$K) : max(x$K))
+setMethod("plot", signature(x="MDLObj", y="missing"),
+    function(x, data.term = FALSE, ...){
+        if (data.term) {
+            plot(x@K, x@mdls, xlab = 'number of sources', ylab = '', type='l',
+                 ylim = range(c(x@datalengths, x@mdls)), col= 'blue', xaxt = "n",
+                 ...)
+            points(x@K, x@datalengths, type = 'l', lty = 2, col = 'red')
+            axis(1, at = min(x@K) : max(x@K))
+            legend("topright", cex=1.5, inset=.01, c("MDL","data term"),
+                   lty=c(1,2), col = c('blue', 'red'))
+        } else {
+            plot(x@K, x@mdl, xlab = 'number of sources', ylab = '',
+                 main = 'MDL Curve', col='blue', type='l', xaxt = "n", ...)
+            axis(1, at = min(x@K) : max(x@K))
+        }
     }
-}
+)

@@ -39,13 +39,13 @@ MGsforA <- function(CAMResult = NULL, K = NULL,
             stop("Please provide K!")
         }
 
-        PrepResult <- CAMResult$PrepResult
-        MGResult <- CAMResult$MGResult[[which(names(CAMResult$MGResult) ==
+        PrepResult <- CAMResult@PrepResult
+        MGResult <- CAMResult@MGResult[[which(names(CAMResult@MGResult) ==
                                         as.character(K))]]
     }
 
-    MGlist <- lapply(as.character(MGResult$corner[corner.strategy,]),
-        function(x) colnames(PrepResult$Xproj)[PrepResult$cluster$cluster == x])
+    MGlist <- lapply(as.character(MGResult@corner[corner.strategy,]),
+        function(x) colnames(PrepResult@Xproj)[PrepResult@cluster$cluster == x])
     MGlist
 }
 

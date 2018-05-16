@@ -23,10 +23,13 @@
 #' @name CAMTHC-package
 #' @aliases CAMTHC
 #'
+#' @import methods
 #' @import rJava
 #' @import BiocParallel
 #' @import stats
 #' @import graphics
+#' @importFrom Biobase exprs
+#' @importFrom SummarizedExperiment assay
 #' @importFrom NMF .fcnnls
 #' @importFrom corpcor pseudoinverse
 NULL

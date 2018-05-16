@@ -4,7 +4,8 @@
 #' dimension deduction, perspective projection, local outlier removal and
 #' aggregation of gene expression vectors by clustering.
 #' @param data Matrix of mixture expression profiles.
-#'     Data frame format will be internally coerced into a matrix.
+#'     Data frame, SummarizedExperiment or ExpressionSet object will be
+#'     internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
 #'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
@@ -46,8 +47,9 @@
 #' Finallly, gene expression vectors are aggregated by clustering
 #' to further reduce the impact of noise/outler and help improve the efficiency
 #' of simplex corner detction.
-#' @return An object of class "CAMPrepObj" containing the following components:
-#' \item{valid}{logical vector to indicate the genes left after filtering.}
+#' @return An object of class "\code{\link{CAMPrepObj}}" containing the
+#' following components:
+#' \item{Valid}{logical vector to indicate the genes left after filtering.}
 #' \item{Xprep}{Preprocessed data matrix.}
 #' \item{Xproj}{Preprocessed data matrix after perspective projection.}
 #' \item{W}{The matrix whose rows are loading vectors.}
@@ -72,8 +74,13 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
                     seed = NULL){
     if (class(data) == "data.frame") {
         data <- as.matrix(data)
+    } else if (class(data) == "SummarizedExperiment") {
+        data <- assay(data)
+    } else if (class(data) == "ExpressionSet") {
+        data <- exprs(data)
     } else if (class(data) != "matrix") {
-        stop("Only matrix and data frame are supported for expression data!")
+        stop("Only matrix, data frame and SummarizedExperiment object are
+             supported for expression data!")
     }
     if (sum(is.na(data)) > 0) {
         stop("Data with missing values are not supported!")
@@ -175,7 +182,7 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
     message('convex hull cluster number: ',length(corner),"\n")
 
 
-    structure(list(ValidIdx=Valid, Xprep=X, Xproj=Xproj, W=weightMatrix,
+    return(new("CAMPrepObj", Valid=Valid, Xprep=X, Xproj=Xproj, W=weightMatrix,
                     cluster=cluster, c.outlier=c.outlier,
-                    centers=medcenters[,corner]), class = "CAMPrepObj")
+                    centers=medcenters[,corner]))
 }

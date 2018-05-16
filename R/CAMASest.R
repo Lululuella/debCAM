@@ -2,10 +2,14 @@
 #'
 #' This function estimates A and S matrix based on marker gene clusters
 #' detected by CAM.
-#' @param MGResult An object of class "CAMMGObj" from
-#'     \code{\link{CAMMGCluster}}.
-#' @param PrepResult An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.
-#' @param data Matrix of mixture expression profiles.
+#' @param MGResult An object of class "\code{\link{CAMMGObj}}" obtained from
+#'     \code{\link{CAMMGCluster}} function.
+#' @param PrepResult An object of class "\code{\link{CAMPrepObj}}" obtained
+#'     from \code{\link{CAMPrep}} function.
+#' @param data Matrix of mixture expression profiles which need to be the same
+#'     as the input of \code{\link{CAMPrep}}.
+#'     Data frame, SummarizedExperiment or ExpressionSet object will be
+#'     internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample.
 #'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
@@ -26,7 +30,8 @@
 #' returned. mdl is the sum of two terms: code length of data under the model
 #' and code length of model. Both mdl value and the first term (code length
 #' of data) will be returned.
-#' @return An object of class "CAMASObj" containing the following components:
+#' @return An object of class "\code{\link{CAMASObj}}" containing the
+#' following components:
 #' \item{Aest}{Estimated proportion matrix from Approach 2.}
 #' \item{Sest}{Estimated subpopulation-specific expression matrix from
 #'     Approach 2.}
@@ -67,24 +72,35 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
     if (is.null(MGResult)) {
         return (NULL)
     }
+    if (class(data) == "data.frame") {
+        data <- as.matrix(data)
+    } else if (class(data) == "SummarizedExperiment") {
+        data <- assay(data)
+    } else if (class(data) == "ExpressionSet") {
+        data <- exprs(data)
+    } else if (class(data) != "matrix") {
+        stop("Only matrix, data frame and SummarizedExperiment object are
+             supported for expression data!")
+    }
     if (is.null(rownames(data))) {
         rownames(data) <- seq_len(nrow(data))
         warning('Gene/probe name is missing!')
     }
-    X <- t(data)
-    c.valid <- !(PrepResult$cluster$cluster %in% PrepResult$c.outlier)
-    geneValid <- PrepResult$ValidIdx
+
+
+    c.valid <- !(PrepResult@cluster$cluster %in% PrepResult@c.outlier)
+    geneValid <- PrepResult@Valid
     geneValid[geneValid][!c.valid] <- FALSE
 
-    Xprep <- PrepResult$Xprep[,c.valid]
-    Xproj <- PrepResult$Xproj[,c.valid]
+    Xprep <- PrepResult@Xprep[,c.valid]
+    Xproj <- PrepResult@Xproj[,c.valid]
     dataSize <- ncol(Xprep)
 
-    Aproj <- PrepResult$centers[,as.character(MGResult$corner[corner.strategy,])]
+    Aproj <- PrepResult@centers[,as.character(MGResult@corner[corner.strategy,])]
     Kest <- ncol(Aproj)
 
     #scale <- as.vector(coef(nnls(Aproj, rowSums(PrepResult$W))))
-    scale <- c(.fcnnls(Aproj, matrix(rowSums(PrepResult$W),ncol=1))$coef)
+    scale <- c(.fcnnls(Aproj, matrix(rowSums(PrepResult@W),ncol=1))$coef)
     scale[scale<1e-10] <- 0.01/(sqrt(colSums(Aproj^2)))[scale<1e-10]
     Apca <- Aproj %*% diag(scale)
     #S1 <- apply(Xprep, 2, function(x) coef(nnls(Apca,x)))
@@ -95,7 +111,11 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
         (Kest * dataSize) / 2 * log(nrow(Xprep))
     mdl1 <- datalength1 + penalty1
 
-    Aproj.org <- pseudoinverse(PrepResult$W) %*% Aproj
+    X <- t(data)
+    if (ncol(PrepResult@W) != ncol(data)) {
+        stop("Data should be the same with the input of CAMPrep()!")
+    }
+    Aproj.org <- pseudoinverse(PrepResult@W) %*% Aproj
     #scale.org <- as.vector(coef(nnls(Aproj.org, matrix(1,nrow(Aproj.org),1))))
     scale.org <- c(.fcnnls(Aproj.org, matrix(1,nrow(Aproj.org),1))$coef)
     scale.org[scale.org<1e-10] <-
@@ -111,8 +131,8 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
         (Kest * dataSize) / 2 * log(nrow(X))
     mdl2 <- datalength2 + penalty2
 
-    MGlist <- lapply(as.character(MGResult$corner[corner.strategy,]),
-        function(x) colnames(PrepResult$Xproj)[PrepResult$cluster$cluster == x])
+    MGlist <- lapply(as.character(MGResult@corner[corner.strategy,]),
+        function(x) colnames(PrepResult@Xproj)[PrepResult@cluster$cluster == x])
     Xproj.all <- t(data/rowSums(data))
     Aproj.all <- matrix(0, ncol(data), length(MGlist))
     for(i in seq_along(MGlist)){
@@ -132,10 +152,10 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
     mdl3 <- datalength3 + penalty3
 
 
-    structure(list(Aest=Aest.org, Sest=t(S2), Aest.proj=Aproj.org,
+    return(new("CAMASObj", Aest=Aest.org, Sest=t(S2), Aest.proj=Aproj.org,
                     Ascale=scale.org,
                     AestO=Aest.all, SestO=t(S3), AestO.proj=Aproj.all,
                     AscaleO=scale.all,
                     datalength=c(datalength1,datalength2,datalength3),
-                    mdl=c(mdl1,mdl2,mdl3)), class = "CAMASObj")
+                    mdl=c(mdl1,mdl2,mdl3)))
 }

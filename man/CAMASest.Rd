@@ -7,12 +7,16 @@
 CAMASest(MGResult, PrepResult, data, corner.strategy = 2)
 }
 \arguments{
-\item{MGResult}{An object of class "CAMMGObj" from
-\code{\link{CAMMGCluster}}.}
+\item{MGResult}{An object of class "\code{\link{CAMMGObj}}" obtained from
+\code{\link{CAMMGCluster}} function.}
 
-\item{PrepResult}{An object of class "CAMPrepObj" from \code{\link{CAMPrep}}.}
+\item{PrepResult}{An object of class "\code{\link{CAMPrepObj}}" obtained
+from \code{\link{CAMPrep}} function.}
 
-\item{data}{Matrix of mixture expression profiles.
+\item{data}{Matrix of mixture expression profiles which need to be the same
+as the input of \code{\link{CAMPrep}}.
+Data frame, SummarizedExperiment or ExpressionSet object will be
+internally coerced into a matrix.
 Each row is a gene and each column is a sample.
 Data should be in non-log linear space with non-negative numerical values
 (i.e. >= 0). Missing values are not supported.}
@@ -22,7 +26,8 @@ Data should be in non-log linear space with non-negative numerical values
 errors. The default is 2.}
 }
 \value{
-An object of class "CAMASObj" containing the following components:
+An object of class "\code{\link{CAMASObj}}" containing the
+following components:
 \item{Aest}{Estimated proportion matrix from Approach 2.}
 \item{Sest}{Estimated subpopulation-specific expression matrix from
     Approach 2.}

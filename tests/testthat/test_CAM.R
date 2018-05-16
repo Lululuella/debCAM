@@ -16,9 +16,9 @@ test_that("Return NULL for inapplicable K", {
                          lof.thres = 0.02, cores = 0)
     )
 
-    expect_true(is.null(CAMResult$MGResult[[3]]))
-    expect_true(is.null(CAMResult$ASestResult[[3]]))
+    expect_true(is.null(CAMResult@MGResult[[3]]))
+    expect_true(is.null(CAMResult@ASestResult[[3]]))
 
     MDLres <- MDL(CAMResult)
-    expect_length(MDLres$mdls, 2)
+    expect_length(MDLres@mdls, 2)
 })

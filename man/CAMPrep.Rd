@@ -10,7 +10,8 @@ CAMPrep(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
 }
 \arguments{
 \item{data}{Matrix of mixture expression profiles.
-Data frame format will be internally coerced into a matrix.
+Data frame, SummarizedExperiment or ExpressionSet object will be
+internally coerced into a matrix.
 Each row is a gene and each column is a sample.
 Data should be in non-log linear space with non-negative numerical values
 (i.e. >= 0). Missing values are not supported.}
@@ -46,8 +47,9 @@ Zero value will disable lof.}
 k-Means.}
 }
 \value{
-An object of class "CAMPrepObj" containing the following components:
-\item{valid}{logical vector to indicate the genes left after filtering.}
+An object of class "\code{\link{CAMPrepObj}}" containing the
+following components:
+\item{Valid}{logical vector to indicate the genes left after filtering.}
 \item{Xprep}{Preprocessed data matrix.}
 \item{Xproj}{Preprocessed data matrix after perspective projection.}
 \item{W}{The matrix whose rows are loading vectors.}
