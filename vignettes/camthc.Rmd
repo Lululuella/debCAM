@@ -311,7 +311,8 @@ MGlist.FC <- lapply(seq_len(2), function(x)
 We can also run CAM on unmethylated quantification, 1 - beta, to obtain quite similar results since the underlying linear mixing model is also applicable for unmethylated probe intensity.
 
 ```{r, echo=TRUE, message=FALSE, eval=FALSE}
-rCAM <- CAM(1 - data[featureId,], K = 2, thres.low = 0.10, thres.high = 0.60)
+rCAM <- CAM(1 - exprs(data[featureId,]),
+            K = 2, thres.low = 0.10, thres.high = 0.60)
 ```
 
 # Supervised/Semi-supervised Deconvolution
