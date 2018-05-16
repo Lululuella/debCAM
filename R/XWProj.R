@@ -35,8 +35,8 @@ XWProj <- function(data, W){
     } else if (class(data) == "ExpressionSet") {
         data <- exprs(data)
     } else if (class(data) != "matrix") {
-        stop("Only matrix, data frame and SummarizedExperiment object are
-             supported for expression data!")
+        stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
+            object are supported for expression data!")
     }
 
     Xp <- data %*% t(W)

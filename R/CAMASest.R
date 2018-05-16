@@ -79,8 +79,8 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
     } else if (class(data) == "ExpressionSet") {
         data <- exprs(data)
     } else if (class(data) != "matrix") {
-        stop("Only matrix, data frame and SummarizedExperiment object are
-             supported for expression data!")
+        stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
+            object are supported for expression data!")
     }
     if (is.null(rownames(data))) {
         rownames(data) <- seq_len(nrow(data))

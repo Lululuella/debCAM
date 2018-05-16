@@ -124,8 +124,8 @@ CAMObj <- setClass("CAMObj",
 #' code length of data under the model.
 #' @slot mdls mdl value for each model with a certain subpopulation number.
 MDLObj <- setClass("MDLObj",
-         slots = list(
-             K = "vector",
-             datalengths = "vector",
-             mdls = "vector")
+    slots = list(
+        K = "vector",
+        datalengths = "vector",
+        mdls = "vector")
 )
