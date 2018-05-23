@@ -43,7 +43,7 @@ Theoretically, `CAMTHC` accepts any molecular expression data types as long as t
 - be in non-log linear space with non-negative numerical values (i.e.>=0).
 - be already processed by normalization and batch effect removal.
 - no missing values; the molecules containig missing values shoulde be removed prior to CAM.
-- no zero-expressed molecules; the molecules with zero expression in all samples should be removed prior to CAM.
+- no all-zero expressed molecules; otherwise, all-zero expressed molecules will be removed internally.
 
 The input expression data should be stored in a matrix. Data frame, SummarizedExperiment or ExpressionSet object is also accepted and will be internally coerced into a matrix format before analysis. Each column in the matrix should be a tissue sample. Each row should be a probe/gene/protein/etc. Row names should be provided so that CAM can return the names of detected markers. Otherwize rows will be automatically named by 1,2,3,...
 

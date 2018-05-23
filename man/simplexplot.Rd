@@ -11,7 +11,8 @@ simplexplot(data, A, MGlist = NULL, corner.order = NULL,
 \item{data}{A data set that will be internally coerced into a matrix.
 Each row is a gene and each column is a sample.
 Data should be in non-log linear space with non-negative numerical values
-(i.e. >= 0). Missing values are not supported.}
+(i.e. >= 0). Missing values are not supported.
+All-zero rows will be removed internally.}
 
 \item{A}{Prior/Estimated proporiton matrix.}
 

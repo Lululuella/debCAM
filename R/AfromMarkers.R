@@ -7,6 +7,7 @@
 #'     data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0).
 #'     Missing values are not supported.
+#'     All-zero rows will be removed internally.
 #' @param MGlist A list of vectors, each of which contains known markers
 #'     and/or CAM-detected markers for one subpopulation.
 #' @param scaleRecover If TRUE, scale ambiguity of each column vector
@@ -30,13 +31,13 @@
 #' #estimate A matrix from markers
 #' Aest <- AfromMarkers(ratMix3$X, pMGlist.FC)
 AfromMarkers <- function(data, MGlist, scaleRecover = TRUE){
-    if (class(data) == "data.frame") {
+    if (is(data, "data.frame")) {
         data <- as.matrix(data)
-    } else if (class(data) == "SummarizedExperiment") {
+    } else if (is(data, "SummarizedExperiment")) {
         data <- assay(data)
-    } else if (class(data) == "ExpressionSet") {
+    } else if (is(data, "ExpressionSet")) {
         data <- exprs(data)
-    } else if (class(data) != "matrix") {
+    } else if (is(data, "matrix") == FALSE) {
         stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
             object are supported for expression data!")
     }
@@ -46,6 +47,7 @@ AfromMarkers <- function(data, MGlist, scaleRecover = TRUE){
     if (sum(data<0) > 0) {
         stop("Only non-negative data are supported!")
     }
+    data <- data[rowSums(data) > 0,]
 
     Xproj <- t(data/rowSums(data))
 

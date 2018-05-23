@@ -10,6 +10,7 @@
 #'     Each row is a gene and each column is a sample.
 #'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
+#'     All-zero rows will be removed internally.
 #' @param K The candidate subpopulation number(s), e.g. K = 2:8.
 #' @param corner.strategy The method to find corners of convex hull.
 #'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
@@ -98,13 +99,13 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
     if (!is.numeric(K)) {
         stop("K is not numeric")
     }
-    if (class(data) == "data.frame") {
+    if (is(data, "data.frame")) {
         data <- as.matrix(data)
-    } else if (class(data) == "SummarizedExperiment") {
+    } else if (is(data, "SummarizedExperiment")) {
         data <- assay(data)
-    } else if (class(data) == "ExpressionSet") {
+    } else if (is(data, "ExpressionSet")) {
         data <- exprs(data)
-    } else if (class(data) != "matrix") {
+    } else if (is(data, "matrix") == FALSE) {
         stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
             object are supported for expression data!")
     }
@@ -120,6 +121,8 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
     if (dim.rdc < max(K)) {
         warning("dim.rdc is less than max(K)!")
     }
+
+    data <- data[rowSums(data) > 0,]
 
     coreParam <- NULL
     if (length(K) > 1 && (is.null(cores) || cores > 0)) {

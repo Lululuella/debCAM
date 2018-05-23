@@ -19,7 +19,8 @@ Data frame, SummarizedExperiment or ExpressionSet object will be
 internally coerced into a matrix.
 Each row is a gene and each column is a sample.
 Data should be in non-log linear space with non-negative numerical values
-(i.e. >= 0). Missing values are not supported.}
+(i.e. >= 0). Missing values are not supported.
+All-zero rows will be removed internally.}
 
 \item{corner.strategy}{The method to detect corner clusters.
 1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction

@@ -6,6 +6,7 @@
 #' @param data A data set that will be internally coerced into a matrix.
 #'     Each row is a gene and each column is a sample. Missing values
 #'     are not supported.
+#'     All-zero rows will be removed internally.
 #' @param W The matrix whose rows are loading vectors;
 #'     should be obtained from \code{\link{CAM}}/\code{\link{CAMPrep}} function
 #'     with accessor method \code{\link{PCAmat}}.
@@ -28,16 +29,18 @@
 #' #plot simplex in 3d space
 #' #plot3d(Xproj[,-1]) #The first dimension is constant after projection
 XWProj <- function(data, W){
-    if (class(data) == "data.frame") {
+    if (is(data, "data.frame")) {
         data <- as.matrix(data)
-    } else if (class(data) == "SummarizedExperiment") {
+    } else if (is(data, "SummarizedExperiment")) {
         data <- assay(data)
-    } else if (class(data) == "ExpressionSet") {
+    } else if (is(data, "ExpressionSet")) {
         data <- exprs(data)
-    } else if (class(data) != "matrix") {
+    } else if (is(data, "matrix") == FALSE) {
         stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
             object are supported for expression data!")
     }
+
+    data <- data[rowSums(data) > 0,]
 
     Xp <- data %*% t(W)
 

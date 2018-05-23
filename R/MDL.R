@@ -57,15 +57,15 @@ setMethod("plot", signature(x="MDLObj", y="missing"),
     function(x, data.term = FALSE, ...){
         if (data.term) {
             plot(x@K, x@mdls, xlab = 'number of sources', ylab = '', type='l',
-                 ylim = range(c(x@datalengths, x@mdls)), col= 'blue',
-                 xaxt = "n", ...)
+                ylim = range(c(x@datalengths, x@mdls)), col= 'blue',
+                xaxt = "n", ...)
             points(x@K, x@datalengths, type = 'l', lty = 2, col = 'red')
             axis(1, at = min(x@K) : max(x@K))
             legend("topright", cex=1.5, inset=.01, c("MDL","data term"),
-                   lty=c(1,2), col = c('blue', 'red'))
+                lty=c(1,2), col = c('blue', 'red'))
         } else {
             plot(x@K, x@mdl, xlab = 'number of sources', ylab = '',
-                 main = 'MDL Curve', col='blue', type='l', xaxt = "n", ...)
+                main = 'MDL Curve', col='blue', type='l', xaxt = "n", ...)
             axis(1, at = min(x@K) : max(x@K))
         }
     }

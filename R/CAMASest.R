@@ -13,6 +13,7 @@
 #'     Each row is a gene and each column is a sample.
 #'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
+#'     All-zero rows will be removed internally.
 #' @param corner.strategy The method to detect corner clusters.
 #'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
 #'     errors. The default is 2.
@@ -72,13 +73,13 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
     if (is.null(MGResult)) {
         return (NULL)
     }
-    if (class(data) == "data.frame") {
+    if (is(data, "data.frame")) {
         data <- as.matrix(data)
-    } else if (class(data) == "SummarizedExperiment") {
+    } else if (is(data, "SummarizedExperiment")) {
         data <- assay(data)
-    } else if (class(data) == "ExpressionSet") {
+    } else if (is(data, "ExpressionSet")) {
         data <- exprs(data)
-    } else if (class(data) != "matrix") {
+    } else if (is(data, "matrix") == FALSE) {
         stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
             object are supported for expression data!")
     }
@@ -86,7 +87,7 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
         rownames(data) <- seq_len(nrow(data))
         warning('Gene/probe name is missing!')
     }
-
+    data <- data[rowSums(data) > 0,]
 
     c.valid <- !(PrepResult@cluster$cluster %in% PrepResult@c.outlier)
     geneValid <- PrepResult@Valid

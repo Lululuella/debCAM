@@ -1,0 +1,22 @@
+# Changes in verison 0.99.4
+
+* Remove LazyData:true.
+
+* fix bugs for input class identification.
+
+* remove all-zero rows internally.
+
+
+# Changes in verison 0.99.3
+
+* Objects returned from main functions are converted to S4 classes
+
+* Add accessor methods for S4 objects.
+
+* Input expression data could be SummarizedExperiment and ExpressionSet object.
+
+* The second Case Study in Vignettes used ExpressionSet type as input.
+
+
+
+

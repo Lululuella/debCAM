@@ -9,7 +9,8 @@ XWProj(data, W)
 \arguments{
 \item{data}{A data set that will be internally coerced into a matrix.
 Each row is a gene and each column is a sample. Missing values
-are not supported.}
+are not supported.
+All-zero rows will be removed internally.}
 
 \item{W}{The matrix whose rows are loading vectors;
 should be obtained from \code{\link{CAM}}/\code{\link{CAMPrep}} function

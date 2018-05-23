@@ -5,6 +5,7 @@
 #'     Each row is a gene and each column is a sample.
 #'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
+#'     All-zero rows will be removed internally.
 #' @param A Prior/Estimated proporiton matrix.
 #' @param MGlist A list of vectors, each of which contains known markers
 #'     and/or CAM-detected markers for one subpopulation.
@@ -36,13 +37,13 @@
 #'             data.col = "blue", corner.col = c("red","orange","green"))
 simplexplot <- function(data, A, MGlist = NULL, corner.order = NULL,
                         data.col = 'gray', corner.col = 'red', ...){
-    if (class(data) == "data.frame") {
+    if (is(data, "data.frame")) {
         data <- as.matrix(data)
-    } else if (class(data) == "SummarizedExperiment") {
+    } else if (is(data, "SummarizedExperiment")) {
         data <- assay(data)
-    } else if (class(data) == "ExpressionSet") {
+    } else if (is(data, "ExpressionSet")) {
         data <- exprs(data)
-    } else if (class(data) != "matrix") {
+    } else if (is(data, "matrix") == FALSE) {
         stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
             object are supported for expression data!")
     }
@@ -53,6 +54,7 @@ simplexplot <- function(data, A, MGlist = NULL, corner.order = NULL,
         stop("The number of samples in data and in A matrix
             should be the same!")
     }
+    data <- data[rowSums(data) > 0,]
     K <- ncol(A)
     if (is.null(corner.order)) {
         corner.order <- seq_len(K)

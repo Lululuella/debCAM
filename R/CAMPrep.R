@@ -9,6 +9,7 @@
 #'     Each row is a gene and each column is a sample.
 #'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
+#'     All-zero rows will be removed internally.
 #' @param dim.rdc Reduced data dimension; should be not less than maximum
 #'     candidate K.
 #' @param thres.low The lower bound of percentage of genes to keep for CAM
@@ -72,13 +73,13 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
                     cluster.method = c('K-Means', 'apcluster'),
                     cluster.num = 50, MG.num.thres = 20, lof.thres = 0,
                     seed = NULL){
-    if (class(data) == "data.frame") {
+    if (is(data, "data.frame")) {
         data <- as.matrix(data)
-    } else if (class(data) == "SummarizedExperiment") {
+    } else if (is(data, "SummarizedExperiment")) {
         data <- assay(data)
-    } else if (class(data) == "ExpressionSet") {
+    } else if (is(data, "ExpressionSet")) {
         data <- exprs(data)
-    } else if (class(data) != "matrix") {
+    } else if (is(data, "matrix") == FALSE) {
         stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
             object are supported for expression data!")
     }
@@ -98,6 +99,7 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
         set.seed(seed)
     }
 
+    data <- data[rowSums(data) > 0,]
     X <- t(data)
 
     ######### data preprocessing ############

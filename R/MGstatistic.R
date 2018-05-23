@@ -7,6 +7,7 @@
 #'     Each row is a gene and each column is a sample.
 #'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
+#'     All-zero rows will be removed internally.
 #' @param A When data are mixture expression profiles,
 #'     A is estimated proportion matix or prior proportion matrix.
 #'     When data are pure expression profiles, A is a phenotype vector to
@@ -46,19 +47,20 @@
 #' }
 MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
                         cores = NULL, seed = NULL) {
-    if (class(data) == "data.frame") {
+    if (is(data, "data.frame")) {
         data <- as.matrix(data)
-    } else if (class(data) == "SummarizedExperiment") {
+    } else if (is(data, "SummarizedExperiment")) {
         data <- assay(data)
-    } else if (class(data) == "ExpressionSet") {
+    } else if (is(data, "ExpressionSet")) {
         data <- exprs(data)
-    } else if (class(data) != "matrix") {
+    } else if (is(data, "matrix") == FALSE) {
         stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
             object are supported for expression data!")
     }
     if (sum(is.na(data)) > 0) {
         stop("Data with missing values are not supported!")
     }
+    data <- data[rowSums(data) > 0,]
 
     M <- ncol(data)
 

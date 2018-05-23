@@ -11,7 +11,8 @@ AfromMarkers(data, MGlist, scaleRecover = TRUE)
 Each row is a gene and each column is a sample.
 data should be in non-log linear space with non-negative numerical values
 (i.e. >= 0).
-Missing values are not supported.}
+Missing values are not supported.
+All-zero rows will be removed internally.}
 
 \item{MGlist}{A list of vectors, each of which contains known markers
 and/or CAM-detected markers for one subpopulation.}
