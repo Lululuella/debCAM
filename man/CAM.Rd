@@ -6,8 +6,7 @@
 \usage{
 CAM(data, K = NULL, corner.strategy = 2, dim.rdc = 10, thres.low = 0.05,
   thres.high = 0.95, cluster.method = c("K-Means", "apcluster"),
-  cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02, cores = NULL,
-  seed = NULL)
+  cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02, cores = NULL)
 }
 \arguments{
 \item{data}{Matrix of mixture expression profiles.
@@ -56,9 +55,6 @@ Zero value will disable lof.}
 \item{cores}{The number of system cores for parallel computing.
 If not provided, one core for each element in K will be invoked.
 Zero value will disable parallel computing.}
-
-\item{seed}{For reproducibility, the seed of the random number generator for
-k-Means.}
 }
 \value{
 An object of class "\code{\link{CAMObj}}" containing the following
@@ -100,6 +96,9 @@ e.g. 0\% ~ 10\%, due to a limited number of proteins without missing values.
 #obtain data
 data(ratMix3)
 data <- ratMix3$X
+
+#set seed to generate reproduciable results
+set.seed(111)
 
 #CAM with known subpopulation number
 rCAM <- CAM(data, K = 3, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)

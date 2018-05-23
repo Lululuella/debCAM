@@ -17,8 +17,6 @@
 #' @param nboot The number of boots.
 #' @param cores The number of system cores for parallel computing.
 #'     If not provided, the default back-end is used.
-#' @param seed For reproducibility, the seed of the random number generator for
-#'     boot sampling.
 #' @details This function calculates OVE-FC and bootstrapped OVE-FC which can be
 #' used to identify markers from all genes.
 #' @return A data frame containing the following components:
@@ -46,7 +44,7 @@
 #' MGstat <- MGstatistic(S, c(1,1,1,2,2,2,3,3,3,3), boot.alpha = 0.05)
 #' }
 MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
-                        cores = NULL, seed = NULL) {
+                        cores = NULL) {
     if (is(data, "data.frame")) {
         data <- as.matrix(data)
     } else if (is(data, "SummarizedExperiment")) {
@@ -71,7 +69,7 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
                     subpopulation and Bootstrapping is not applicable!")
             boot.alpha <- NULL
         }
-    } else if (class(A) != "matrix") {
+    } else if (!is(A, "matrix")) {
         if (M != length(A)) {
             stop("Sample size in data matrix must be the same with the length
                 of A vector!")
@@ -83,9 +81,6 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
         colnames(A) <- levels(label)
 
         if (!is.null(boot.alpha)) {
-            if (!is.null(seed)) {
-                set.seed(seed)
-            }
             withinGroupSampleBoot <- function(group) {
                 sidx <- seq_along(group)
                 for (g in unique(group)) {
@@ -101,9 +96,6 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
         stop("Sample size in data matrix and A matrix should be the same!")
     } else {
         if (!is.null(boot.alpha)) {
-            if (!is.null(seed)) {
-                set.seed(seed)
-            }
             sampleId <- vapply(seq_len(nboot), function(x)
                 sample(M, replace = TRUE), integer(M))
         }
@@ -135,7 +127,7 @@ MGstatistic <- function(data, A = NULL, boot.alpha = NULL, nboot = 1000,
             #coef(nnls(A[sampleId[,p],], x)))
             S.boot <- tryCatch(.fcnnls(A[sampleId[,p],],
                 data[sampleId[,p],])$coef, error = function(e) e)
-            if (any(class(S.boot) == "error")) {
+            if (is(S.boot, "error")) {
                 return(rep(NA, ncol(data)))
             }
             OVE.FC.boot <- unlist(lapply(seq_len(ncol(S.boot)), function(x)

@@ -5,7 +5,7 @@
 \title{Statistics for ranking marker genes}
 \usage{
 MGstatistic(data, A = NULL, boot.alpha = NULL, nboot = 1000,
-  cores = NULL, seed = NULL)
+  cores = NULL)
 }
 \arguments{
 \item{data}{A data set that will be internally coerced into a matrix.
@@ -26,9 +26,6 @@ The default is 0.05.}
 
 \item{cores}{The number of system cores for parallel computing.
 If not provided, the default back-end is used.}
-
-\item{seed}{For reproducibility, the seed of the random number generator for
-boot sampling.}
 }
 \value{
 A data frame containing the following components:

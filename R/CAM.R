@@ -40,8 +40,6 @@
 #' @param cores The number of system cores for parallel computing.
 #'     If not provided, one core for each element in K will be invoked.
 #'     Zero value will disable parallel computing.
-#' @param seed For reproducibility, the seed of the random number generator for
-#'     k-Means.
 #' @details This function includes three necessary steps to decompose a matrix
 #' of mixture expression prefiles: data preprocessing, marker gene cluster
 #' search, and matrix decomposition. They are implemented in
@@ -75,6 +73,9 @@
 #' data(ratMix3)
 #' data <- ratMix3$X
 #'
+#' #set seed to generate reproduciable results
+#' set.seed(111)
+#'
 #' #CAM with known subpopulation number
 #' rCAM <- CAM(data, K = 3, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 #' #A larger dim.rdc can improve performance but increase time complexity
@@ -92,7 +93,7 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
                 thres.low = 0.05, thres.high = 0.95,
                 cluster.method = c('K-Means', 'apcluster'),
                 cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02,
-                cores = NULL, seed = NULL){
+                cores = NULL){
     if (is.null(K)) {
         stop("K is missing")
     }
@@ -138,7 +139,7 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
     ################ Preprocessing ################
     message('Preprocessing\n')
     PrepResult <- CAMPrep(data, dim.rdc, thres.low, thres.high, cluster.method,
-                        cluster.num, MG.num.thres, lof.thres, seed)
+                        cluster.num, MG.num.thres, lof.thres)
 
     ################ Marker Gene Selection ################
     message('Marker Gene Selection\n')

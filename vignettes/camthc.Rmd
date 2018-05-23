@@ -66,10 +66,11 @@ data <- ratMix3$X
 
 ### Analysis by CAM
 
-Unsupervised deconvolution can be achieved by the function `CAM()` with a simple setting as Section \@ref(quick-start) introduced. Other critial parameters are `dim.rdc` (reduced data dimension) and `cluster.num` (number of clusters). Increasing them will bring more time complexity. We can also specify `cores` for parallel computing configured by `r Biocpkg("BiocParallel")`. `cores = 0` will disable parallel computing. No `cores` argument will invoke one core for each element in `K`. The `seed` argument can help generate reproduciable results. 
+Unsupervised deconvolution can be achieved by the function `CAM()` with a simple setting as Section \@ref(quick-start) introduced. Other critial parameters are `dim.rdc` (reduced data dimension) and `cluster.num` (number of clusters). Increasing them will bring more time complexity. We can also specify `cores` for parallel computing configured by `r Biocpkg("BiocParallel")`. `cores = 0` will disable parallel computing. No `cores` argument will invoke one core for each element in `K`. Setting the seed of the random number generator prior to CAM can generate reproduciable results. 
 
 ```{r, echo=TRUE, message=FALSE}
-rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95, seed = 111)
+set.seed(111) # set seed for internal clustering to generate reproduciable results
+rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95)
 #CAM return three sub results: 
 #rCAM@PrepResult contains details corresponding to data preprocessing.
 #rCAM@MGResult contains details corresponding to marker gene clusters detection.
@@ -186,8 +187,10 @@ unlist(lapply(seq_len(3), function(k) {
 There major steps in CAM (data preprocession, marker gene cluster detection, and matrix decomposition) can also be performed seperately as a more flexiable choise.
 
 ```{r, echo=TRUE}
+set.seed(111)
+
 #Data preprocession
-rPrep <- CAMPrep(data, thres.low = 0.30, thres.high = 0.95, seed = 111)
+rPrep <- CAMPrep(data, thres.low = 0.30, thres.high = 0.95)
 
 #Marker gene cluster detection with a fixed K
 rMGC <- CAMMGCluster(3, rPrep)
@@ -224,9 +227,9 @@ data.clusterMean <- lapply(slot(apres,"clusters"),
                            function(x) rowMeans(data[, x, drop = FALSE]))
 data.clusterMean <- do.call(cbind, data.clusterMean)
 
-rCAM <- CAM(data.clusterMean, K = 2:5, thres.low = 0.30, thres.high = 0.95, 
-            seed = 111)
-# or rPrep <- CAMPrep(data.clusterMean, thres.low = 0.30, thres.high = 0.95, seed = 111)
+set.seed(111)
+rCAM <- CAM(data.clusterMean, K = 2:5, thres.low = 0.30, thres.high = 0.95)
+# or rPrep <- CAMPrep(data.clusterMean, thres.low = 0.30, thres.high = 0.95)
 ```
 
 We can still follow the workflow in \@ref(cam-workflow) or \@ref(alternative-cam-workflow) to obtain marker gene list and estimated S matrix. However, the estimated A matrix is for the new data composed of cluster centers. The A matrix for the origianl data can be obtained by
@@ -253,7 +256,8 @@ mat.aggre <- sapply(unique(pheno), function(x) rowMeans(mat[,pheno == x]))
 data <- mat.aggre[,5:8]
 
 #running CAM
-rCAM <- CAM(data, K = 4, thres.low = 0.70, thres.high = 0.95, seed = 111)
+set.seed(111)
+rCAM <- CAM(data, K = 4, thres.low = 0.70, thres.high = 0.95)
 Aest <- Amat(rCAM, 4)
 Aest
 

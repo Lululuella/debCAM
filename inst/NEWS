@@ -1,3 +1,9 @@
+# Changes in verison 0.99.5
+
+* Remove Remove set.seed usage within functions.
+
+* fix bugs for input class identification.
+
 # Changes in verison 0.99.4
 
 * Remove LazyData:true.

@@ -6,7 +6,7 @@
 \usage{
 CAMPrep(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
   cluster.method = c("K-Means", "apcluster"), cluster.num = 50,
-  MG.num.thres = 20, lof.thres = 0, seed = NULL)
+  MG.num.thres = 20, lof.thres = 0)
 }
 \arguments{
 \item{data}{Matrix of mixture expression profiles.
@@ -43,9 +43,6 @@ function. MG.num.thres is used as the number of neighbours in the
 calculation of the local outlier factors.
 The default value 0.02 will remove top 2\% local outliers.
 Zero value will disable lof.}
-
-\item{seed}{For reproducibility, the seed of the random number generator for
-k-Means.}
 }
 \value{
 An object of class "\code{\link{CAMPrepObj}}" containing the
@@ -89,6 +86,9 @@ of simplex corner detction.
 #obtain data
 data(ratMix3)
 data <- ratMix3$X
+
+#set seed to generate reproduciable results
+set.seed(111)
 
 #preprocess data
 rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
