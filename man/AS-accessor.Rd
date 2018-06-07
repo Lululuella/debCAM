@@ -37,7 +37,7 @@ Smat(x, ...)
 
 \item{usingPCA}{If TRUE, A matrix is estimated by transforming
 dimension-reduced A matrix back to original space. Otherwise, A matrix is
-directly estimated in origianl data space. The default is TRUE.}
+directly estimated in original data space. The default is TRUE.}
 }
 \value{
 Estimated A matrix or S matrix.

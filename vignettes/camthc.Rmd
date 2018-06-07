@@ -20,15 +20,15 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Convex Analysis of Mixtures (CAM) is a fully unsupervised computational method to analyze tissue samples composed of unknown numbers and varying proportions of distinct subpopulations. CAM assumes that the measured expression level is the weighted sum of each subpopulation’s expression, where the contribution from a single subpopulation is proportional to the abundance and specific expression of that subpopulation. This linear mixing model can be formulated as $\mathbf{X'=AS'}$. CAM can can identify molecular markers directly from the original mixed expression matrix, $\mathbf{X}$, and further estimate the constituent proportion matrix, $\mathbf{A}$, as well as subpopulation-specific expression profile matrix, $\mathbf{S}$.
+Convex Analysis of Mixtures (CAM) is a fully unsupervised computational method to analyze tissue samples composed of unknown numbers and varying proportions of distinct subpopulations. CAM assumes that the measured expression level is the weighted sum of each subpopulation’s expression, where the contribution from a single subpopulation is proportional to the abundance and specific expression of that subpopulation. This linear mixing model can be formulated as $\mathbf{X'=AS'}$. CAM can identify molecular markers directly from the original mixed expression matrix, $\mathbf{X}$, and further estimate the constituent proportion matrix, $\mathbf{A}$, as well as subpopulation-specific expression profile matrix, $\mathbf{S}$.
 
-`CAMTHC` is an R package developed for tissue heterogeneity characterization by CAM algorithm. It provides basic functions to perform unsupervised deconvolution on mixture expression profiles by CAM and some auxiliary functions to help understand the subpopulation-specific results. `CAMTHC` also implements functions to perform supervised deconlution based on prior knowledge of molecular markers, S matrix or A matrix. Semi-suprvised deconvolution can also be achieved by combining molecular markers from CAM and from prior knowledge to analyze mixture expressions.
+`CAMTHC` is an R package developed for tissue heterogeneity characterization by CAM algorithm. It provides basic functions to perform unsupervised deconvolution on mixture expression profiles by CAM and some auxiliary functions to help understand the subpopulation-specific results. `CAMTHC` also implements functions to perform supervised deconvolution based on prior knowledge of molecular markers, S matrix or A matrix. Semi-supervised deconvolution can also be achieved by combining molecular markers from CAM and from prior knowledge to analyze mixture expressions.
 
-# Quick start
+# Quick Start
 
-The function `CAM()` includes all necessary steps to decompose a matrix of mixture expression prefiles. There are some optional steps upstream of `CAM()` that downsample the matrix for reducing running time. Each step in `CAM()` can also be performed seperately if you prefer a more flexiable workflow. More details will be introduced in sections below.
+The function `CAM()` includes all necessary steps to decompose a matrix of mixture expression profiles. There are some optional steps upstream of `CAM()` that downsample the matrix for reducing running time. Each step in `CAM()` can also be performed separately if you prefer a more flexible workflow. More details will be introduced in sections below.
 
-Starting your analysis by `CAM()`, you need to specify the range of possible subpopulation numbers and the percentage of low/high-expressed molecueles to be removed. Typically, 30% ~ 50% low-expressed genes can be removed from gene expression data. Much less low-expressed proteins are removed, e.g. 0% ~ 10%, due to a limited number of proteins in proteomics data. The removel of high-expressed molecules has much less impact on results, and usually set to be 0% ~ 10%.
+Starting your analysis by `CAM()`, you need to specify the range of possible subpopulation numbers and the percentage of low/high-expressed molecules to be removed. Typically, 30% ~ 50% low-expressed genes can be removed from gene expression data. Much less low-expressed proteins are removed, e.g. 0% ~ 10%, due to a limited number of proteins in proteomics data. The removal of high-expressed molecules has much less impact on results, and usually set to be 0% ~ 10%.
 
 ```{r, eval=FALSE}
 rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95)
@@ -42,12 +42,12 @@ Theoretically, `CAMTHC` accepts any molecular expression data types as long as t
 
 - be in non-log linear space with non-negative numerical values (i.e.>=0).
 - be already processed by normalization and batch effect removal.
-- no missing values; the molecules containig missing values shoulde be removed prior to CAM.
+- no missing values; the molecules containing missing values should be removed prior to CAM.
 - no all-zero expressed molecules; otherwise, all-zero expressed molecules will be removed internally.
 
-The input expression data should be stored in a matrix. Data frame, SummarizedExperiment or ExpressionSet object is also accepted and will be internally coerced into a matrix format before analysis. Each column in the matrix should be a tissue sample. Each row should be a probe/gene/protein/etc. Row names should be provided so that CAM can return the names of detected markers. Otherwize rows will be automatically named by 1,2,3,...
+The input expression data should be stored in a matrix. Data frame, SummarizedExperiment or ExpressionSet object is also accepted and will be internally coerced into a matrix format before analysis. Each column in the matrix should be a tissue sample. Each row should be a probe/gene/protein/etc. Row names should be provided so that CAM can return the names of detected markers. Otherwise, rows will be automatically named by 1,2,3,...
 
-## CAM workflow
+## CAM Workflow
 
 We use a data set downsampled from [GSE19830](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE19830) as an example to show CAM workflow. This data set provides gene expression profiles of pure tissues (brain, liver, lung) and their biological mixtures with different proportions.  
 
@@ -55,8 +55,8 @@ We use a data set downsampled from [GSE19830](https://www.ncbi.nlm.nih.gov/geo/q
 library(CAMTHC)
 
 data(ratMix3) 
-#ratMix3$X: X matrix cotaining mixtue expression profiless to be analyzed
-#ratMix3$A: ground truth A matrix cotaining proportions
+#ratMix3$X: X matrix containing mixture expression profiles to be analyzed
+#ratMix3$A: ground truth A matrix containing proportions
 #ratMix3$S: ground truth S matrix containing subpopulation-specific expression profiles
 
 data <- ratMix3$X
@@ -66,10 +66,10 @@ data <- ratMix3$X
 
 ### Analysis by CAM
 
-Unsupervised deconvolution can be achieved by the function `CAM()` with a simple setting as Section \@ref(quick-start) introduced. Other critial parameters are `dim.rdc` (reduced data dimension) and `cluster.num` (number of clusters). Increasing them will bring more time complexity. We can also specify `cores` for parallel computing configured by `r Biocpkg("BiocParallel")`. `cores = 0` will disable parallel computing. No `cores` argument will invoke one core for each element in `K`. Setting the seed of the random number generator prior to CAM can generate reproduciable results. 
+Unsupervised deconvolution can be achieved by the function `CAM()` with a simple setting as Section \@ref(quick-start) introduced. Other critical parameters are `dim.rdc` (reduced data dimension) and `cluster.num` (number of clusters). Increasing them will bring more time complexity. We can also specify `cores` for parallel computing configured by `r Biocpkg("BiocParallel")`. `cores = 0` will disable parallel computing. No `cores` argument will invoke one core for each element in `K`. Setting the seed of the random number generator prior to CAM can generate reproducible results. 
 
 ```{r, echo=TRUE, message=FALSE}
-set.seed(111) # set seed for internal clustering to generate reproduciable results
+set.seed(111) # set seed for internal clustering to generate reproducible results
 rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95)
 #CAM return three sub results: 
 #rCAM@PrepResult contains details corresponding to data preprocessing.
@@ -79,14 +79,14 @@ rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95)
 
 ### Estimated A and S matrix
 
-The A and S matrix estimated by CAM with a fixed subpopultation number, e.g. K = 3, can be obtained by
+The A and S matrix estimated by CAM with a fixed subpopulation number, e.g. K = 3, can be obtained by
 
 ```{r, echo=TRUE}
 Aest <- Amat(rCAM, 3)
 Sest <- Smat(rCAM, 3)
 ```
 
-### Detected marker genes
+### Detected Marker Genes
 
 The marker genes detected by CAM and used for A matrix estimation can be obtained by
 
@@ -94,7 +94,7 @@ The marker genes detected by CAM and used for A matrix estimation can be obtaine
 MGlist <- MGsforA(rCAM, K = 3) #for three subpopulations
 ```
 
-Data preprocessing has filtered many genes, among which there are also some biologically-meaningful marker genes. So we need to check each gene again to find all the possible markers. Two statistics based on the subpopultiaon-specifc expressions are exploited to identify marker genes with certain thresholds. The first is OVE-FC (one versus everyone - fold change) (Yu et al. 2010). The second is the lower confidence bound of bootstrapped OVE-FC at $\alpha$ level. 
+Data preprocessing has filtered many genes, among which there are also some biologically-meaningful marker genes. So we need to check each gene again to find all the possible markers. Two statistics based on the subpopulation-specific expressions are exploited to identify marker genes with certain thresholds. The first is OVE-FC (one versus everyone - fold change) (Yu et al. 2010). The second is the lower confidence bound of bootstrapped OVE-FC at $\alpha$ level. 
 
 ```{r, echo=TRUE}
 MGstat <- MGstatistic(data, Aest, boot.alpha = 0.05, nboot = 1000)
@@ -106,7 +106,7 @@ MGlist.FCboot <- lapply(seq_len(3), function(x)
 
 ### Simplex Plot - 2D
 
-Fundamental to the success of CAM is that the scatter simplex of mixed expressions is a rotated and compressed version of the scatter simplex of pure expressions, where the marker genes are located at each vertex. `simplexplot()` function can show the scatter simplex and deteced marker genes in a 2D plot. The vertices in the high-dimenisonal simplex will still locate at extreme points of low-dimensional simplex. 
+Fundamental to the success of CAM is that the scatter simplex of mixed expressions is a rotated and compressed version of the scatter simplex of pure expressions, where the marker genes are located at each vertex. `simplexplot()` function can show the scatter simplex and detected marker genes in a 2D plot. The vertices in the high-dimensional simplex will still locate at extreme points of the low-dimensional simplex. 
 
 ```{r, fig.height=6, fig.width=6}
 simplexplot(data, Aest, MGlist)
@@ -123,7 +123,7 @@ simplexplot(data, Aest, MGlist.FCboot, corner.order = c(2,1,3),
 
 ### Simplex Plot - 3D
 
-We can also observe the convex cone and simplex of mixture expressions in 3D space by PCA. Note that PCA cannot gurantee the vertices will be still preserved as extreme points of the dimension-reduced simplex.
+We can also observe the convex cone and simplex of mixture expressions in 3D space by PCA. Note that PCA cannot guarantee that vertices are still preserved as extreme points of the dimension-reduced simplex.
 
 Code to show convex cone:
 
@@ -153,7 +153,7 @@ for(i in seq_along(MGlist)){
 }
 ```
 
-### Model selection by MDL curves
+### Model Selection by MDL Curves
 
 We used MDL, a widely-adopted and consistent information theoretic criterion, to guide model selection. The underlying subpopulation number can be decided by minimizing the total description code length:
 
@@ -163,7 +163,7 @@ plot(MDL(rCAM), data.term = TRUE)
 
 ### Validation with Ground Truth
 
-If the ground truth A and S matrix are availabe, the estimation from CAM can be evaluated:
+If the ground truth A and S matrix are available, the estimation from CAM can be evaluated:
 
 ```{r, echo=TRUE}
 cor(Aest, ratMix3$A)
@@ -182,9 +182,9 @@ unlist(lapply(seq_len(3), function(k) {
 
 ```
 
-## Alternative CAM workflow
+## Alternative CAM Workflow
 
-There major steps in CAM (data preprocession, marker gene cluster detection, and matrix decomposition) can also be performed seperately as a more flexiable choise.
+There major steps in CAM (data preprocessing, marker gene cluster detection, and matrix decomposition) can also be performed separately as a more flexible choice.
 
 ```{r, echo=TRUE}
 set.seed(111)
@@ -213,15 +213,15 @@ MGlist.FCboot <- lapply(seq_len(3), function(x)
     rownames(MGstat)[MGstat$idx == x & MGstat$OVE.FC.alpha > 10])
 ```
 
-## Optional sample clustering
+## Optional Sample Clustering
 
-We have implemented PCA in `CAM()`/`CAMPrep()` to reduce data dimensions. Sample clusteirng, as another data dimension reduction method, is optional prior to `CAM()`/`CAMPrep()`. 
+We have implemented PCA in `CAM()`/`CAMPrep()` to reduce data dimensions. Sample clustering, as another data dimension reduction method, is optional prior to `CAM()`/`CAMPrep()`. 
 
 ```{r, echo=TRUE, message=FALSE}
 #clustering
 library(apcluster)
 apres <- apclusterK(negDistMat(r=2), t(data),  K = 10) 
-#You can also use apcluster(), but need to make sure the number of clusters is large than potentional subpopulation number.
+#You can also use apcluster(), but need to make sure the number of clusters is large than potential subpopulation number.
 
 data.clusterMean <- lapply(slot(apres,"clusters"), 
                            function(x) rowMeans(data[, x, drop = FALSE]))
@@ -232,7 +232,7 @@ rCAM <- CAM(data.clusterMean, K = 2:5, thres.low = 0.30, thres.high = 0.95)
 # or rPrep <- CAMPrep(data.clusterMean, thres.low = 0.30, thres.high = 0.95)
 ```
 
-We can still follow the workflow in \@ref(cam-workflow) or \@ref(alternative-cam-workflow) to obtain marker gene list and estimated S matrix. However, the estimated A matrix is for the new data composed of cluster centers. The A matrix for the origianl data can be obtained by
+We can still follow the workflow in \@ref(cam-workflow) or \@ref(alternative-cam-workflow) to obtain marker gene list and estimated S matrix. However, the estimated A matrix is for the new data composed of cluster centers. The A matrix for the original data can be obtained by
 
 ```{r, echo=TRUE}
 Sest <- Smat(rCAM,3)
@@ -240,10 +240,10 @@ MGlist <- MGsforA(rCAM, K = 3)
 Aest <- AfromMarkers(data, MGlist)
 ```
 
-## Case study
+## Case Study
 ### GSE11058
 
-[GSE11058](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE11058) run four immune cell lines on microarrays as well as their mixtures of various relative proportions. The code chunk below shows how to use CAM to blindly seperate the four mixtures into four pure cell lines. Note that this data set contains 54613 probe/probesets. We can reduce running time by downsampling probe/probesets or remove more low-expressed genes (e.g. 70%).
+[GSE11058](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE11058) run four immune cell lines on microarrays as well as their mixtures of various relative proportions. The code chunk below shows how to use CAM to blindly separate the four mixtures into four pure cell lines. Note that this data set contains 54613 probe/probesets. We can reduce running time by downsampling probe/probesets or remove more low-expressed genes (e.g. 70%).
 
 ```{r, echo=TRUE, message=FALSE}
 #download data and phenotypes
@@ -275,7 +275,7 @@ cor(Aest, Atrue)
 
 ### GSE41826 (methylation)
 
-[GSE41826](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41826) conducted a reconstitution experiment by mixing neuron and glial derived DNA from a single individual from 10% ~ 90%. The code chunk below shows how to use CAM to blindly seperate 9 mixtures into neuron and glial specific CpG methylation quantification. Additional requirments of running CAM on methylation data: 
+[GSE41826](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE41826) conducted a reconstitution experiment by mixing neuron and glial derived DNA from a single individual from 10% ~ 90%. The code chunk below shows how to use CAM to blindly separate 9 mixtures into neuron and glial specific CpG methylation quantification. Additional requirements of running CAM on methylation data: 
 
 - Use beta-value, not M-value, as methylation quantification.
 - CpG sites in X or Y chromosomes must be removed if mixture tissues are from both males and females. 
@@ -358,7 +358,7 @@ MGstat <- MGstatistic(data, A)
 
 ## Semi-supervised Deconvolution
 
-When prior information of markers, S matrix and/or A matrix is available, semi-supervised deconvoluton can also be performed by combining markers from prior information and markers identified by CAM. While supervised deconvolution cannot handle the underlying subpopulations without prior information, unsupervised deconvolution may miss the subpopulation without enough discrimination power. Therefore, semi-supervised deconvolution can take advantage of both methods.   
+When prior information of markers, S matrix and/or A matrix is available, semi-supervised deconvolution can also be performed by combining markers from prior information and markers identified by CAM. While supervised deconvolution cannot handle the underlying subpopulations without prior information, unsupervised deconvolution may miss the subpopulation without enough discrimination power. Therefore, semi-supervised deconvolution can take advantage of both methods.   
 
 ```{r, echo=TRUE, eval=FALSE}
 Aest <- AfromMarkers(data, MGlist)

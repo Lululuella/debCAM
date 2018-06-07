@@ -6,15 +6,15 @@
 #'     Data should be in non-log linear space with non-negative numerical values
 #'     (i.e. >= 0). Missing values are not supported.
 #'     All-zero rows will be removed internally.
-#' @param A Prior/Estimated proporiton matrix.
+#' @param A Prior/Estimated proportion matrix.
 #' @param MGlist A list of vectors, each of which contains known markers
 #'     and/or CAM-detected markers for one subpopulation.
 #' @param corner.order The order to show simplex corners counterclockwise.
 #' @param data.col The color for data points. The default is "gray".
 #' @param corner.col The color for corner points. The default is "red".
 #' @param ... All other arguments are passed to the plotting command.
-#' @details This function can show the scatter simplex and deteced marker genes
-#' in a 2D plot. The corners in the high-dimenisonal simplex will still locate
+#' @details This function can show the scatter simplex and detected marker genes
+#' in a 2D plot. The corners in the high-dimensional simplex will still locate
 #' at extreme points of low-dimensional simplex. These corners will follow the
 #' order set by \code{corner.order} to display in the plot counterclockwise.
 #' @return A plot to the current device.

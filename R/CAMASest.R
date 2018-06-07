@@ -22,12 +22,12 @@
 #' and mdl values. It can also be used when you want to perform CAM step by
 #' step.
 #'
-#' The mdl values are calcluated in three approaches:
+#' The mdl values are calculated in three approaches:
 #' (1) based on data and A matrix in dimension-reduced space; (2) based on
 #' original data with A matrix estimated by transforming dimension-reduced
 #' A matrix back to original space;
-#' (3) based on original data with A directly estimated in origianl space.
-#' A and S matrix in origial space estiamted from the latter two approaches are
+#' (3) based on original data with A directly estimated in original space.
+#' A and S matrix in original space estimated from the latter two approaches are
 #' returned. mdl is the sum of two terms: code length of data under the model
 #' and code length of model. Both mdl value and the first term (code length
 #' of data) will be returned.

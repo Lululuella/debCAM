@@ -32,7 +32,7 @@ setGeneric(name="Smat", def=function(x, ...) standardGeneric("Smat"))
 #' @param k subpopulation number
 #' @param usingPCA If TRUE, A matrix is estimated by transforming
 #' dimension-reduced A matrix back to original space. Otherwise, A matrix is
-#' directly estimated in origianl data space. The default is TRUE.
+#' directly estimated in original data space. The default is TRUE.
 #' @rdname AS-accessor
 #' @aliases Amat
 setMethod("Amat", signature(x="CAMObj"),
@@ -76,7 +76,7 @@ setMethod("Smat", signature(x="CAMASObj"),
 #' Accessor to Dimension-reduction loading matrix.
 #' @param x a \code{\link{CAMObj}} object or a \code{\link{CAMPrepObj}} object
 #' @param ... additional argument list.
-#' @return The matrix whose rows are loading vectors for dimention reduction.
+#' @return The matrix whose rows are loading vectors for dimension reduction.
 #' @export
 #' @examples
 #' #obtain data

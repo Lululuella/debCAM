@@ -49,7 +49,7 @@ MDL <- function(CAMResult, mdl.method = 3) {
 }
 
 #' @param x An object of class "\code{\link{MDLObj}}" from \code{\link{MDL}}.
-#' @param data.term If ture, plot data term (code lenght of data under model).
+#' @param data.term If true, plot data term (code length of data under model).
 #' @param ... All other arguments are passed to the plotting command.
 #' @export
 #' @rdname MDL

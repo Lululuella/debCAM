@@ -1,7 +1,7 @@
 Package: CAMTHC
 Type: Package
 Title: Convex Analysis of Mixtures for Tissue Heterogeneity Characterization
-Version: 0.99.5
+Version: 0.99.6
 Author: Lulu Chen <luluchen@vt.edu>
 Maintainer: Lulu Chen <luluchen@vt.edu>
 biocViews: Software, CellBiology, GeneExpression
@@ -9,10 +9,10 @@ Description: An R package for tissue heterogeneity characterization by convex
     analysis of mixtures (CAM). It provides basic functions to perform 
     unsupervised deconvolution on mixture expression profiles by CAM and some 
     auxiliary functions to help understand the subpopulation-specific results. 
-    It also implements functions to perform supervised deconlution based on 
+    It also implements functions to perform supervised deconvolution based on 
     prior knowledge of molecular markers, S matrix or A matrix. Combining 
     molecular markers from CAM and from prior knowledge can achieve 
-    semi-suprvised deconvolution of mixtures.
+    semi-supervised deconvolution of mixtures.
 License: GPL-2
 Encoding: UTF-8
 RoxygenNote: 6.0.1
@@ -40,3 +40,4 @@ Imports:
     apcluster,
     graphics
 SystemRequirements: Java (>= 1.8)
+BugReports: https://github.com/Lululuella/CAMTHC/issues

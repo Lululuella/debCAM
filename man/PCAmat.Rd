@@ -19,7 +19,7 @@ PCAmat(x, ...)
 \item{...}{additional argument list.}
 }
 \value{
-The matrix whose rows are loading vectors for dimention reduction.
+The matrix whose rows are loading vectors for dimension reduction.
 }
 \description{
 Accessor to Dimension-reduction loading matrix.

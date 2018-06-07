@@ -30,7 +30,7 @@ should be not less than maximum candidate K.}
 with ranked norm. The value should be between 0 and 1.
 The default is 0.05.}
 
-\item{thres.high}{The higer bound of percentage of genes to keep for CAM
+\item{thres.high}{The higher bound of percentage of genes to keep for CAM
 with ranked norm. The value should be between 0 and 1.
 The default is 0.95.}
 
@@ -47,7 +47,7 @@ MG.num.thres will be treated as outliers.
 The default is 20.}
 
 \item{lof.thres}{Remove local outlier using \code{\link[DMwR]{lofactor}}.
-MG.num.thres is used as the number of neighbours in the calculation of
+MG.num.thres is used as the number of neighbors in the calculation of
 the local outlier factors.
 The default value 0.02 will remove top 2\% local outliers.
 Zero value will disable lof.}
@@ -61,11 +61,11 @@ An object of class "\code{\link{CAMObj}}" containing the following
 components:
 \item{PrepResult}{An object of class "\code{\link{CAMPrepObj}}" containing
 data preprocessing results from \code{\link{CAMPrep}} function.}
-\item{MGResult}{A list of "\code{\link{CAMMGObj}}" objects containg
+\item{MGResult}{A list of "\code{\link{CAMMGObj}}" objects containing
 marker gene detection results from \code{\link{CAMMGCluster}} function for
 each K value.}
 \item{ASestResult}{A list of "\code{\link{CAMASObj}}" objects containing
-estimated proportions, subpopution-specific expressions and mdl values
+estimated proportions, subpopulation-specific expressions and mdl values
 from \code{\link{CAMASest}} function for each K value.}
 }
 \description{
@@ -76,16 +76,16 @@ This function performs a fully unsupervised computational deconvolution
 }
 \details{
 This function includes three necessary steps to decompose a matrix
-of mixture expression prefiles: data preprocessing, marker gene cluster
+of mixture expression profiles: data preprocessing, marker gene cluster
 search, and matrix decomposition. They are implemented in
 \code{\link{CAMPrep}}, \code{\link{CAMMGCluster}} and
-\code{\link{CAMASest}}, seperately.
+\code{\link{CAMASest}}, separately.
 More details can be found in the help document of each function.
 
 For this function, you needs to specify the range of possible
 subpopulation numbers and the percentage of low/high-expressed genes to
 be removed. Typically, 30\% ~ 50\% low-expressed genes can be removed from
-gene expression data. The removel of high-expressed genes has much less
+gene expression data. The removal of high-expressed genes has much less
 impact on results, and usually set to be 0\% ~ 10\%.
 
 This function can also analyze other molecular expression data, such as
@@ -97,7 +97,7 @@ e.g. 0\% ~ 10\%, due to a limited number of proteins without missing values.
 data(ratMix3)
 data <- ratMix3$X
 
-#set seed to generate reproduciable results
+#set seed to generate reproducible results
 set.seed(111)
 
 #CAM with known subpopulation number

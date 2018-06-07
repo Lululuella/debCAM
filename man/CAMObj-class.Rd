@@ -20,7 +20,7 @@ results from \code{\link{CAMMGCluster}} function for each candidate
 subpopulation number.}
 
 \item{\code{ASestResult}}{A list of "\code{\link{CAMASObj}}" objects storing
-estimated proportions, subpopution-specific expressions and mdl values
+estimated proportions, subpopulation-specific expressions and mdl values
 from \code{\link{CAMASest}} function for each candidate
 subpopulation number.}
 }}

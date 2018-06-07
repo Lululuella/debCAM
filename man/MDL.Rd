@@ -18,7 +18,7 @@ The default is 3.}
 
 \item{x}{An object of class "\code{\link{MDLObj}}" from \code{\link{MDL}}.}
 
-\item{data.term}{If ture, plot data term (code lenght of data under model).}
+\item{data.term}{If true, plot data term (code length of data under model).}
 
 \item{...}{All other arguments are passed to the plotting command.}
 }

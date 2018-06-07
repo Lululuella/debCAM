@@ -18,7 +18,7 @@
 #' Marker genes could be from unsupervised/supervised detection or
 #' from literatures.
 #' Scale ambiguity is optionally removed based on sum-to-one constraint of rows.
-#' @return Return the estiamted proportion matrix (A matrix).
+#' @return Return the estimated proportion matrix (A matrix).
 #' @export
 #' @examples
 #' #obtain data and marker genes

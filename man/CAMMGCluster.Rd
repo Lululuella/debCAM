@@ -38,7 +38,7 @@ detect clusters containing marker genes,
 or used when you want to perform CAM step by step.
 
 This function provides two solutions. The first is the combination of
-clusters yielding the minimum sum of margin-of-errors for cluster ceneters.
+clusters yielding the minimum sum of margin-of-errors for cluster centers.
 In the second, nComb possible combinations are selected by ranking sum of
 margin-of-errors for cluster centers. Then the best one is selected based on
 reconstruction errors of all data points in original space.

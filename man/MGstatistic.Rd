@@ -15,7 +15,7 @@ Data should be in non-log linear space with non-negative numerical values
 All-zero rows will be removed internally.}
 
 \item{A}{When data are mixture expression profiles,
-A is estimated proportion matix or prior proportion matrix.
+A is estimated proportion matrix or prior proportion matrix.
 When data are pure expression profiles, A is a phenotype vector to
 indicate which subpopulation each sample belongs to.}
 
@@ -31,7 +31,7 @@ If not provided, the default back-end is used.}
 A data frame containing the following components:
 \item{idx}{Numbers or phenotypes indicating which subpopulation each gene
 could be a marker for. If A is a proportion matrix without column name,
-numbers are returned. Otherwize, phenotypes.}
+numbers are returned. Otherwise, phenotypes.}
 \item{OVE.FC}{One-versus-Everyone fold change (OVE-FC)}
 \item{OVE.FC.alpha}{lower confidence bound of bootstrapped OVE-FC at alpha
     level.}
@@ -39,7 +39,7 @@ numbers are returned. Otherwize, phenotypes.}
 \description{
 This function computes One-Versus-Everyone Fold Change (OVE-FC)
 from subpopulation-specific expression profiles.
-Bootstrappping is optional.
+Bootstrapping is optional.
 }
 \details{
 This function calculates OVE-FC and bootstrapped OVE-FC which can be

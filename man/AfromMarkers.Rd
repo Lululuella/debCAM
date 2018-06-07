@@ -21,7 +21,7 @@ and/or CAM-detected markers for one subpopulation.}
 in A matrix is removed based on sum-to-one constraint on each row.}
 }
 \value{
-Return the estiamted proportion matrix (A matrix).
+Return the estimated proportion matrix (A matrix).
 }
 \description{
 This function estimates proportion matrix (A matrix) from observed mixture

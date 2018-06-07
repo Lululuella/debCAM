@@ -14,7 +14,7 @@ Data should be in non-log linear space with non-negative numerical values
 (i.e. >= 0). Missing values are not supported.
 All-zero rows will be removed internally.}
 
-\item{A}{Prior/Estimated proporiton matrix.}
+\item{A}{Prior/Estimated proportion matrix.}
 
 \item{MGlist}{A list of vectors, each of which contains known markers
 and/or CAM-detected markers for one subpopulation.}
@@ -34,8 +34,8 @@ A plot to the current device.
 This function shows scatter simplex of mixture expressions.
 }
 \details{
-This function can show the scatter simplex and deteced marker genes
-in a 2D plot. The corners in the high-dimenisonal simplex will still locate
+This function can show the scatter simplex and detected marker genes
+in a 2D plot. The corners in the high-dimensional simplex will still locate
 at extreme points of low-dimensional simplex. These corners will follow the
 order set by \code{corner.order} to display in the plot counterclockwise.
 }

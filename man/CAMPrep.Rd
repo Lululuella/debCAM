@@ -24,12 +24,12 @@ candidate K.}
 with ranked norm. The value should be between 0 and 1.
 The default is 0.05.}
 
-\item{thres.high}{The higer bound of percentage of genes to keep for CAM
+\item{thres.high}{The higher bound of percentage of genes to keep for CAM
 with ranked norm. The value should be between 0 and 1.
 The default is 0.95.}
 
 \item{cluster.method}{The method to do clustering. The default "K-Means" will
-use \code{\link{kmeans}} fucntion. The alternative "apcluster" will use
+use \code{\link{kmeans}} function. The alternative "apcluster" will use
 \code{\link[apcluster]{apclusterK-methods}}.}
 
 \item{cluster.num}{The number of clusters; should be much larger than K.
@@ -39,7 +39,7 @@ The default is 50.}
 MG.num.thres will be treated as outliers. The default is 20.}
 
 \item{lof.thres}{Remove local outlier using \code{\link[DMwR]{lofactor}}
-function. MG.num.thres is used as the number of neighbours in the
+function. MG.num.thres is used as the number of neighbors in the
 calculation of the local outlier factors.
 The default value 0.02 will remove top 2\% local outliers.
 Zero value will disable lof.}
@@ -71,23 +71,23 @@ preprocess data, or used when you want to perform CAM step by step.
 Low/high-expressed genes are filtered by their L2-norm ranks.
 Dimension reduction is slightly different from PCA.
 The first loading vector is forced to be c(1,1,...,1) with unit norm
-normaliztion. The remaining are eignvectors from PCA in the space orthogonal
-to the first vector.
+normalization. The remaining are eigenvectors from PCA in the space
+orthogonal to the first vector.
 Perspective projection is to project dimension-reduced gene expression
 vectors to the hyperplane orthogonal to c(1,0,...,0), i.e., the first axis
 in the new coordinate system.
 local outlier removal is optional to exclude outliers in simplex formed
 after perspective projection.
-Finallly, gene expression vectors are aggregated by clustering
-to further reduce the impact of noise/outler and help improve the efficiency
-of simplex corner detction.
+Finally, gene expression vectors are aggregated by clustering
+to further reduce the impact of noise/outlier and help improve the efficiency
+of simplex corner detection.
 }
 \examples{
 #obtain data
 data(ratMix3)
 data <- ratMix3$X
 
-#set seed to generate reproduciable results
+#set seed to generate reproducible results
 set.seed(111)
 
 #preprocess data
