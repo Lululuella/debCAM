@@ -64,7 +64,7 @@ setMethod("plot", signature(x="MDLObj", y="missing"),
             legend("topright", cex=1.5, inset=.01, c("MDL","data term"),
                 lty=c(1,2), col = c('blue', 'red'))
         } else {
-            plot(x@K, x@mdl, xlab = 'number of sources', ylab = '',
+            plot(x@K, x@mdls, xlab = 'number of sources', ylab = '',
                 main = 'MDL Curve', col='blue', type='l', xaxt = "n", ...)
             axis(1, at = min(x@K) : max(x@K))
         }
