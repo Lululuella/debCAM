@@ -4,13 +4,7 @@ The goal of CAMTHC is to perform computational deconvolution for tissue heteroge
 
 ## Installation
 
-You can install the released version of CAMTHC following the instructions in CAMTHC's bioconductor page
-
-``` r
-## try http:// if https:// URLs are not supported
-source("https://bioconductor.org/biocLite.R")
-biocLite("CAMTHC")
-```
+You can install the latest version of CAMTHC following the instructions in CAMTHC's bioconductor page: http://bioconductor.org/packages/CAMTHC.
 
 Or, you can install it from github by
 
