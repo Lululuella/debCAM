@@ -7,7 +7,7 @@
 cornerSort(X, K, nComb)
 }
 \arguments{
-\item{X}{A matrix of data. Each column is a data point.}
+\item{X}{Data in a matrix. Each column is a data point.}
 
 \item{K}{The number of corner points.}
 

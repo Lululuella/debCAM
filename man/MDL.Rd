@@ -44,7 +44,7 @@ mdl is code length of data under the model plus code length of model.
 Both mdl value and the first term about data are returned.
 }
 \examples{
-\donttest{
+\dontrun{
 #obtain data
 data(ratMix3)
 data <- ratMix3$X

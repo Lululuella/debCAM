@@ -3,7 +3,7 @@
 #' Given a set of data points, return possible combinations of data points as
 #' corners. These combinations are selected by ranking the sum of
 #' margin-of-errors.
-#' @param X    A matrix of data. Each column is a data point.
+#' @param X    Data in a matrix. Each column is a data point.
 #' @param K    The number of corner points.
 #' @param nComb    The number of returned combinations of data points as
 #'     corners. All combinations will be returned if the number of all

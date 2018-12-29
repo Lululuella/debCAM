@@ -20,7 +20,7 @@
 #' \item{mdls}{mdl value for each model with a certain subpopulation number.}
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' #obtain data
 #' data(ratMix3)
 #' data <- ratMix3$X

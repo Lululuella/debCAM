@@ -5,6 +5,11 @@
 #' @param K The candidate subpopulation number.
 #' @param PrepResult An object of class "\code{\link{CAMPrepObj}}" obtained
 #'     from \code{\link{CAMPrep}} function.
+#' @param generalNMF If TRUE, the decomposed proportion matrix has no sum-to-one
+#'     constraint for each row. Without this constraint, the scale ambiguity of
+#'     corner cluster centers will not be removed when computing
+#'     reconstruction errors.
+#'     The default is FALSE.
 #' @param nComb The number of possible combinations of clusters as corner
 #'     clusters. Within these possible combinations ranked by margin errors,
 #'     we can further select the best one based on reconstruction errors.
@@ -38,7 +43,7 @@
 #'
 #' #Marker gene cluster detection with a fixed K = 3
 #' rMGC <- CAMMGCluster(3, rPrep)
-CAMMGCluster <- function(K, PrepResult, nComb = 200) {
+CAMMGCluster <- function(K, PrepResult, generalNMF = FALSE, nComb = 200) {
     X <- PrepResult@centers
     if (K > nrow(X) || K > ncol(X)){
         warning("Return NULL for K = ", K, " larger than ", max(dim(X)))
@@ -54,22 +59,33 @@ CAMMGCluster <- function(K, PrepResult, nComb = 200) {
     idx <- topconv$idx
     error1 <- topconv$error
     nComb <- length(error1)
+    scaleRecover <- !generalNMF
 
 
     Xall <- PrepResult@Xprep[,!(PrepResult@cluster$cluster %in%
                                 PrepResult@c.outlier)]
 
-    errCalcu <- function (p, idx, X, Xall, W) {
-        A <- X[,idx[,p]]
-        #scale <- as.vector(coef(nnls(A,matrix(rowSums(W),M,1))))
-        scale <- c(.fcnnls(A, matrix(rowSums(W),M,1))$coef)
-        scale[scale<1e-10] <- 0.01/(sqrt(colSums(A^2)))[scale<1e-10]
-        A<-A%*%diag(scale)
-        #sum(apply(Xall,2, function(x) (nnls(A,x))$deviance))
-        sum((Xall - A%*%(.fcnnls(A, Xall)$coef))^2)
+    errCalcu <- function (p, idx, X, Xall, W, scaleRecover) {
+        out <- tryCatch({
+            A <- X[,idx[,p]]
+            if (scaleRecover) {
+                #scale <- as.vector(coef(nnls(A,matrix(W,ncol=1))))
+                scale <- c(.fcnnls(A, matrix(W,ncol=1))$coef)
+                scale[scale<1e-10] <- 0.01/(sqrt(colSums(A^2)))[scale<1e-10]
+                A<-A%*%diag(scale)
+            }
+            #sum(apply(Xall,2, function(x) (nnls(A,x))$deviance))
+            err <- sum((Xall - A%*%(.fcnnls(A, Xall)$coef))^2)
+            return(err)
+        }, error=function(e) {
+            err <- sum(Xall^2)
+            return(err)
+        })
+
     }
     error2 <- unlist(lapply(seq_len(nComb), errCalcu,
-                            idx, X, Xall, PrepResult@W))
+                            idx, X, Xall, PrepResult@W%*%PrepResult@SW,
+                            scaleRecover))
 
     idx1 <- which.min(error1)
     idx2 <- which.min(error2)

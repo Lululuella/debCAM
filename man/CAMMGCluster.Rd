@@ -4,13 +4,19 @@
 \alias{CAMMGCluster}
 \title{MG cluster detection for CAM}
 \usage{
-CAMMGCluster(K, PrepResult, nComb = 200)
+CAMMGCluster(K, PrepResult, generalNMF = FALSE, nComb = 200)
 }
 \arguments{
 \item{K}{The candidate subpopulation number.}
 
 \item{PrepResult}{An object of class "\code{\link{CAMPrepObj}}" obtained
 from \code{\link{CAMPrep}} function.}
+
+\item{generalNMF}{If TRUE, the decomposed proportion matrix has no sum-to-one
+constraint for each row. Without this constraint, the scale ambiguity of
+corner cluster centers will not be removed when computing
+reconstruction errors.
+The default is FALSE.}
 
 \item{nComb}{The number of possible combinations of clusters as corner
 clusters. Within these possible combinations ranked by margin errors,

@@ -1,8 +1,30 @@
+# Changes in verison 1.1.1 (2018-12-28)
+
+* add reselectMG() to help select markers from all probes.
+
+* add redoASest() to re-estimate A and S matrix and optionally apply ALS.
+
+* add quick.select option for greedy search by sffsHull() function.
+
+* add sample.wight option for CAM(), CAMPrep() and add SW for CAMPrepObj class.
+
+* add generalNMF option which has no sum-to-one constraint.
+
+* fix bug caused by NMF::.fcnnls() and import more robust function nnls::nnls().
+
+* fix bug in space median when dimenion is 2.
+
+* decrease Kmeans repetition times when input data has too many data points.
+
+* enhance simplex plot.
+
+
 # Changes in verison 0.99.7
 
 * fix bug in plot mdl curves
 
 * correct install instruction in README.md
+
 
 # Changes in verison 0.99.6
 

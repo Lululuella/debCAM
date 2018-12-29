@@ -48,13 +48,13 @@ AfromMarkers <- function(data, MGlist, scaleRecover = TRUE){
         stop("Only non-negative data are supported!")
     }
     data <- data[rowSums(data) > 0,]
+    MGlist <- lapply(MGlist, function(x) intersect(x,rownames(data)))
 
     Xproj <- t(data/rowSums(data))
 
     XprojMean <- matrix(0, ncol(data), length(MGlist))
     for(i in seq_along(MGlist)){
         mg <- MGlist[[i]]
-        mg <- mg[rowSums(data[mg,]) > 0]
         if(length(mg)==0) XprojMean[,i] <- 0
         else if(length(mg)==1) XprojMean[,i] <- Xproj[,mg]
         else XprojMean[,i] <- pcaPP::l1median(t(Xproj[,mg]))

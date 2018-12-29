@@ -1,7 +1,7 @@
 Package: CAMTHC
 Type: Package
 Title: Convex Analysis of Mixtures for Tissue Heterogeneity Characterization
-Version: 0.99.7
+Version: 1.1.1
 Author: Lulu Chen <luluchen@vt.edu>
 Maintainer: Lulu Chen <luluchen@vt.edu>
 biocViews: Software, CellBiology, GeneExpression
@@ -35,6 +35,7 @@ Imports:
     corpcor,
     geometry,
     NMF,
+    nnls,
     DMwR,
     pcaPP,
     apcluster,

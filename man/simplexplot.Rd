@@ -4,8 +4,10 @@
 \alias{simplexplot}
 \title{The plot of scatter simplex}
 \usage{
-simplexplot(data, A, MGlist = NULL, corner.order = NULL,
-  data.col = "gray", corner.col = "red", ...)
+simplexplot(data, A, MGlist = NULL, data.extra = NULL,
+  corner.order = NULL, col = "gray", pch = 1, cex = 0.8,
+  mg.col = "red", mg.pch = 1, mg.cex = 1.2, ex.col = "black",
+  ex.pch = 19, ex.cex = 1.5, ...)
 }
 \arguments{
 \item{data}{A data set that will be internally coerced into a matrix.
@@ -19,11 +21,39 @@ All-zero rows will be removed internally.}
 \item{MGlist}{A list of vectors, each of which contains known markers
 and/or CAM-detected markers for one subpopulation.}
 
+\item{data.extra}{Extra data points to be shown in the simplex plot, e.g.
+the points associated with prior/estimated proportion vectors. The format
+should be consistent with \code{data}, so prior/estimated proportion
+matrix needs to be transposed before as the input.}
+
 \item{corner.order}{The order to show simplex corners counterclockwise.}
 
-\item{data.col}{The color for data points. The default is "gray".}
+\item{col}{The color for data points. The default is "gray".}
 
-\item{corner.col}{The color for corner points. The default is "red".}
+\item{pch}{The symbol/character for data points. The default is 1.}
+
+\item{cex}{The symbol/character expansion for data points.
+The default is 0.8.}
+
+\item{mg.col}{The colors for marker genes. Marker genes of one subpopulation
+could have their own color if a vector is provided. The default is "red".}
+
+\item{mg.pch}{The symbols/characters for marker genes. Marker genes of one
+subpopulation could have their own symbol/character if a vector is
+provided. The default is 1.}
+
+\item{mg.cex}{The symbol/character expansion for marker genes.
+The default is 1.2.}
+
+\item{ex.col}{The colors for extra data points. Each data point could have
+its own color if a vector is provided. The default is "black".}
+
+\item{ex.pch}{The symbols/characters for extra data points. Each data point
+could have its own symbol/character if a vector is provided.
+The default is 19.}
+
+\item{ex.cex}{The symbol/character expansion for extra data points.
+The default is 1.5.}
 
 \item{...}{All other arguments are passed to the plotting command.}
 }
@@ -50,9 +80,11 @@ pMGlist.FC <- lapply(c("Liver","Brain","Lung"), function(x)
 
 #plot simplex for data
 simplexplot(data, A)
-simplexplot(data, A, MGlist = pMGlist.FC) #Color marker genes in simplex plot
+simplexplot(data, A, MGlist = pMGlist.FC) #Color marker genes in the plot
+simplexplot(data, A, MGlist = pMGlist.FC,
+    data.extra = t(A)) #show the location of proportion vectors in the plot
 
-#set differnt corner order and colors
+#set different corner order and colors
 simplexplot(data, A, MGlist = pMGlist.FC, corner.order = c(2,1,3),
-            data.col = "blue", corner.col = c("red","orange","green"))
+            col = "blue", mg.col = c("red","orange","green"))
 }

@@ -19,6 +19,7 @@ CAMPrepObj <- setClass("CAMPrepObj",
         Xprep = "matrix",
         Xproj = "matrix",
         W = "matrix",
+        SW = "vector",
         cluster = "list",
         c.outlier = "vector",
         centers = "matrix")

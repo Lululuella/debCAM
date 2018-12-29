@@ -2,6 +2,7 @@
 title: "CAMTHC User Manual"
 author: "Lulu Chen"
 date: "`r Sys.Date()`"
+bibliography: camthc.bib
 output: 
   BiocStyle::html_document:
     toc: true
@@ -20,7 +21,7 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Convex Analysis of Mixtures (CAM) is a fully unsupervised computational method to analyze tissue samples composed of unknown numbers and varying proportions of distinct subpopulations. CAM assumes that the measured expression level is the weighted sum of each subpopulation’s expression, where the contribution from a single subpopulation is proportional to the abundance and specific expression of that subpopulation. This linear mixing model can be formulated as $\mathbf{X'=AS'}$. CAM can identify molecular markers directly from the original mixed expression matrix, $\mathbf{X}$, and further estimate the constituent proportion matrix, $\mathbf{A}$, as well as subpopulation-specific expression profile matrix, $\mathbf{S}$.
+Convex Analysis of Mixtures (CAM) is a fully unsupervised computational method to analyze tissue samples composed of unknown numbers and varying proportions of distinct subpopulations [@CAM2016]. CAM assumes that the measured expression level is the weighted sum of each subpopulation’s expression, where the contribution from a single subpopulation is proportional to the abundance and specific expression of that subpopulation. This linear mixing model can be formulated as $\mathbf{X'=AS'}$. CAM can identify molecular markers directly from the original mixed expression matrix, $\mathbf{X}$, and further estimate the constituent proportion matrix, $\mathbf{A}$, as well as subpopulation-specific expression profile matrix, $\mathbf{S}$.
 
 `CAMTHC` is an R package developed for tissue heterogeneity characterization by CAM algorithm. It provides basic functions to perform unsupervised deconvolution on mixture expression profiles by CAM and some auxiliary functions to help understand the subpopulation-specific results. `CAMTHC` also implements functions to perform supervised deconvolution based on prior knowledge of molecular markers, S matrix or A matrix. Semi-supervised deconvolution can also be achieved by combining molecular markers from CAM and from prior knowledge to analyze mixture expressions.
 
@@ -77,6 +78,14 @@ rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95)
 #rCAM@ASestResult contains details corresponding to A and S matrix estimation.
 ```
 
+### Model Selection by MDL Curves
+
+We used MDL, a widely-adopted and consistent information theoretic criterion, to guide model selection. The underlying subpopulation number can be decided by minimizing the total description code length:
+
+```{r, fig.height=6, fig.width=6}
+plot(MDL(rCAM), data.term = TRUE)
+```
+
 ### Estimated A and S matrix
 
 The A and S matrix estimated by CAM with a fixed subpopulation number, e.g. K = 3, can be obtained by
@@ -104,21 +113,47 @@ MGlist.FCboot <- lapply(seq_len(3), function(x)
     rownames(MGstat)[MGstat$idx == x & MGstat$OVE.FC.alpha > 10])
 ```
 
+The thresholds above are set arbitrary and will impact the number of resulted markers significantly. Each subpopulation can also have different threshold. To make threshold setting more easier, we can also set thresholds to be quantile of fold changes and margin-of-errors of one subpopulation's input markers. Margin-of-error is the distance between one gene and the simplex defined by column vectors of A matrix [@CAM2016]. Margin-of-error threshold can be relaxed to a value larger than the maximum. 
+
+```{r, echo=TRUE}
+MGlist.re <- reselectMG(data, MGlist, fc.thres='q0.2', err.thres='q1.2')
+#q0.2: 0.2-quantile
+#q1.2: 1-quantile (maximum) times 1.2
+```
+
+### (Optional) Re-estimation
+
+It is optional to re-estimate A and S matrix based on the new marker list and/or apply Alternating Least Square (ALS) method to further reduce mean squared error. Note that allowing too many iterations of ALS may bring the risk of a significant deviation from initial values. The constraint for methylation data, $\mathbf{S\in[0,1]}$, will be imposed during re-estimation.
+
+```{r, echo=TRUE}
+rre <- redoASest(data, MGlist.re, maxIter = 2, methy = FALSE)
+#rre$Aest: re-estimated A matrix
+#rre$Sest: re-estimated S matrix
+```
+
 ### Simplex Plot - 2D
 
 Fundamental to the success of CAM is that the scatter simplex of mixed expressions is a rotated and compressed version of the scatter simplex of pure expressions, where the marker genes are located at each vertex. `simplexplot()` function can show the scatter simplex and detected marker genes in a 2D plot. The vertices in the high-dimensional simplex will still locate at extreme points of the low-dimensional simplex. 
 
 ```{r, fig.height=6, fig.width=6}
-simplexplot(data, Aest, MGlist)
-simplexplot(data, Aest, MGlist.FC)
-simplexplot(data, Aest, MGlist.FCboot)
+layout(matrix(c(1,2,3,4), 2, 2, byrow = TRUE))
+simplexplot(data, Aest, MGlist, main=c('Initially detected markers'))
+simplexplot(data, Aest, MGlist.FC, main=c('fc > 10'))
+simplexplot(data, Aest, MGlist.FCboot, 
+            main=c(expression(bold(paste('fc(bootstrap,',alpha,'=0.05) > 10')))))
+simplexplot(data, Aest, MGlist.re, main=c("fc >= 'q0.2', error <= 'q1.2'"))
 ```
 
 The colors and the vertex order displayed in 2D plot can be changed as
 
 ```{r, fig.height=6, fig.width=6}
-simplexplot(data, Aest, MGlist.FCboot, corner.order = c(2,1,3), 
-            data.col = "blue", corner.col = c("red","orange","green"))
+simplexplot(data, Aest, MGlist.FCboot, 
+            data.extra=rbind(t(ratMix3$A),t(Aest)),
+            corner.order = c(2,1,3), col = "blue", 
+            mg.col = c("red","orange","green"),
+            ex.col = "black", ex.pch = c(19,19,19,17,17,17))
+legend("bottomright", cex=1.2, inset=.01, c("Ground Truth","CAM Estimation"),
+       pch=c(19,17), col="black")
 ```
 
 ### Simplex Plot - 3D
@@ -151,14 +186,6 @@ abclines3d(0,0,0, a=diag(3), col="black")
 for(i in seq_along(MGlist)){
     points3d(Xp[MGlist[[i]], 1:3], col= rainbow(3)[i], size = 8)
 }
-```
-
-### Model Selection by MDL Curves
-
-We used MDL, a widely-adopted and consistent information theoretic criterion, to guide model selection. The underlying subpopulation number can be decided by minimizing the total description code length:
-
-```{r, fig.height=6, fig.width=6}
-plot(MDL(rCAM), data.term = TRUE)
 ```
 
 ### Validation with Ground Truth
@@ -211,6 +238,7 @@ MGlist.FC <- lapply(seq_len(3), function(x)
     rownames(MGstat)[MGstat$idx == x & MGstat$OVE.FC > 10])
 MGlist.FCboot <- lapply(seq_len(3), function(x) 
     rownames(MGstat)[MGstat$idx == x & MGstat$OVE.FC.alpha > 10])
+MGlist.re <- reselectMG(data, MGlist, fc.thres='q0.2', err.thres='q1.2')
 ```
 
 ## Optional Sample Clustering
@@ -238,6 +266,8 @@ We can still follow the workflow in \@ref(cam-workflow) or \@ref(alternative-cam
 Sest <- Smat(rCAM,3)
 MGlist <- MGsforA(rCAM, K = 3)
 Aest <- AfromMarkers(data, MGlist)
+#(Optional) alternative re-estimation of A and S matrix
+rre <- redoASest(data, MGlist, maxIter = 10) 
 ```
 
 ## Case Study
@@ -298,25 +328,34 @@ data <- gsm[[1]][,mixtureId]
 #data <- data[annot$CHR != 'X' & annot$CHR != 'Y',]
 
 #downsample CpG sites
-featureId <- sample(seq_len(nrow(gsm[[1]])), 20000)
+featureId <- sample(seq_len(nrow(data)), 50000)
 
-#running CAM
-rCAM <- CAM(data[featureId,], K = 2, thres.low = 0.10, thres.high = 0.60)
-Aest <- Amat(rCAM, 2)
+#Running CAM
+#When input data has too many probes, lof has to be disabled due to space limit.
+#When cluster.num is large, quick.select can be enable to increase the speed
+rCAM <- CAM(data[featureId,], K = 2, thres.low = 0.10, thres.high = 0.60,
+            cluster.num = 100, MG.num.thres = 10, 
+            lof.thres = 0, quick.select = 20)
+MGlist <- MGsforA(rCAM, K = 2)
+
+#Identify markers from all CpG sites
+MGlist.re <- reselectMG(data, MGlist, fc.thres='q0.2', err.thres='q1.2')
+
+#re-esitmation with methylation constraint
+rre <- redoASest(data, MGlist.re, maxIter = 20, methy = TRUE)
+
+#Validation using ground truth A matrix
 Atrue <- cbind(seq(0.1, 0.9, 0.1), seq(0.9, 0.1, -0.1))
-cor(Aest, Atrue)
-
-#obtain a full list of marker CpG sites
-MGstat <- MGstatistic(data, Aest)
-MGlist.FC <- lapply(seq_len(2), function(x) 
-    rownames(MGstat)[MGstat$idx == x & MGstat$OVE.FC > 10])
+cor(rre$Aest, Atrue)
 ```
 
 We can also run CAM on unmethylated quantification, 1 - beta, to obtain quite similar results since the underlying linear mixing model is also applicable for unmethylated probe intensity.
 
 ```{r, echo=TRUE, message=FALSE, eval=FALSE}
 rCAM <- CAM(1 - exprs(data[featureId,]),
-            K = 2, thres.low = 0.10, thres.high = 0.60)
+            K = 2, thres.low = 0.10, thres.high = 0.60,
+            cluster.num = 100, MG.num.thres = 10, 
+            lof.thres = 0, quick.select = 20)
 ```
 
 # Supervised/Semi-supervised Deconvolution
@@ -324,36 +363,67 @@ rCAM <- CAM(1 - exprs(data[featureId,]),
 
 CAM algorithm can estimate A and S matrix based on blindly detected markers. Thus, we can also use part of CAM algorithm to estimate A and S matrix based on known markers.
 
+The package provides `AfromMarkers()` to estimate A matrix from marker list.
+
 ```{r, echo=TRUE, eval=FALSE}
 Aest <- AfromMarkers(data, MGlist)
 #MGlist is a list of vectors, each of which contains known markers for one subpopulation
 ```
 
+Or we can use `redoASest()` to estimate A and S matrix from marker list and alternatively re-estimate two matrices by ALS to further reduce mean squared error. Note that allowing too many iterations of ALS may bring the risk of a significant deviation from initial values. The constraint for methylation data, $\mathbf{S\in[0,1]}$, can  be imposed during re-estimation. 
+
+```{r, echo=TRUE, eval=FALSE}
+rre <- redoASest(data, MGlist, maxIter = 10)
+#MGlist is a list of vectors, each of which contains known markers for one subpopulation
+#maxIter = 0: No re-estimation by ALS
+#rre$Aest: estimated A matrix
+#rre$Sest: estimated S matrix
+```
+
 ## S matrix is known
 
-Many datasets provide expression profiles for purified cell lines or even every single cell, which can be treated as references of S matrix. Some methods use least squares techniques or support vector regression (CIBERSORT) to estimate A matrix based on known S matrix. `CAMTHC` will estimate A matrix by identified markers from known S matrix, which has better performance in terms of correlation coefficient with ground truth A matrix.  
+Many datasets provide expression profiles for purified cell lines or even every single cell, which can be treated as references of S matrix. Some methods use least squares techniques or support vector regression [@CIBERSORT] to estimate A matrix based on known S matrix. `CAMTHC` will estimate A matrix by identified markers from known S matrix, which has better performance in terms of correlation coefficient with ground truth A matrix.  
 
 ```{r, echo=TRUE}
 data <- ratMix3$X
 S <- ratMix3$S #known S matrix
 
+#Identify markers
 pMGstat <- MGstatistic(S, c("Liver","Brain","Lung"))
 pMGlist.FC <- lapply(c("Liver","Brain","Lung"), function(x) 
     rownames(pMGstat)[pMGstat$idx == x & pMGstat$OVE.FC > 10])
 
+#Estimate A matrix
 Aest <- AfromMarkers(data, pMGlist.FC)
+
+#(Optional) alternative re-estimation
+rre <- redoASest(data, pMGlist.FC, maxIter = 10) 
+```
+
+`CAMTHC` also supports estimating A matrix directly from known S matrix using least squares method. Marker identification from S matrix is still needed because only markers' squared errors will be counted which facilitates (1) faster computational running time and (2) a greater signal-to-noise ratio owing to markers' discriminatory power [@CIBERSORT].
+
+```{r, echo=TRUE, eval=FALSE}
+Aest <- redoASest(data, pMGlist.FC, S=S, maxIter = 0)$Aest
 ```
 
 ## A matrix is known
 
-With known A matrix, `CAMTHC` estimates S matrix using non-negative least squares (NNLS) from `r CRANpkg("NMF")`, and further identify markers
+With known A matrix, `CAMTHC` estimates S matrix using non-negative least squares (NNLS) from `r CRANpkg("NMF")`, and further identify markers.
 
 ```{r, echo=TRUE}
 data <- ratMix3$X
 A <- ratMix3$A #known A matrix
 
+#Estimate S matrix
 Sest <- t(NMF::.fcnnls(A, t(data))$coef)
-MGstat <- MGstatistic(data, A)
+
+#Identify markers
+pMGstat <- MGstatistic(data, A)
+pMGlist.FC <- lapply(unique(pMGstat$idx), function(x) 
+    rownames(pMGstat)[pMGstat$idx == x & pMGstat$OVE.FC > 10])
+
+#(Optional) alternative re-estimation
+rre <- redoASest(data, pMGlist.FC, A=A,  maxIter = 10) 
 ```
 
 ## Semi-supervised Deconvolution
@@ -365,3 +435,14 @@ Aest <- AfromMarkers(data, MGlist)
 #MGlist is a list of vectors, each of which contains known markers and/or CAM-detected markers for one subpopulation
 ```
 
+Or 
+
+```{r, echo=TRUE, eval=FALSE}
+rre <- redoASest(data, MGlist, maxIter = 10)
+#MGlist is a list of vectors, each of which contains known markers and/or CAM-detected markers for one subpopulation
+#maxIter = 0: No re-estimation by ALS
+#rre$Aest: estimated A matrix
+#rre$Sest: estimated S matrix
+```
+
+# References

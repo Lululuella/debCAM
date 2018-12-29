@@ -30,6 +30,17 @@
 #'     calculation of the local outlier factors.
 #'     The default value 0.02 will remove top 2\% local outliers.
 #'     Zero value will disable lof.
+#' @param quick.select  The number of candidate corners kept after quickhull
+#'     and SFFS greedy search. If Null, only quickhull is applied.
+#'     The default is 20. If this value is larger than the number of candidate
+#'     corners after quickhull, greedy search will also not be applied.
+#' @param sample.weight Vector of sample weights. If NULL, all samples have
+#'     the same weights. The length should be the same as sample numbers.
+#'     All values should be positive.
+#' @param generalNMF If TRUE, the decomposed proportion matrix has no sum-to-one
+#'     constraint for each row. Without assuming samples are normalized,
+#'     the first principal component will not forced to be along
+#'     c(1,1,..,1) but a standard PCA will be applied during preprocessing.
 #' @details This function is used internally by \code{\link{CAM}} function to
 #' preprocess data, or used when you want to perform CAM step by step.
 #'
@@ -52,6 +63,7 @@
 #' \item{Xprep}{Preprocessed data matrix.}
 #' \item{Xproj}{Preprocessed data matrix after perspective projection.}
 #' \item{W}{The matrix whose rows are loading vectors.}
+#' \item{SW}{Sample weights.}
 #' \item{cluster}{cluster results including two vectors.
 #'     The first indicates the cluster to which each gene is allocated.
 #'     The second is the number of genes in each cluster.}
@@ -72,7 +84,9 @@
 #' rPrep <- CAMPrep(data, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
 CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
                     cluster.method = c('K-Means', 'apcluster'),
-                    cluster.num = 50, MG.num.thres = 20, lof.thres = 0){
+                    cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02,
+                    quick.select = NULL, sample.weight = NULL,
+                    generalNMF = FALSE) {
     if (is(data, "data.frame")) {
         data <- as.matrix(data)
     } else if (is(data, "SummarizedExperiment")) {
@@ -96,8 +110,18 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
         rownames(data) <- seq_len(nrow(data))
     }
 
+    if (is.null(sample.weight)) {
+        sample.weight <- rep(1, ncol(data))
+    } else {
+        if (length(sample.weight) != ncol(data)) {
+            stop("The length of sample.weight is not
+                the same as sample numbers!")
+        }
+    }
+
     data <- data[rowSums(data) > 0,]
     X <- t(data)
+    X <- X * sample.weight
 
     ######### data preprocessing ############
     sigNorm <- apply(X, 2, function(x) norm(matrix(x),"F") )
@@ -113,14 +137,32 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
     L <- min(dim.rdc, Lorg)
     Xmean <- rowMeans(Xorg)
     Xmeanrm <- Xorg - Xmean
-    P1 <- rep(1,Lorg) / sqrt(Lorg)
-    C1 <- P1 %*% Xmeanrm
-    Xmeanrm <- Xmeanrm - matrix(rep(C1, 1, each=Lorg), Lorg) *
-        matrix(P1, Lorg, dataSize)
-    r <- eigen(Xmeanrm %*% t(Xmeanrm))
-    Ppca <- t(r$vectors[,seq_len(L-1)])
-    X <- rbind(P1,Ppca) %*% Xorg
-    weightMatrix <- rbind(P1, Ppca)
+
+    if (generalNMF == FALSE) {
+        #use sample.weight as the first dimension, then PCA
+        P1 <- sample.weight
+        P1 <- P1/ sqrt(sum(P1^2))
+        C1 <- P1 %*% Xmeanrm
+        Xmeanrm <- Xmeanrm - matrix(rep(C1, 1, each=Lorg), Lorg) *
+            matrix(P1, Lorg, dataSize)
+        r <- eigen(Xmeanrm %*% t(Xmeanrm))
+        Ppca <- t(r$vectors[,seq_len(L-1)])
+        X <- rbind(P1,Ppca) %*% Xorg
+        weightMatrix <- rbind(P1, Ppca)
+    } else {
+        #standard PCA
+        r <- eigen(Xmeanrm %*% t(Xmeanrm))
+        Ppca <- t(r$vectors[,seq_len(L)])
+        X <- Ppca %*% Xorg
+        if (sum(X[1,]>0) > 0 && sum(X[1,]<0) > 0 || sum(X[1,]==0) > 0) {
+            warning('There are points projected improperly!')
+        }
+        if (sum(X[1,]<0) > 0) {
+            Ppca[1,] <- -Ppca[1,]
+            X <- Ppca %*% Xorg
+        }
+        weightMatrix <- Ppca
+    }
 
     ################ perspective projection #################
     Xcenter <- c(1, rep(0, L-1))
@@ -142,7 +184,12 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
     if (cluster.method == 'K-Means') {
         clusterRes <- kmeans(t(Xproj), cluster.num, iter.max=100)
         #repeat K-means and use the best one
-        for (i in seq_len(50)){
+        if (ncol(Xproj) > 15000) {
+            ntry <- 10
+        } else {
+            ntry <- 50
+        }
+        for (i in seq_len(ntry)){
             tmp <- kmeans(t(Xproj), cluster.num, iter.max=100)
             if (clusterRes$tot.withinss > tmp$tot.withinss){
                 clusterRes <- tmp
@@ -168,8 +215,14 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
     c.outlier <- which(cluster$size < MG.num.thres)
     message('outlier cluster number: ',sum(cluster$size < MG.num.thres),"\n")
 
-    medcenters <- vapply(cluster.valid, function(x)
-        pcaPP::l1median(t(Xproj[,cluster$cluster==x])), numeric(L))
+    if (L == 2) {
+        medcenters <- vapply(cluster.valid, function(x)
+            median(Xproj[-1,cluster$cluster==x]), numeric(1))
+    } else {
+        medcenters <- vapply(cluster.valid, function(x)
+            pcaPP::l1median(t(Xproj[-1,cluster$cluster==x])), numeric(L-1))
+    }
+    medcenters <- rbind(1, medcenters)
     colnames(medcenters) <- cluster.valid
 
     ################ quickhull #################
@@ -180,8 +233,15 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
     corner <- corner[-which(corner == (J+1))]  # throw away the origin point
     message('convex hull cluster number: ',length(corner),"\n")
 
+    if (!is.null(quick.select) && quick.select < length(corner)) {
+        quickset <- sffsHull(medcenters, medcenters[,corner], quick.select)
+        quickidx <- quickset[[quick.select]]
+        corner <- corner[quickidx]
+        message('Selected convex hull cluster number: ',length(corner),"\n")
+    }
+
 
     return(new("CAMPrepObj", Valid=Valid, Xprep=X, Xproj=Xproj, W=weightMatrix,
-                    cluster=cluster, c.outlier=c.outlier,
+                    SW=sample.weight, cluster=cluster, c.outlier=c.outlier,
                     centers=medcenters[,corner]))
 }

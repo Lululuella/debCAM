@@ -31,13 +31,13 @@
 #' #data are mixture expression profiles, A is proportion matrix
 #' data(ratMix3)
 #' MGstat <- MGstatistic(ratMix3$X, ratMix3$A)
-#' \donttest{
+#' \dontrun{
 #' MGstat <- MGstatistic(ratMix3$X, ratMix3$A, boot.alpha = 0.05) #enable boot
 #' }
 #'
 #' #data are pure expression profiles without replicates
 #' MGstat <- MGstatistic(ratMix3$S) #boot is not applicable
-#' \donttest{
+#' \dontrun{
 #' #data are pure expression profiles with phenotypes
 #' S <- matrix(rgamma(3000,0.1,0.1), 1000, 3)
 #' S <- S[, c(1,1,1,2,2,2,3,3,3,3)] + rnorm(1000*10, 0, 0.5)

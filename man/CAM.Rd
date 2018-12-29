@@ -6,7 +6,9 @@
 \usage{
 CAM(data, K = NULL, corner.strategy = 2, dim.rdc = 10, thres.low = 0.05,
   thres.high = 0.95, cluster.method = c("K-Means", "apcluster"),
-  cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02, cores = NULL)
+  cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02,
+  quick.select = NULL, sample.weight = NULL, generalNMF = FALSE,
+  cores = NULL)
 }
 \arguments{
 \item{data}{Matrix of mixture expression profiles.
@@ -51,6 +53,23 @@ MG.num.thres is used as the number of neighbors in the calculation of
 the local outlier factors.
 The default value 0.02 will remove top 2\% local outliers.
 Zero value will disable lof.}
+
+\item{quick.select}{The number of candidate corners kept after quickhull
+and SFFS greedy search. If Null, only quickhull is applied.
+The default is 20. If this value is larger than the number of candidate
+corners after quickhull, greedy search will also not be applied.}
+
+\item{sample.weight}{Vector of sample weights. If NULL, all samples have
+the same weights. The length should be the same as sample numbers.
+All values should be positive.}
+
+\item{generalNMF}{If TRUE, the decomposed proportion matrix has no sum-to-one
+constraint for each row. The default is FALSE.
+TRUE value brings two changes: (1) Without assuming samples are
+normalized, the first principal component will not forced to be along
+c(1,1,..,1) but a standard PCA will be applied during preprocessing.
+(2) Without sum-to-one constraint for each row, the scale ambiguity of
+each column vector in proportion matrix will not be removed.}
 
 \item{cores}{The number of system cores for parallel computing.
 If not provided, one core for each element in K will be invoked.
@@ -102,14 +121,26 @@ set.seed(111)
 
 #CAM with known subpopulation number
 rCAM <- CAM(data, K = 3, dim.rdc = 3, thres.low = 0.30, thres.high = 0.95)
-#A larger dim.rdc can improve performance but increase time complexity
+#Larger dim.rdc can improve performance but increase time complexity
 
-\donttest{
+\dontrun{
 #CAM with a range of subpopulation number
 rCAM <- CAM(data, K = 2:5, dim.rdc = 10, thres.low = 0.30, thres.high = 0.95)
 
 #Use "apcluster" to aggregate gene vectors in CAM
 rCAM <- CAM(data, K = 2:5, dim.rdc = 10, thres.low = 0.30, thres.high = 0.95,
             cluster.method = 'apcluster')
+
+#CAM with quick selection to reduce time complexity
+rCAM <- CAM(data, K = 3, dim.rdc = 10, thres.low = 0.30, thres.high = 0.95,
+        quick.select = 20)
+
+#CAM with different sample weights (e.g. adjusted based on sample quality)
+rCAM <- CAM(data, K = 3, dim.rdc = 5, thres.low = 0.30, thres.high = 0.95,
+        sample.weight = c(rep(10,11),rep(1,10)))
+
+#CAM for general NMF (no sum-to-one contraint for proportion matrix)
+rCAM <- CAM(data, K = 3, dim.rdc = 5, thres.low = 0.30, thres.high = 0.95,
+       generalNMF = TRUE)
 }
 }

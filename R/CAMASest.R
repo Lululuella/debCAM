@@ -17,6 +17,10 @@
 #' @param corner.strategy The method to detect corner clusters.
 #'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
 #'     errors. The default is 2.
+#' @param generalNMF If TRUE, the decomposed proportion matrix has no sum-to-one
+#'     constraint for each row. Without this constraint, the scale ambiguity of
+#'     each column vector in proportion matrix will not be removed.
+#'     The default is FALSE.
 #' @details This function is used internally by \code{\link{CAM}} function to
 #' estimate proportion matrix (A), subpopulation-specific expression matrix (S)
 #' and mdl values. It can also be used when you want to perform CAM step by
@@ -69,7 +73,8 @@
 #'
 #' #A and S matrix estimation
 #' rASest <- CAMASest(rMGC, rPrep, data)
-CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
+CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2,
+                    generalNMF = FALSE) {
     if (is.null(MGResult)) {
         return (NULL)
     }
@@ -100,9 +105,12 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
     Aproj <- PrepResult@centers[,as.character(MGResult@corner[corner.strategy,])]
     Kest <- ncol(Aproj)
 
-    #scale <- as.vector(coef(nnls(Aproj, rowSums(PrepResult$W))))
-    scale <- c(.fcnnls(Aproj, matrix(rowSums(PrepResult@W),ncol=1))$coef)
-    scale[scale<1e-10] <- 0.01/(sqrt(colSums(Aproj^2)))[scale<1e-10]
+    scale <- rep(1, Kest)
+    if (generalNMF == FALSE) {
+        #scale <- as.vector(coef(nnls(Aproj, rowSums(PrepResult$W))))
+        scale <- c(.fcnnls(Aproj, PrepResult@W%*%PrepResult@SW)$coef)
+        scale[scale<1e-10] <- 0.01/(sqrt(colSums(Aproj^2)))[scale<1e-10]
+    }
     Apca <- Aproj %*% diag(scale)
     #S1 <- apply(Xprep, 2, function(x) coef(nnls(Apca,x)))
     S1 <- .fcnnls(Apca, Xprep)$coef
@@ -112,46 +120,53 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2) {
         (Kest * dataSize) / 2 * log(nrow(Xprep))
     mdl1 <- datalength1 + penalty1
 
-    X <- t(data)
     if (ncol(PrepResult@W) != ncol(data)) {
         stop("Data should be the same with the input of CAMPrep()!")
     }
+    X <- t(data) * PrepResult@SW
+
     Aproj.org <- pseudoinverse(PrepResult@W) %*% Aproj
-    #scale.org <- as.vector(coef(nnls(Aproj.org, matrix(1,nrow(Aproj.org),1))))
-    scale.org <- c(.fcnnls(Aproj.org, matrix(1,nrow(Aproj.org),1))$coef)
-    scale.org[scale.org<1e-10] <-
-        0.01/(sqrt(colSums(Aproj.org^2)))[scale.org<1e-10]
-    Aest.org <- Aproj.org%*%diag(scale.org)
+    scale.org <- rep(1, Kest)
+    if (generalNMF == FALSE) {
+        scale.org <- c(.fcnnls(Aproj.org, matrix(PrepResult@SW, ncol=1))$coef)
+        scale.org[scale.org<1e-10] <-
+            0.01/(sqrt(colSums(Aproj.org^2)))[scale.org<1e-10]
+    }
+    Aest.org <- Aproj.org %*% diag(scale.org)
     Aest.org[Aest.org < 0] <- 0
-    Aest.org <- Aest.org/rowSums(Aest.org)
-    #S2 <- apply(X, 2, function(x) coef(nnls(Aest.org, x)))
     S2 <- .fcnnls(Aest.org, X)$coef
     datalength2 <- (nrow(X) * dataSize) / 2 *
         log(mean((as.vector(X[,geneValid] - Aest.org %*% S2[,geneValid]))^2))
     penalty2 <- ((Kest - 1) * nrow(X)) / 2 * log(dataSize) +
         (Kest * dataSize) / 2 * log(nrow(X))
     mdl2 <- datalength2 + penalty2
+    if (generalNMF == FALSE) {
+        Aest.org <- Aest.org/rowSums(Aest.org)
+    }
+
 
     MGlist <- lapply(as.character(MGResult@corner[corner.strategy,]),
         function(x) colnames(PrepResult@Xproj)[PrepResult@cluster$cluster == x])
-    Xproj.all <- t(data/rowSums(data))
+    Xproj.all <- scale(X, center = FALSE, scale = colSums(X))
     Aproj.all <- matrix(0, ncol(data), length(MGlist))
     for(i in seq_along(MGlist)){
         Aproj.all[,i] <- pcaPP::l1median(t(Xproj.all[,MGlist[[i]]]))
     }
-    #scale.all <- as.vector(coef(nnls(Aproj.all, matrix(1,nrow(Aproj.all),1))))
-    scale.all <- c(.fcnnls(Aproj.all, matrix(1,nrow(Aproj.all),1))$coef)
-    scale.all[scale.all<1e-10] <-
-        0.01/(sqrt(colSums(Aproj.all^2)))[scale.all<1e-10]
-    Aest.all <- Aproj.all%*%diag(scale.all)
-    Aest.all <- Aest.all/rowSums(Aest.all)
-    #S3 <- apply(X, 2, function(x) coef(nnls(Aest.all, x)))
+    scale.all <- rep(1, Kest)
+    if (generalNMF == FALSE) {
+        scale.all <- c(.fcnnls(Aproj.all, matrix(PrepResult@SW, ncol=1))$coef)
+        scale.all[scale.all<1e-10] <-
+            0.01/(sqrt(colSums(Aproj.all^2)))[scale.all<1e-10]
+    }
+    Aest.all <- Aproj.all %*% diag(scale.all)
     S3 <- .fcnnls(Aest.all, X)$coef
     datalength3 <- (nrow(X) * dataSize) / 2 *
         log(mean((as.vector(X[,geneValid] - Aest.all %*% S3[,geneValid]))^2))
     penalty3 <- penalty2
     mdl3 <- datalength3 + penalty3
-
+    if (generalNMF == FALSE) {
+        Aest.all <- Aest.all/rowSums(Aest.all)
+    }
 
     return(new("CAMASObj", Aest=Aest.org, Sest=t(S2), Aest.proj=Aproj.org,
                     Ascale=scale.org,
