@@ -1,3 +1,7 @@
+# Changes in verison 1.1.2 (2018-12-30)
+
+* change the code order to avoid the assignment of mulitple cores affecting RNG.
+
 # Changes in verison 1.1.1 (2018-12-28)
 
 * add reselectMG() to help select markers from all probes.

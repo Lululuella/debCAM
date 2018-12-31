@@ -151,6 +151,13 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
 
     data <- data[rowSums(data) > 0,]
 
+    ################ Preprocessing ################
+    message('Preprocessing\n')
+    PrepResult <- CAMPrep(data, dim.rdc, thres.low, thres.high, cluster.method,
+                        cluster.num, MG.num.thres, lof.thres, quick.select,
+                        sample.weight, generalNMF)
+
+    ################ Marker Gene Selection ################
     coreParam <- NULL
     if (length(K) > 1 && (is.null(cores) || cores > 0)) {
         registered()
@@ -161,14 +168,6 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
         }
     }
 
-
-    ################ Preprocessing ################
-    message('Preprocessing\n')
-    PrepResult <- CAMPrep(data, dim.rdc, thres.low, thres.high, cluster.method,
-                        cluster.num, MG.num.thres, lof.thres, quick.select,
-                        sample.weight, generalNMF)
-
-    ################ Marker Gene Selection ################
     message('Marker Gene Selection\n')
     MGResult<-list()
 
