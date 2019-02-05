@@ -29,7 +29,7 @@ Convex Analysis of Mixtures (CAM) is a fully unsupervised computational method t
 
 The function `CAM()` includes all necessary steps to decompose a matrix of mixture expression profiles. There are some optional steps upstream of `CAM()` that downsample the matrix for reducing running time. Each step in `CAM()` can also be performed separately if you prefer a more flexible workflow. More details will be introduced in sections below.
 
-Starting your analysis by `CAM()`, you need to specify the range of possible subpopulation numbers and the percentage of low/high-expressed molecules to be removed. Typically, 30% ~ 50% low-expressed genes can be removed from gene expression data. Much less low-expressed proteins are removed, e.g. 0% ~ 10%, due to a limited number of proteins in proteomics data. The removal of high-expressed molecules has much less impact on results, and usually set to be 0% ~ 10%.
+Starting your analysis by `CAM()`, you need to specify the range of possible subpopulation numbers and the percentage of low/high-expressed molecules to be removed. Typically, 30% ~ 50% low-expressed genes can be removed from gene expression data. Much less low-expressed proteins are removed, e.g. 0% ~ 10%, due to a limited number of proteins in proteomics data. The removal of high-expressed molecules has much less impact on results, usually set to be 0% ~ 10%.
 
 ```{r, eval=FALSE}
 rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95)

@@ -90,9 +90,9 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
     if (is(data, "data.frame")) {
         data <- as.matrix(data)
     } else if (is(data, "SummarizedExperiment")) {
-        data <- assay(data)
+        data <- SummarizedExperiment::assay(data)
     } else if (is(data, "ExpressionSet")) {
-        data <- exprs(data)
+        data <- Biobase::exprs(data)
     } else if (is(data, "matrix") == FALSE) {
         stop("Only matrix, data frame, SummarizedExperiment and ExpressionSet
             object are supported for expression data!")

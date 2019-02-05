@@ -1,3 +1,7 @@
+# Changes in verison 1.1.3 (2019-02-05)
+
+*not explicitly import SummarizedExperiment and Biobase to reduce memory cost.
+
 # Changes in verison 1.1.2 (2018-12-30)
 
 * change the code order to avoid the assignment of mulitple cores affecting RNG.
