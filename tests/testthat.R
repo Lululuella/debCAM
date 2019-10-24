@@ -1,4 +1,4 @@
 library(testthat)
-library(CAMTHC)
+library(debCAM)
 
-test_check("CAMTHC")
+test_check("debCAM")

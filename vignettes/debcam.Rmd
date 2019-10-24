@@ -1,13 +1,13 @@
 ---
-title: "CAMTHC User Manual"
+title: "debCAM User Manual"
 author: "Lulu Chen"
 date: "`r Sys.Date()`"
-bibliography: camthc.bib
+bibliography: debcam.bib
 output: 
   BiocStyle::html_document:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{CAMTHC User Manual}
+  %\VignetteIndexEntry{debCAM User Manual}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 Convex Analysis of Mixtures (CAM) is a fully unsupervised computational method to analyze tissue samples composed of unknown numbers and varying proportions of distinct subpopulations [@CAM2016]. CAM assumes that the measured expression level is the weighted sum of each subpopulation’s expression, where the contribution from a single subpopulation is proportional to the abundance and specific expression of that subpopulation. This linear mixing model can be formulated as $\mathbf{X'=AS'}$. CAM can identify molecular markers directly from the original mixed expression matrix, $\mathbf{X}$, and further estimate the constituent proportion matrix, $\mathbf{A}$, as well as subpopulation-specific expression profile matrix, $\mathbf{S}$.
 
-`CAMTHC` is an R package developed for tissue heterogeneity characterization by CAM algorithm. It provides basic functions to perform unsupervised deconvolution on mixture expression profiles by CAM and some auxiliary functions to help understand the subpopulation-specific results. `CAMTHC` also implements functions to perform supervised deconvolution based on prior knowledge of molecular markers, S matrix or A matrix. Semi-supervised deconvolution can also be achieved by combining molecular markers from CAM and from prior knowledge to analyze mixture expressions.
+`debCAM` is an R package developed for tissue heterogeneity characterization by CAM algorithm. It provides basic functions to perform unsupervised deconvolution on mixture expression profiles by CAM and some auxiliary functions to help understand the subpopulation-specific results. `debCAM` also implements functions to perform supervised deconvolution based on prior knowledge of molecular markers, S matrix or A matrix. Semi-supervised deconvolution can also be achieved by combining molecular markers from CAM and from prior knowledge to analyze mixture expressions.
 
 # Quick Start
 
@@ -39,7 +39,7 @@ rCAM <- CAM(data, K = 2:5, thres.low = 0.30, thres.high = 0.95)
 
 ## Datatypes and Input Format
 
-Theoretically, `CAMTHC` accepts any molecular expression data types as long as the expressions follow the linear mixing model. We have validated the feasibility of CAM in gene expression data (microarray, RNAseq), proteomics data and DNA methylation data. Requirements for the input expression data:
+Theoretically, `debCAM` accepts any molecular expression data types as long as the expressions follow the linear mixing model. We have validated the feasibility of CAM in gene expression data (microarray, RNAseq), proteomics data and DNA methylation data. Requirements for the input expression data:
 
 - be in non-log linear space with non-negative numerical values (i.e.>=0).
 - be already processed by normalization and batch effect removal.
@@ -53,7 +53,7 @@ The input expression data should be stored in a matrix. Data frame, SummarizedEx
 We use a data set downsampled from [GSE19830](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE19830) as an example to show CAM workflow. This data set provides gene expression profiles of pure tissues (brain, liver, lung) and their biological mixtures with different proportions.  
 
 ```{r, echo=TRUE}
-library(CAMTHC)
+library(debCAM)
 
 data(ratMix3) 
 #ratMix3$X: X matrix containing mixture expression profiles to be analyzed
@@ -382,7 +382,7 @@ rre <- redoASest(data, MGlist, maxIter = 10)
 
 ## S matrix is known
 
-Many datasets provide expression profiles for purified cell lines or even every single cell, which can be treated as references of S matrix. Some methods use least squares techniques or support vector regression [@CIBERSORT] to estimate A matrix based on known S matrix. `CAMTHC` will estimate A matrix by identified markers from known S matrix, which has better performance in terms of correlation coefficient with ground truth A matrix.  
+Many datasets provide expression profiles for purified cell lines or even every single cell, which can be treated as references of S matrix. Some methods use least squares techniques or support vector regression [@CIBERSORT] to estimate A matrix based on known S matrix. `debCAM` will estimate A matrix by identified markers from known S matrix, which has better performance in terms of correlation coefficient with ground truth A matrix.  
 
 ```{r, echo=TRUE}
 data <- ratMix3$X
@@ -400,7 +400,7 @@ Aest <- AfromMarkers(data, pMGlist.FC)
 rre <- redoASest(data, pMGlist.FC, maxIter = 10) 
 ```
 
-`CAMTHC` also supports estimating A matrix directly from known S matrix using least squares method. Marker identification from S matrix is still needed because only markers' squared errors will be counted which facilitates (1) faster computational running time and (2) a greater signal-to-noise ratio owing to markers' discriminatory power [@CIBERSORT].
+`debCAM` also supports estimating A matrix directly from known S matrix using least squares method. Marker identification from S matrix is still needed because only markers' squared errors will be counted which facilitates (1) faster computational running time and (2) a greater signal-to-noise ratio owing to markers' discriminatory power [@CIBERSORT].
 
 ```{r, echo=TRUE, eval=FALSE}
 Aest <- redoASest(data, pMGlist.FC, S=S, maxIter = 0)$Aest
@@ -408,7 +408,7 @@ Aest <- redoASest(data, pMGlist.FC, S=S, maxIter = 0)$Aest
 
 ## A matrix is known
 
-With known A matrix, `CAMTHC` estimates S matrix using non-negative least squares (NNLS) from `r CRANpkg("NMF")`, and further identify markers.
+With known A matrix, `debCAM` estimates S matrix using non-negative least squares (NNLS) from `r CRANpkg("NMF")`, and further identify markers.
 
 ```{r, echo=TRUE}
 data <- ratMix3$X

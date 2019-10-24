@@ -1,4 +1,4 @@
-#' CAMTHC: A package for Tissue Heterogeneity Characterization.
+#' debCAM: A package for fully unsupervised deconvolution of complex tissues.
 #'
 #' The core function in this package is \code{\link{CAM}} which achieves fully
 #' unsupervised deconvolution on mixture expression profiles.
@@ -20,8 +20,8 @@
 #' tissues. Scientific Reports, 6, 18909. http://doi.org/10.1038/srep18909
 #'
 #' @docType package
-#' @name CAMTHC-package
-#' @aliases CAMTHC
+#' @name debCAM-package
+#' @aliases debCAM
 #'
 #' @import methods
 #' @import rJava
