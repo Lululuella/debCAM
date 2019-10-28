@@ -1,74 +1,13 @@
-# Changes in verison 1.3.1 (2019-10-24)
+Changes in version 1.1.1 (2018-12-28)
++ Add reselectMG() to help select markers from all probes
++ Add redoASest() to re-estimate A and S matrix and optionally apply ALS
++ Add quick.select option for greedy search by sffsHull() function
++ Add sample.wight option for CAM(), CAMPrep() and add SW for CAMPrepObj class
++ Add generalNMF option which has no sum-to-one constraint
++ Fix bug caused by NMF::.fcnnls() and import more robust function nnls::nnls()
++ Fix bug in space median when dimenion is 2
++ Decrease Kmeans repetition times when input data has too many data points
++ Enhance simplex plot
 
-*change package name from CAMTHC to debCAM.
-
-# Changes in verison 1.1.3 (2019-02-05)
-
-*not explicitly import SummarizedExperiment and Biobase to reduce memory cost.
-
-# Changes in verison 1.1.2 (2018-12-30)
-
-* change the code order to avoid the assignment of mulitple cores affecting RNG.
-
-# Changes in verison 1.1.1 (2018-12-28)
-
-* add reselectMG() to help select markers from all probes.
-
-* add redoASest() to re-estimate A and S matrix and optionally apply ALS.
-
-* add quick.select option for greedy search by sffsHull() function.
-
-* add sample.wight option for CAM(), CAMPrep() and add SW for CAMPrepObj class.
-
-* add generalNMF option which has no sum-to-one constraint.
-
-* fix bug caused by NMF::.fcnnls() and import more robust function nnls::nnls().
-
-* fix bug in space median when dimenion is 2.
-
-* decrease Kmeans repetition times when input data has too many data points.
-
-* enhance simplex plot.
-
-
-# Changes in verison 0.99.7
-
-* fix bug in plot mdl curves
-
-* correct install instruction in README.md
-
-
-# Changes in verison 0.99.6
-
-* Correct typos in manuals
-
-
-# Changes in verison 0.99.5
-
-* Remove Remove set.seed usage within functions.
-
-* fix bugs for input class identification.
-
-
-# Changes in verison 0.99.4
-
-* Remove LazyData:true.
-
-* fix bugs for input class identification.
-
-* remove all-zero rows internally.
-
-
-# Changes in verison 0.99.3
-
-* Objects returned from main functions are converted to S4 classes
-
-* Add accessor methods for S4 objects.
-
-* Input expression data could be SummarizedExperiment and ExpressionSet object.
-
-* The second Case Study in Vignettes used ExpressionSet type as input.
-
-
-
-
+Changes in version 1.3.3 (2019-10-28)
++ Change package name from CAMTHC to debCAM
