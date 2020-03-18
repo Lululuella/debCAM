@@ -4,8 +4,8 @@
 \alias{MGsforA}
 \title{Marker genes detected by CAM for estimating A}
 \usage{
-MGsforA(CAMResult = NULL, K = NULL, PrepResult = NULL, MGResult = NULL,
-  corner.strategy = 2)
+MGsforA(CAMResult = NULL, K = NULL, PrepResult = NULL,
+  MGResult = NULL, corner.strategy = 2)
 }
 \arguments{
 \item{CAMResult}{Result from \code{\link{CAM}}.}

@@ -17,6 +17,8 @@
 #' @param corner.strategy The method to detect corner clusters.
 #'     1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
 #'     errors. The default is 2.
+#' @param appro3 Estimate A and S matrix by approach 3 or not. Please see
+#'     details for further information. The default is TRUE.
 #' @param generalNMF If TRUE, the decomposed proportion matrix has no sum-to-one
 #'     constraint for each row. Without this constraint, the scale ambiguity of
 #'     each column vector in proportion matrix will not be removed.
@@ -73,8 +75,8 @@
 #'
 #' #A and S matrix estimation
 #' rASest <- CAMASest(rMGC, rPrep, data)
-CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2,
-                    generalNMF = FALSE) {
+CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2, 
+                    appro3 = TRUE, generalNMF = FALSE) {
     if (is.null(MGResult)) {
         return (NULL)
     }
@@ -147,25 +149,36 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2,
 
     MGlist <- lapply(as.character(MGResult@corner[corner.strategy,]),
         function(x) colnames(PrepResult@Xproj)[PrepResult@cluster$cluster == x])
-    Xproj.all <- scale(X, center = FALSE, scale = colSums(X))
-    Aproj.all <- matrix(0, ncol(data), length(MGlist))
-    for(i in seq_along(MGlist)){
-        Aproj.all[,i] <- pcaPP::l1median(t(Xproj.all[,MGlist[[i]]]))
-    }
-    scale.all <- rep(1, Kest)
-    if (generalNMF == FALSE) {
-        scale.all <- c(.fcnnls(Aproj.all, matrix(PrepResult@SW, ncol=1))$coef)
-        scale.all[scale.all<1e-10] <-
-            0.01/(sqrt(colSums(Aproj.all^2)))[scale.all<1e-10]
-    }
-    Aest.all <- Aproj.all %*% diag(scale.all)
-    S3 <- .fcnnls(Aest.all, X)$coef
-    datalength3 <- (nrow(X) * dataSize) / 2 *
-        log(mean((as.vector(X[,geneValid] - Aest.all %*% S3[,geneValid]))^2))
-    penalty3 <- penalty2
-    mdl3 <- datalength3 + penalty3
-    if (generalNMF == FALSE) {
-        Aest.all <- Aest.all/rowSums(Aest.all)
+    if (appro3){
+        Xproj.all <- scale(X, center = FALSE, scale = colSums(X))
+        Aproj.all <- matrix(0, ncol(data), length(MGlist))
+        for(i in seq_along(MGlist)){
+            Aproj.all[,i] <- pcaPP::l1median(t(Xproj.all[,MGlist[[i]]]))
+        }
+        scale.all <- rep(1, Kest)
+        if (generalNMF == FALSE) {
+            scale.all <- 
+                c(.fcnnls(Aproj.all, matrix(PrepResult@SW, ncol=1))$coef)
+            scale.all[scale.all<1e-10] <-
+                0.01/(sqrt(colSums(Aproj.all^2)))[scale.all<1e-10]
+        }
+        Aest.all <- Aproj.all %*% diag(scale.all)
+        S3 <- .fcnnls(Aest.all, X)$coef
+        datalength3 <- (nrow(X) * dataSize) / 2 *
+            log(mean((as.vector(X[,geneValid] - 
+                                    Aest.all %*% S3[,geneValid]))^2))
+        penalty3 <- penalty2
+        mdl3 <- datalength3 + penalty3
+        if (generalNMF == FALSE) {
+            Aest.all <- Aest.all/rowSums(Aest.all)
+        }
+    } else {
+        Aest.all <- NULL
+        S3 <- NULL
+        Aproj.all <- NULL
+        scale.all <- NULL
+        datalength3 <- NULL
+        mdl3 <- NULL
     }
 
     return(new("CAMASObj", Aest=Aest.org, Sest=t(S2), Aest.proj=Aproj.org,

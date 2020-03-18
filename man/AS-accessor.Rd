@@ -4,16 +4,11 @@
 \name{AS-accessor}
 \alias{AS-accessor}
 \alias{Amat}
-\alias{AS-accessor}
 \alias{Smat}
 \alias{Amat,CAMObj-method}
-\alias{Amat}
 \alias{Amat,CAMASObj-method}
-\alias{Amat}
 \alias{Smat,CAMObj-method}
-\alias{Smat}
 \alias{Smat,CAMASObj-method}
-\alias{Smat}
 \title{Deconvoluted matrix accessors}
 \usage{
 Amat(x, ...)

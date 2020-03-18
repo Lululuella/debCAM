@@ -16,7 +16,7 @@ Description: An R package for fully unsupervised deconvolution of complex
     semi-supervised deconvolution of mixtures.
 License: GPL-2
 Encoding: UTF-8
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
 Depends: R (>= 3.5) 
 Suggests: 
     knitr,

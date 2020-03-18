@@ -37,6 +37,8 @@
 #'     the local outlier factors.
 #'     The default value 0.02 will remove top 2\% local outliers.
 #'     Zero value will disable lof.
+#' @param quickhull Perform quickhull to select clusters or not. The default is   
+#'     True.    
 #' @param quick.select  The number of candidate corners kept after quickhull
 #'     and SFFS greedy search. If Null, only quickhull is applied.
 #'     The default is 20. If this value is larger than the number of candidate
@@ -44,6 +46,8 @@
 #' @param sample.weight Vector of sample weights. If NULL, all samples have
 #'     the same weights. The length should be the same as sample numbers.
 #'     All values should be positive.
+#' @param appro3 Estimate A and S matrix by approach 3 or not. Please see
+#'     \code{\link{CAMASest}} for further information. The default is TRUE.
 #' @param generalNMF If TRUE, the decomposed proportion matrix has no sum-to-one
 #'     constraint for each row. The default is FALSE.
 #'     TRUE value brings two changes: (1) Without assuming samples are
@@ -118,8 +122,8 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
                 thres.low = 0.05, thres.high = 0.95,
                 cluster.method = c('K-Means', 'apcluster'),
                 cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02,
-                quick.select = NULL, sample.weight = NULL,
-                generalNMF = FALSE, cores = NULL){
+                quickhull = TRUE, quick.select = NULL, sample.weight = NULL,
+                appro3 = TRUE, generalNMF = FALSE, cores = NULL){
     if (is.null(K)) {
         stop("K is missing")
     }
@@ -154,8 +158,8 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
     ################ Preprocessing ################
     message('Preprocessing\n')
     PrepResult <- CAMPrep(data, dim.rdc, thres.low, thres.high, cluster.method,
-                        cluster.num, MG.num.thres, lof.thres, quick.select,
-                        sample.weight, generalNMF)
+                        cluster.num, MG.num.thres, lof.thres, quickhull, 
+                        quick.select, sample.weight, generalNMF)
 
     ################ Marker Gene Selection ################
     coreParam <- NULL
@@ -183,10 +187,10 @@ CAM <- function(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
     message('A and S Matrix Estimation\n')
     if (is.null(coreParam)) {
         ASestResult <- lapply(MGResult, CAMASest, PrepResult, data,
-                            corner.strategy, generalNMF)
+                            corner.strategy, appro3, generalNMF)
     } else {
         ASestResult <- bplapply(MGResult, CAMASest, PrepResult, data,
-                                corner.strategy, generalNMF,
+                                corner.strategy, appro3, generalNMF,
                                 BPPARAM = coreParam)
     }
     names(ASestResult) <- as.character(K)

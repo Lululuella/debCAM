@@ -6,8 +6,8 @@
 \usage{
 CAMPrep(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
   cluster.method = c("K-Means", "apcluster"), cluster.num = 50,
-  MG.num.thres = 20, lof.thres = 0.02, quick.select = NULL,
-  sample.weight = NULL, generalNMF = FALSE)
+  MG.num.thres = 20, lof.thres = 0.02, quickhull = TRUE,
+  quick.select = NULL, sample.weight = NULL, generalNMF = FALSE)
 }
 \arguments{
 \item{data}{Matrix of mixture expression profiles.
@@ -44,6 +44,9 @@ function. MG.num.thres is used as the number of neighbors in the
 calculation of the local outlier factors.
 The default value 0.02 will remove top 2\% local outliers.
 Zero value will disable lof.}
+
+\item{quickhull}{Perform quickhull to select clusters or not. The default is
+True.}
 
 \item{quick.select}{The number of candidate corners kept after quickhull
 and SFFS greedy search. If Null, only quickhull is applied.

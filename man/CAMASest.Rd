@@ -5,7 +5,7 @@
 \title{A and S matrix estimation by CAM}
 \usage{
 CAMASest(MGResult, PrepResult, data, corner.strategy = 2,
-  generalNMF = FALSE)
+  appro3 = TRUE, generalNMF = FALSE)
 }
 \arguments{
 \item{MGResult}{An object of class "\code{\link{CAMMGObj}}" obtained from
@@ -26,6 +26,9 @@ All-zero rows will be removed internally.}
 \item{corner.strategy}{The method to detect corner clusters.
 1: minimum sum of margin-of-errors; 2: minimum sum of reconstruction
 errors. The default is 2.}
+
+\item{appro3}{Estimate A and S matrix by approach 3 or not. Please see
+details for further information. The default is TRUE.}
 
 \item{generalNMF}{If TRUE, the decomposed proportion matrix has no sum-to-one
 constraint for each row. Without this constraint, the scale ambiguity of

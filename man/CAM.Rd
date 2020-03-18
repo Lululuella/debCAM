@@ -4,10 +4,11 @@
 \alias{CAM}
 \title{Convex Analysis of Mixtures}
 \usage{
-CAM(data, K = NULL, corner.strategy = 2, dim.rdc = 10, thres.low = 0.05,
-  thres.high = 0.95, cluster.method = c("K-Means", "apcluster"),
-  cluster.num = 50, MG.num.thres = 20, lof.thres = 0.02,
-  quick.select = NULL, sample.weight = NULL, generalNMF = FALSE,
+CAM(data, K = NULL, corner.strategy = 2, dim.rdc = 10,
+  thres.low = 0.05, thres.high = 0.95, cluster.method = c("K-Means",
+  "apcluster"), cluster.num = 50, MG.num.thres = 20,
+  lof.thres = 0.02, quickhull = TRUE, quick.select = NULL,
+  sample.weight = NULL, appro3 = TRUE, generalNMF = FALSE,
   cores = NULL)
 }
 \arguments{
@@ -54,6 +55,9 @@ the local outlier factors.
 The default value 0.02 will remove top 2\% local outliers.
 Zero value will disable lof.}
 
+\item{quickhull}{Perform quickhull to select clusters or not. The default is
+True.}
+
 \item{quick.select}{The number of candidate corners kept after quickhull
 and SFFS greedy search. If Null, only quickhull is applied.
 The default is 20. If this value is larger than the number of candidate
@@ -62,6 +66,9 @@ corners after quickhull, greedy search will also not be applied.}
 \item{sample.weight}{Vector of sample weights. If NULL, all samples have
 the same weights. The length should be the same as sample numbers.
 All values should be positive.}
+
+\item{appro3}{Estimate A and S matrix by approach 3 or not. Please see
+\code{\link{CAMASest}} for further information. The default is TRUE.}
 
 \item{generalNMF}{If TRUE, the decomposed proportion matrix has no sum-to-one
 constraint for each row. The default is FALSE.
