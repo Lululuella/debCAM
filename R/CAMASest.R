@@ -173,10 +173,10 @@ CAMASest <- function(MGResult, PrepResult, data, corner.strategy = 2,
             Aest.all <- Aest.all/rowSums(Aest.all)
         }
     } else {
-        Aest.all <- NULL
-        S3 <- NULL
-        Aproj.all <- NULL
-        scale.all <- NULL
+        Aest.all <- matrix(0,0,0)
+        S3 <- matrix(0,0,0)
+        Aproj.all <- matrix(0,0,0)
+        scale.all <- matrix(0,0,0)
         datalength3 <- NULL
         mdl3 <- NULL
     }
