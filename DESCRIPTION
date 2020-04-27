@@ -1,7 +1,7 @@
 Package: debCAM
 Type: Package
 Title: Deconvolution by Convex Analysis of Mixtures
-Version: 1.6.0
+Version: 1.7.0
 Author: Lulu Chen <luluchen@vt.edu>
 Maintainer: Lulu Chen <luluchen@vt.edu>
 biocViews: Software, CellBiology, GeneExpression
