@@ -25,7 +25,7 @@
 #'     The default is 50.
 #' @param MG.num.thres The clusters with the gene number smaller than
 #'     MG.num.thres will be treated as outliers. The default is 20.
-#' @param lof.thres Remove local outlier using \code{\link[DMwR]{lofactor}}
+#' @param lof.thres Remove local outlier using \code{\link[DMwR2]{lofactor}}
 #'     function. MG.num.thres is used as the number of neighbors in the
 #'     calculation of the local outlier factors.
 #'     The default value 0.02 will remove top 2\% local outliers.
@@ -174,7 +174,7 @@ CAMPrep <- function(data, dim.rdc = 10, thres.low = 0.05, thres.high = 0.95,
 
     ################ local outlier removal #################
     if(lof.thres > 0){
-        lof.factor <- DMwR::lofactor(t(Xproj), MG.num.thres)
+        lof.factor <- DMwR2::lofactor(t(Xproj), MG.num.thres)
         lof.outlier <- lof.factor > quantile(lof.factor, 1-lof.thres)
         Valid[Valid==TRUE][lof.outlier]<- FALSE
         X <- X[,!lof.outlier]

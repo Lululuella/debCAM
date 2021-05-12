@@ -32,7 +32,7 @@
 #' @param MG.num.thres The clusters with the gene number smaller than
 #'     MG.num.thres will be treated as outliers.
 #'     The default is 20.
-#' @param lof.thres Remove local outlier using \code{\link[DMwR]{lofactor}}.
+#' @param lof.thres Remove local outlier using \code{\link[DMwR2]{lofactor}}.
 #'     MG.num.thres is used as the number of neighbors in the calculation of
 #'     the local outlier factors.
 #'     The default value 0.02 will remove top 2\% local outliers.
